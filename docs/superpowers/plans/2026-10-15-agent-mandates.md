@@ -30,7 +30,7 @@
 | 8 | Eval set format, fixed rules, 10 seed cases | 3 · Evals | — |
 | 9 | Eval runner and metrics | 3 · Evals | — |
 | 10 | Eval cases, part 1 (to ~35) | 3 · Evals | — |
-| 11 | Eval cases, part 2 (to 62) + baseline numbers | 3 · Evals | — |
+| 11 | Eval cases, part 2 (to 65) + baseline numbers | 3 · Evals | — |
 | 12 | Approvals and activity log | 4 · Approvals & payment | — |
 | 13 | Payment-time check (code only) | 4 · Approvals & payment | — |
 | 14 | One-time cards (fake), "turn off agent" | 4 · Approvals & payment | — |
@@ -112,7 +112,7 @@ BRIEF.md                         spec (kept updated)
 research/                        rules test + incident notes (Session 0.1)
 evals/
   rules.json                     the fixed "eval user" rule set
-  cases.json                     62 labelled purchase requests
+  cases.json                     65 labelled purchase requests
   parse-cases.json               rule-reading eval (Session 28)
   README.md                      labelling policy
   RESULTS.md                     before/after table (written as results land)
@@ -4099,7 +4099,7 @@ export default function EvalsPage() {
     <div className="space-y-4">
       <h2 className="text-base font-semibold">How well does the checker decide?</h2>
       <p className="text-sm text-neutral-600">
-        62 purchase requests, each labelled approve / ask / block against one fixed set of rules. 16 are held back as a test set and never used for tuning.
+        65 purchase requests, each labelled approve / ask / block against one fixed set of rules. 17 are held back as a test set and never used for tuning.
       </p>
       {!latest && <p className="text-sm text-neutral-500">No runs yet. Run <code>npm run eval</code>.</p>}
       {latest && (
