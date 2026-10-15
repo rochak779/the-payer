@@ -5255,6 +5255,8 @@ git commit -m "spike(stripe): verify sandbox issuing and real-time authorisation
 
 ### Session 32: Stripe: real-time authorisation webhook
 
+> **As built:** test restores STRIPE_SECRET_KEY with `delete` when it was unset (assigning undefined stores "undefined"). Verified offline with locally signed events against the real route: approved purchase → `{approved:true}` + Stripe-Version echoed; repeat → declined (used); unknown card → declined; unsigned → 400. **Live wiring check with `stripe listen` pending Stripe access.**
+
 **Files:**
 - Create: `src/integrations/stripe/client.ts`, `src/integrations/stripe/authorization.ts`, `src/app/api/stripe/webhook/route.ts`
 - Test: `src/integrations/stripe/authorization.test.ts`
@@ -5263,7 +5265,7 @@ git commit -m "spike(stripe): verify sandbox issuing and real-time authorisation
 - Consumes: `checkCharge`, `ChargeAttempt` (Session 13).
 - Produces: `stripeClient(): Stripe` (refuses non-`sk_test_` keys), `requireEnv(name: string): string`, `toChargeAttempt(auth: Stripe.Issuing.Authorization): ChargeAttempt | null`, `POST /api/stripe/webhook` (answers `{ approved }` with `Stripe-Version`), `GET /api/stripe/webhook` (warm-up).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/integrations/stripe/authorization.test.ts
@@ -5305,12 +5307,12 @@ describe('stripeClient', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/integrations/stripe`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/integrations/stripe/client.ts
@@ -5381,12 +5383,12 @@ export async function POST(req: Request) {
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Live wiring check with the spike script**
+- [ ] **Step 5: Live wiring check with the spike script** (pending Stripe access; offline signed-event check passed)
 
 ```bash
 npm run dev                                   # terminal 1
@@ -5397,7 +5399,7 @@ node --env-file=.env.local --import tsx scripts/stripe-spike.ts                 
 
 Expected: the 1000p charge is declined with `webhook_declined`. /activity "Other events" shows "Charge of £10 at Spike Test Shop declined. No approved purchase matches this card." That's correct, because `apv_spike` isn't a real approval.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/integrations/stripe src/app/api/stripe
