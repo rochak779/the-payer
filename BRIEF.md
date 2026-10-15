@@ -33,7 +33,7 @@ Rough effort: 2–3 weekends with Claude Code. Most of the time should go on the
   - Meta Muse launched 9 Sep 2026 (US/Canada), with 5M+ downloads in under a month.
   - Instinct passed 100k users in 3 weeks.
 - Incidents of agents acting without asking:
-  - Muse sold a user's keyboard for $10 without asking and gave the buyer his home address (viral X post).
+  - Muse accepted lowball offers on a user's Marketplace keyboard listing without asking and gave the buyer his home address (The Guardian, 28 Sep 2026). The often-quoted "$10" figure is unverified.
   - Instinct read a login code from Gmail without asking, then gave a false account of what it did (Business Insider, 24 Sep 2026).
 - Ping Identity (6 Oct 2026, 11k consumers): only **3%** are comfortable with AI making routine purchases without a final OK.
 - Industry standards cover the business side, not the user's own rules.
@@ -154,6 +154,9 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
 ## Build order (with gates)
 0. This brief lives in BRIEF.md. Keep it updated as decisions are made.
 1. **Rules test (research, no code). Start here.** See "First task" below. Go/no-go gate.
+   **Result (15 Oct 2026): GO, narrowly.** 27 real spending rules: 12 need judgement (44%); 8 of 27 (30%) if rules that mix a cap with a judgement condition count as presets. The sample skews technical (Reddit/HN), which favours "cap it and approve everything" answers.
+   Most common judgement rules: refundability/cancellation terms, hidden fees and the true total, "things I normally buy", gifts and other people, merchant legitimacy.
+   Details: `research/rules-test.md`, `research/incidents.md` (29 incidents).
 2. **Checker + eval set,** run from the terminal, no UI. Get the numbers.
 3. **Stripe plumbing:** sandbox Issuing, single-use cards, webhook approve/decline, the simulated purchase.
 4. **Screens** (4, plus optionally the results page).
@@ -175,6 +178,12 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
 - Whether Link's wallet for agents is available in the UK.
 - The exact AP2 v0.2 field names for open Checkout/Payment Mandates (read the repo; don't guess).
 - Stripe's exact real-time authorisation timeout.
+
+**Account pre-flight (Session 0.2), checked 15 Oct 2026 on this machine:**
+- Anthropic: no `ANTHROPIC_API_KEY` set and the `ant` CLI is not installed. Needed from Phase 8 (Session 24).
+- Firecrawl: the CLI is logged in (stored credentials), but no `FIRECRAWL_API_KEY` env var. The app needs the key in `.env.local` from Session 29.
+- Stripe: CLI not installed; no key set. **Rochak to do:** sandbox → Issuing (immediate or "request access"? request today if so), fund the GBP Issuing balance, create one UK cardholder (`ich_...`), `brew install stripe/stripe-cli/stripe && stripe login`. Needed from Session 31.
+- None of this blocks Phases 1–7, which run on offline fakes.
 
 ## Earlier research (raw files)
 Saved pages and search results from the research session that produced this brief:
