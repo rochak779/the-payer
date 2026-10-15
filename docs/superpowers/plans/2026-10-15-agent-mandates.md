@@ -4952,6 +4952,8 @@ git commit -m "feat(firecrawl): real web search behind SEARCH=firecrawl"
 
 ### Session 30: Claude: real shopper agent
 
+> **As built:** as planned; SDK types accept `fallbacks` on the tool runner. **Live run pending Anthropic + Firecrawl keys.**
+
 **Files:**
 - Create: `src/integrations/claude/shopper.ts`
 - Modify: `src/deps.ts`
@@ -4967,7 +4969,7 @@ Design notes:
 - Forced tool choice is not allowed on `claude-sonnet-5-5`, so the prompt tells it to call `request_purchase`.
 - Server-side refusal fallback is on (`fallbacks: 'default'` + beta `server-side-fallback-2026-07-01`). If the installed SDK's types reject `fallbacks`, update `@anthropic-ai/sdk`. If they still reject it, remove those two lines and note it in BRIEF.md.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/integrations/claude/shopper.test.ts
@@ -4994,12 +4996,12 @@ describe('toPurchaseRequest', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/integrations/claude/shopper`
 Expected: FAIL, module missing.
 
-- [ ] **Step 3: Implement `src/integrations/claude/shopper.ts`**
+- [x] **Step 3: Implement `src/integrations/claude/shopper.ts`**
 
 ```ts
 import type Anthropic from '@anthropic-ai/sdk';
@@ -5099,7 +5101,7 @@ export function createClaudeShopper(opts: { model?: string; client?: Anthropic; 
 }
 ```
 
-- [ ] **Step 4: Switch in `src/deps.ts`**
+- [x] **Step 4: Switch in `src/deps.ts`**
 
 ```ts
 import { createClaudeShopper } from '@/integrations/claude/shopper';
@@ -5107,14 +5109,14 @@ import { createClaudeShopper } from '@/integrations/claude/shopper';
     shopper: process.env.SHOPPER === 'claude' ? createClaudeShopper({ clock }) : createScriptedShopper(clock),
 ```
 
-- [ ] **Step 5: Run tests, then live**
+- [ ] **Step 5: Run tests, then live** (tests pass; live run pending keys)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 Run: `npm run seed && CHECKER=claude SEARCH=firecrawl SHOPPER=claude npm run demo:flow -- "Book a hotel in Lisbon for 7–9 Nov"`
 Expected: real search queries and results stream as events, then one `request` with a real hotel, then a checker decision with a reason. Try `"Buy a birthday present for my nephew, about £60"` and expect "Asking you".
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/integrations/claude/shopper.ts src/integrations/claude/shopper.test.ts src/deps.ts

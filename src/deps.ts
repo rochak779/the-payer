@@ -2,6 +2,7 @@ import { fixtureSearch } from '@/agent/fixtures';
 import { createScriptedShopper } from '@/agent/scriptedShopper';
 import { getFuzzyChecker } from '@/checker/registry';
 import type { FlowDeps } from '@/flow/runs';
+import { createClaudeShopper } from '@/integrations/claude/shopper';
 import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
 import { createFakeIssuer } from '@/payments/fakeIssuer';
 import type { RuleParser } from '@/rules/parser';
@@ -20,7 +21,7 @@ export function getDeps(): Deps {
     fuzzy: getFuzzyChecker(process.env.CHECKER ?? 'keyword'),
     parser: getRuleParser(process.env.PARSER ?? 'pattern'),
     search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
-    shopper: createScriptedShopper(clock),
+    shopper: process.env.SHOPPER === 'claude' ? createClaudeShopper({ clock }) : createScriptedShopper(clock),
     issuer: createFakeIssuer(store, clock),
   };
 }
