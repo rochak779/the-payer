@@ -8,6 +8,7 @@ import { getDeps } from '@/deps';
 import { Rule } from '@/domain/types';
 import { executeRun, startRun } from '@/flow/runs';
 import { appendLog } from '@/log/log';
+import { setAgentEnabled } from '@/payments/agentSwitch';
 import { fulfil } from '@/payments/fulfil';
 import { checkedBy, explainRule } from '@/rules/explain';
 
@@ -44,4 +45,22 @@ export async function decideApproval(formData: FormData): Promise<void> {
   const approval = userDecides(deps.store, id, choice, deps.clock());
   if (approval.status === 'approved') await fulfil(deps, approval.id, deps.clock());
   revalidatePath('/', 'layout'); // refreshes the tab badge too
+}
+
+export async function toggleAgent(formData: FormData): Promise<void> {
+  const deps = getDeps();
+  await setAgentEnabled(deps, formData.get('enabled') === 'true', deps.clock());
+  revalidatePath('/', 'layout');
+}
+
+/** Demo only: pretend a merchant tries a charge that wasn't approved. */
+export async function demoCharge(formData: FormData): Promise<void> {
+  const deps = getDeps();
+  const approval = deps.store.read().approvals.find((a) => a.id === String(formData.get('id')));
+  if (!approval?.card) throw new Error('This purchase has no card.');
+  const kind = String(formData.get('kind'));
+  const amount = kind === 'more' ? { ...approval.request.total, minor: approval.request.total.minor + 2000 } : approval.request.total;
+  const merchant = kind === 'other_merchant' ? 'Totally Legit Electronics Ltd' : approval.request.merchant;
+  await deps.issuer.simulateCharge({ card: approval.card, amount, merchant });
+  revalidatePath('/activity');
 }

@@ -3932,6 +3932,8 @@ git commit -m "feat(ui): approvals screen with approve/decline"
 
 ### Session 22: Activity log screen + turn-off + demo charge buttons
 
+> **As built:** as planned. Verified with real form posts: +£20 and other-shop charges declined with readable reasons; turn off → header shows it and a new task is blocked; turn on restores.
+
 **Files:**
 - Modify: `src/app/actions.ts` (add `toggleAgent`, `demoCharge`), `src/domain/labels.ts` (add `STATUS_LABEL`)
 - Replace: `src/app/activity/page.tsx`
@@ -3940,7 +3942,7 @@ git commit -m "feat(ui): approvals screen with approve/decline"
 - Consumes: `setAgentEnabled` (Session 14), `CardIssuer.simulateCharge` (Session 14).
 - Produces: server actions `toggleAgent(formData)` (field `enabled` = `'true'|'false'`), `demoCharge(formData)` (fields `id`, `kind` = `more` | `other_merchant` | `repeat`); `STATUS_LABEL: Record<ApprovalStatus, string>`.
 
-- [ ] **Step 1: Add `STATUS_LABEL` to `src/domain/labels.ts`**
+- [x] **Step 1: Add `STATUS_LABEL` to `src/domain/labels.ts`**
 
 ```ts
 import type { ApprovalStatus } from './types';
@@ -3953,7 +3955,7 @@ export const STATUS_LABEL: Record<ApprovalStatus, string> = {
 
 (Merge the type import with the existing one.)
 
-- [ ] **Step 2: Add the actions to `src/app/actions.ts`**
+- [x] **Step 2: Add the actions to `src/app/actions.ts`**
 
 ```ts
 import { setAgentEnabled } from '@/payments/agentSwitch';
@@ -3977,7 +3979,7 @@ export async function demoCharge(formData: FormData): Promise<void> {
 }
 ```
 
-- [ ] **Step 3: Replace `src/app/activity/page.tsx`**
+- [x] **Step 3: Replace `src/app/activity/page.tsx`**
 
 ```tsx
 import Link from 'next/link';
@@ -4067,7 +4069,7 @@ export default function ActivityPage() {
 }
 ```
 
-- [ ] **Step 4: Verify in the browser** (this is the demo moment)
+- [x] **Step 4: Verify in the browser** (this is the demo moment)
 
 Run: `npm run typecheck`, `npm run seed`, `npm run dev`. Run the Lisbon task, then open /activity.
 Expected: the purchase shows "Approved", status "paid", card •••• NNNN (fake), and a log timeline (decision → card created → charge approved).
@@ -4075,7 +4077,7 @@ Expected: the purchase shows "Approved", status "paid", card •••• NNNN (
 - Click "charge from another shop". Declined, naming the merchant.
 - Click "Turn off agent". The header shows "Agent is turned off"; /ask tasks now get "Blocked: The agent is turned off."; turn it back on.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app src/domain/labels.ts
