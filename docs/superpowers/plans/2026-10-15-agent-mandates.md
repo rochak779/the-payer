@@ -4264,6 +4264,8 @@ git commit -m "feat(claude): client setup and smoke test"
 
 ### Session 25: Claude fuzzy-rule checker
 
+> **As built:** uses `client.beta.messages.parse` + `betaZodOutputFormat` with `betas: ['server-side-fallback-2026-07-01'], fallbacks: 'default'` (claude-api skill default for Sonnet 5.5: a wrongful refusal is retried on a fallback model instead of becoming a needless ask). Test stub moved to `beta.messages.parse` and asserts the fallback settings. **Live headphones check pending a key.**
+
 The product's core. Claude reports facts per judgement rule plus two flags. `checkPurchase` (Session 6) turns those into outcomes, so Claude can never approve past a code limit.
 
 **Files:**
@@ -4275,7 +4277,7 @@ The product's core. Claude reports facts per judgement rule plus two flags. `che
 - Consumes: `FuzzyChecker`, `FuzzyResult` (Session 6), `explainRule` (Session 15), `claude`, `CHECKER_MODEL`, `CHECKER_EFFORT` (Session 24).
 - Produces: `PROMPT_VERSION` (start `'v1'`), `renderPrompt(req: PurchaseRequest, rules: Rule[]): string`, `createClaudeFuzzyChecker(opts?: { model?: string; effort?: Effort; client?: Anthropic }): FuzzyChecker` (name `claude:<model>:<version>`). Registry accepts `'claude'` and `'claude-haiku'`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/integrations/claude/fuzzyChecker.test.ts
@@ -4336,12 +4338,12 @@ describe('Claude fuzzy checker', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/integrations/claude`
 Expected: FAIL, cannot find module `./fuzzyChecker`.
 
-- [ ] **Step 3: Implement `src/integrations/claude/fuzzyChecker.ts`**
+- [x] **Step 3: Implement `src/integrations/claude/fuzzyChecker.ts`**
 
 ```ts
 import type Anthropic from '@anthropic-ai/sdk';
@@ -4433,7 +4435,7 @@ export function createClaudeFuzzyChecker(opts: { model?: string; effort?: Effort
 
 If `zodOutputFormat` reports a Zod version mismatch, check which Zod import the installed helper expects (`node_modules/@anthropic-ai/sdk/helpers/zod.d.ts`). Import `z` in this file from that same path.
 
-- [ ] **Step 4: Register it in `src/checker/registry.ts`**
+- [x] **Step 4: Register it in `src/checker/registry.ts`**
 
 ```ts
 import { createClaudeFuzzyChecker } from '@/integrations/claude/fuzzyChecker';
@@ -4454,14 +4456,14 @@ export function getFuzzyChecker(name: string): FuzzyChecker {
 
 Update the Session 7 registry test's error expectation if it checks the options text.
 
-- [ ] **Step 5: Run tests, then one live check**
+- [ ] **Step 5: Run tests, then one live check** (tests pass; live check pending an Anthropic key)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 Run: `npm run seed && CHECKER=claude npm run demo:flow -- "Get me noise-cancelling headphones"`
 Expected: `[decision] Blocked: …` mentioning that the item is non-refundable / all sales final. The keyword baseline approved this one.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/integrations/claude src/checker/registry.ts
