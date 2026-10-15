@@ -4183,6 +4183,8 @@ Rules for every integration session:
 
 ### Session 24: Claude client + smoke test
 
+> **As built:** code done; **live smoke run pending a key** (no ANTHROPIC_API_KEY or `ant` login on this machine; fails with "Could not resolve authentication method"). Default model stays claude-sonnet-5-5 because the brief names it; the claude-api skill's default is claude-opus-5-5 (about 2x the price).
+
 **Files:**
 - Create: `src/integrations/claude/client.ts`, `scripts/claude-smoke.ts`
 - Modify: `.env.example`, `package.json`
@@ -4190,13 +4192,13 @@ Rules for every integration session:
 **Interfaces:**
 - Produces: `claude(): Anthropic` (lazy singleton), `CHECKER_MODEL`, `AGENT_MODEL` (default `'claude-sonnet-5-5'`), `type Effort = 'low' | 'medium' | 'high'`, `CHECKER_EFFORT` (default `'medium'`).
 
-- [ ] **Step 1: Install**
+- [x] **Step 1: Install**
 
 ```bash
 npm install @anthropic-ai/sdk
 ```
 
-- [ ] **Step 2: Create `src/integrations/claude/client.ts`**
+- [x] **Step 2: Create `src/integrations/claude/client.ts`**
 
 ```ts
 import Anthropic from '@anthropic-ai/sdk';
@@ -4215,7 +4217,7 @@ export function claude(): Anthropic {
 }
 ```
 
-- [ ] **Step 3: Create `scripts/claude-smoke.ts`**
+- [x] **Step 3: Create `scripts/claude-smoke.ts`**
 
 ```ts
 import { CHECKER_MODEL, claude } from '@/integrations/claude/client';
@@ -4238,7 +4240,7 @@ main().catch((err) => { console.error(err); process.exit(1); });
 npm pkg set scripts.claude:smoke="node --env-file-if-exists=.env.local --import tsx scripts/claude-smoke.ts"
 ```
 
-- [ ] **Step 4: Add to `.env.example`**
+- [x] **Step 4: Add to `.env.example`**
 
 ```bash
 # Claude (Phase 8). Or run `ant auth login` instead of setting a key.
@@ -4248,12 +4250,12 @@ npm pkg set scripts.claude:smoke="node --env-file-if-exists=.env.local --import 
 # AGENT_MODEL=claude-sonnet-5-5
 ```
 
-- [ ] **Step 5: Verify**
+- [ ] **Step 5: Verify** (pending an Anthropic key)
 
 Run: `npm run typecheck && npm test && npm run claude:smoke`
 Expected: `claude-sonnet-5-5: "ready" (… tokens)`. If it fails on auth, run `ant auth status` (see Session 0.2).
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/integrations scripts/claude-smoke.ts .env.example package.json package-lock.json
