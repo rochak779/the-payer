@@ -23,10 +23,14 @@ describe('loadEvalSet', () => {
     expect(() => loadEvalSet(dir)).toThrow('Duplicate eval case id: within-01');
   });
 
-  it('covers every category with at least 6 cases once complete', () => {
+  it('has the full eval set: 65 cases, every category covered, 17 held out', () => {
     const { cases } = loadEvalSet();
+    expect(cases).toHaveLength(65);
     const counts = new Map<string, number>();
     for (const c of cases) counts.set(c.category, (counts.get(c.category) ?? 0) + 1);
-    for (const cat of ['within', 'against', 'ambiguous', 'conflict']) expect(counts.get(cat)).toBeGreaterThanOrEqual(6);
+    for (const cat of ['within', 'against', 'ambiguous', 'conflict', 'price_edge', 'refund_wording', 'gifts_others', 'injection']) {
+      expect(counts.get(cat)).toBeGreaterThanOrEqual(6);
+    }
+    expect(cases.filter((c) => c.split === 'test')).toHaveLength(17);
   });
 });
