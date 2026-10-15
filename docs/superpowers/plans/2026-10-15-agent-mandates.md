@@ -4086,6 +4086,8 @@ git commit -m "feat(ui): activity log with turn-off switch and demo charges"
 
 ### Session 23: Eval results page (optional)
 
+> **As built:** built (not cut). Shows the keyword baseline: 53% on the held-out set.
+
 Cut this if time is short. The numbers already live in `evals/RESULTS.md`.
 
 **Files:**
@@ -4094,7 +4096,7 @@ Cut this if time is short. The numbers already live in `evals/RESULTS.md`.
 **Interfaces:**
 - Consumes: `loadRuns`, `SavedRun` (Session 9).
 
-- [ ] **Step 1: Create `src/app/evals/page.tsx`**
+- [x] **Step 1: Create `src/app/evals/page.tsx`**
 
 ```tsx
 import { Card } from '@/components/ui';
@@ -4158,12 +4160,12 @@ export default function EvalsPage() {
 }
 ```
 
-- [ ] **Step 2: Verify**
+- [x] **Step 2: Verify**
 
 Run: `npm run typecheck`, `npm run dev`, open /evals (linked from Activity).
 Expected: the keyword baseline run appears with tiles and the runs table.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/app/evals
