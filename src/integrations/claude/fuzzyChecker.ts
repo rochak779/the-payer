@@ -42,7 +42,7 @@ const clean = (s: string) => s.replace(/</g, '‹').replace(/>/g, '›');
 export function renderPrompt(req: PurchaseRequest, rules: Rule[]): string {
   const judgement = rules.filter((r): r is JudgementRule => r.kind === 'judgement');
   const hard = rules.filter((r) => r.kind !== 'judgement');
-  const units = req.units ? ` for ${req.units} ${req.unitLabel ?? 'unit'}(s)` : '';
+  const units = req.units ? ` for ${req.units} ${clean(req.unitLabel ?? 'unit')}(s)` : '';
   return [
     '<judgement_rules>',
     ...judgement.map((r) => `- id: ${r.id} | rule: ${clean(r.text)}`),

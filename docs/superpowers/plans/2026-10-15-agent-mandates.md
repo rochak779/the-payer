@@ -4390,7 +4390,7 @@ const clean = (s: string) => s.replace(/</g, '‹').replace(/>/g, '›');
 export function renderPrompt(req: PurchaseRequest, rules: Rule[]): string {
   const judgement = rules.filter((r): r is JudgementRule => r.kind === 'judgement');
   const hard = rules.filter((r) => r.kind !== 'judgement');
-  const units = req.units ? ` for ${req.units} ${req.unitLabel ?? 'unit'}(s)` : '';
+  const units = req.units ? ` for ${req.units} ${clean(req.unitLabel ?? 'unit')}(s)` : '';
   return [
     '<judgement_rules>',
     ...judgement.map((r) => `- id: ${r.id} | rule: ${clean(r.text)}`),
@@ -5590,13 +5590,15 @@ git commit -m "feat(rules): export rules as an AP2 open mandate"
 
 ### Session 35: Demo hardening, README, video run-of-show
 
+> **As built:** Step 1 green (tests, typecheck, lint, build; the build's 4 Turbopack file-tracing warnings from `src/evals/results.ts` date from Phase 7 and only matter when deploying). README written from what was built, not the template alone: status line, baseline eval table (Claude rows pending), AP2 section, demo checklist plus smoke tests and the Stripe timeout-fallback setting, and the run-of-show. Run-of-show steps 1–5 dry-run offline on the stand-ins; all behave as written. **Step 5 (final Claude eval rows) pending an Anthropic key**; RESULTS.md and README say so (Sessions 26–27 are pending too). BRIEF build order records status and the 5-user test setup (run on Rochak's laptop; the JSON store won't persist on Vercel). Step 7: whole-build review (f90d7db..HEAD). Fixed: agent-written `unitLabel` went into the checker prompt without tag escaping (also fixed in Session 25's snippet above), with a test covering every agent/merchant text field; a per-unit cap now compares the whole total when the request counts a different unit (e.g. guest-nights); /rules no longer crashes on an impossible date; README copy. Not fixed, for Rochak: the agent's own category label can sidestep category rules (e.g. a gift card labelled "other"); live Stripe may decline the step-4 wrong-shop demo with its own card limit first. Minor review items listed in the PR.
+
 **Files:**
 - Create: `README.md`
 - Modify: `evals/RESULTS.md`, `BRIEF.md`
 
-- [ ] **Step 1: Full check.** Run `npm test && npm run typecheck && npm run build`. Expected: all pass.
+- [x] **Step 1: Full check.** Run `npm test && npm run typecheck && npm run build`. Expected: all pass.
 
-- [ ] **Step 2: Write `README.md`** (no employer names):
+- [x] **Step 2: Write `README.md`** (no employer names):
 
 ```markdown
 # Agent Mandates
@@ -5624,14 +5626,14 @@ Then: `stripe listen --events issuing_authorization.request --forward-to localho
 Spending only. Non-payment actions (sharing an address, reading email) can't be stopped at the payment step.
 ```
 
-- [ ] **Step 3: Pre-demo checklist** (add to README under "Demo checklist"):
+- [x] **Step 3: Pre-demo checklist** (add to README under "Demo checklist"):
   - `npm run seed` (clean data, demo rules)
   - Stripe sandbox Issuing balance funded
   - `stripe listen …` running (or tunnel up), `STRIPE_WEBHOOK_SECRET` current
   - `curl localhost:3000/api/stripe/webhook` (warm-up)
   - One dry run of every step below
 
-- [ ] **Step 4: Video run-of-show** (add to README; about 90 seconds):
+- [x] **Step 4: Video run-of-show** (add to README; about 90 seconds):
   1. **Rules.** Type "Hotels up to £150 a night. Nothing non-refundable. Ask me about gifts." → "Here's what I understood" → Save.
   2. **Ask.** "Book a hotel in Lisbon 7–9 Nov" → live search → approved → paid with a one-time card.
   3. **Ask.** "Birthday present for my nephew" → "Asking you" → Approvals → Approve.
@@ -5641,11 +5643,11 @@ Spending only. Non-payment actions (sharing an address, reading email) can't be 
 
 - [ ] **Step 5: Final eval rows.** Run `npm run eval -- --checker claude --label final` and add it to `evals/RESULTS.md`.
 
-- [ ] **Step 6: Update BRIEF.md** "Build order" with what's done, and anything left for the 5-user test.
+- [x] **Step 6: Update BRIEF.md** "Build order" with what's done, and anything left for the 5-user test.
 
-- [ ] **Step 7: Request a code review.** Use the `superpowers:requesting-code-review` skill on the whole branch.
+- [x] **Step 7: Request a code review.** Use the `superpowers:requesting-code-review` skill on the whole branch.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add README.md evals BRIEF.md

@@ -4,7 +4,7 @@ Plain-English spending rules for a personal AI shopping agent, a checker that de
 
 Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
 
-**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 110 automated tests. The real Claude checker and agent, Firecrawl search and Stripe sandbox cards are built behind switches but **have not been run live yet**, because there are no API keys on the build machine. The Claude eval numbers are pending for the same reason.
+**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 113 automated tests. The real Claude checker and agent, Firecrawl search and Stripe sandbox cards are built behind switches but **have not been run live yet**, because there are no API keys on the build machine. The Claude eval numbers are pending for the same reason.
 
 ## Run it (offline, no keys)
 Needs Node 22.9 or later.
@@ -40,7 +40,7 @@ In Issuing settings, set the real-time authorisation timeout fallback to **decli
 2. **Claude judges the fuzzy rules** ("nothing non-refundable", "ask me about gifts", "ask me if a shop might not be genuine") and flags hidden costs and prompt injection. It reports facts and code turns them into outcomes, so the AI can only make a decision stricter. If it fails, times out or returns junk, the answer is "ask".
 3. **At payment time, code alone** checks the charge against the approval: amount, merchant, used once, not expired, agent still on.
 
-The agent never holds payment details. After approval it gets a one-time card limited to that amount, so a leaked card is useless. Listing and merchant text is data, never instructions, and only the user's tap approves an "ask".
+The agent never holds payment details. After approval the app creates a one-time card for exactly that amount (the agent never sees it), and the payment check only lets it pay the approved merchant once, so a leaked card is useless. Listing and merchant text is data, never instructions, and only the user's tap approves an "ask".
 
 ## Evals
 65 labelled purchase requests against one fixed set of 10 rules: 48 for tuning ("dev") and 17 held out ("test"). Categories: clearly within or against the rules, ambiguous, rule conflicts, price edge cases, refund wording, gifts and other people, prompt injection. Labelling policy: `evals/README.md`.
@@ -82,6 +82,7 @@ The Rules tab can show your saved rules as an **AP2 v0.2 open Payment Mandate** 
 
 Notes:
 - Steps 1–5 were dry-run offline on the stand-ins (16 Oct 2026) and behave as above. Offline, the fake card lists every reason for a decline ("already used" as well as "over the approved amount" or "not the approved merchant"). Step 6 needs the Claude rows.
+- Live with Stripe, step 4 may look different: the card has already paid the full approved amount, so Stripe's own card limit will probably decline "charge from another shop" before our payment check is asked. The Activity log names whichever check declined it. Confirm this on the first live run (plan Session 33, step 6); if so, either say it that way in the video or show the merchant check offline.
 - Live search results vary. If the agent picks a hotel that triggers an "ask" in step 2, show the reason and approve it: that is still the story.
 
 ## Tech notes

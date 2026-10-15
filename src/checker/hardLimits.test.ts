@@ -40,6 +40,14 @@ describe('amount caps', () => {
     expect(checkHardLimits(makeRequest({ total: gbp(24000), units: undefined }), [hotelCap])).toHaveLength(1);
   });
 
+  it('compares the whole total when the request counts a different unit (e.g. guest-nights, not nights)', () => {
+    const [reason] = checkHardLimits(makeRequest({ total: gbp(60000), units: 4, unitLabel: 'guest-night' }), [hotelCap]);
+    expect(reason).toMatchObject({ ruleId: 'hotel-cap', outcome: 'ask' });
+    expect(reason.message).toBe('£600 in total is over your £150 per night limit (the listing counts guest-nights, not nights).');
+    // Plurals and case still count as the same unit.
+    expect(checkHardLimits(makeRequest({ total: gbp(24000), units: 2, unitLabel: 'Nights' }), [hotelCap])).toEqual([]);
+  });
+
   it('only applies a category-scoped cap to that category', () => {
     expect(checkHardLimits(makeRequest({ category: 'flight', total: gbp(90000), units: undefined }), [hotelCap])).toEqual([]);
   });

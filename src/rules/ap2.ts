@@ -25,8 +25,15 @@ type ExtRule = { rule_id: string; source: string; on_breach: OnBreach; exported_
 /** Lower-case slug used as the AP2 Merchant `id` (we only know shop names, not merchant ids). */
 const merchantId = (name: string) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+/** True for a YYYY-MM-DD date that exists (rejects 2026-13-01 and 2026-02-30). */
+const isRealDay = (d: string) => {
+  const t = new Date(`${d}T00:00:00Z`);
+  return !Number.isNaN(t.getTime()) && isoDay(t) === d;
+};
+
 function toEpochSeconds(validUntil: string): number {
-  const ms = Date.parse(/^\d{4}-\d{2}-\d{2}$/.test(validUntil) ? `${validUntil}T23:59:59Z` : validUntil);
+  const dateOnly = /^\d{4}-\d{2}-\d{2}$/.test(validUntil);
+  const ms = dateOnly ? (isRealDay(validUntil) ? Date.parse(`${validUntil}T23:59:59Z`) : NaN) : Date.parse(validUntil);
   if (Number.isNaN(ms)) throw new Error(`validUntil must be YYYY-MM-DD or an ISO date-time, got "${validUntil}"`);
   return Math.floor(ms / 1000);
 }
@@ -103,6 +110,6 @@ export function toAp2OpenMandate(
 
 /** The mandate runs to the latest date-window end, or 30 days from today if there is none. */
 export function defaultValidUntil(rules: Rule[], today: Date = new Date()): string {
-  const ends = rules.flatMap((r) => (r.kind === 'date_window' ? [r.to] : [])).sort();
+  const ends = rules.flatMap((r) => (r.kind === 'date_window' && isRealDay(r.to) ? [r.to] : [])).sort();
   return ends.at(-1) ?? isoDay(new Date(today.getTime() + 30 * DAY_MS));
 }

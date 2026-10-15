@@ -100,4 +100,10 @@ describe('defaultValidUntil', () => {
   it('falls back to 30 days from today', () => {
     expect(defaultValidUntil([], NOW)).toBe('2026-11-14');
   });
+  it('ignores a date that does not exist, so /rules cannot crash on it', () => {
+    const bad: Rule = { id: 'w', kind: 'date_window', source: '', onBreach: 'block', from: '2026-11-01', to: '2026-13-01' };
+    expect(defaultValidUntil([bad], NOW)).toBe('2026-11-14');
+    expect(() => toAp2OpenMandate([bad], { validUntil: defaultValidUntil([bad], NOW), now: NOW })).not.toThrow();
+    expect(() => toAp2OpenMandate([], { validUntil: '2026-02-30' })).toThrow(/validUntil/);
+  });
 });

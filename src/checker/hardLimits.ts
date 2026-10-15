@@ -53,6 +53,13 @@ function checkAmountCap(req: PurchaseRequest, rule: AmountCapRule): Reason | nul
       message: `The price is in ${req.total.currency} but your limit is in ${rule.max.currency}, so I can't compare them safely.`,
     };
   }
+  // The unit count and label come from the agent. If the request counts a different unit from the rule
+  // (e.g. guest-nights against a per-night cap), don't divide: compare the whole total, like a missing count.
+  const otherUnit = rule.per === 'unit' && !!rule.unitLabel && !!req.unitLabel && unitKey(rule.unitLabel) !== unitKey(req.unitLabel);
+  if (otherUnit) {
+    if (req.total.minor <= rule.max.minor) return null;
+    return breach(rule, `${formatMoney(req.total)} in total is over your ${formatMoney(rule.max)} per ${rule.unitLabel} limit (the listing counts ${unitKey(req.unitLabel!)}s, not ${unitKey(rule.unitLabel!)}s).`);
+  }
   // No unit count: compare the whole total. Conservative, so a per-night breach can't slip through.
   const units = rule.per === 'unit' ? (req.units ?? 1) : 1;
   const price = Math.ceil(req.total.minor / units);
@@ -61,3 +68,6 @@ function checkAmountCap(req: PurchaseRequest, rule: AmountCapRule): Reason | nul
   const what = rule.per === 'unit' ? `${shown} per ${req.unitLabel ?? rule.unitLabel ?? 'unit'}` : shown;
   return breach(rule, `${what} is over your ${formatMoney(rule.max)} limit.`);
 }
+
+/** "Nights", "night " and "night" are the same unit. */
+const unitKey = (label: string) => label.trim().toLowerCase().replace(/s$/, '');
