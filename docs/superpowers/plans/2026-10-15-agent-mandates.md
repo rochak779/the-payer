@@ -3853,6 +3853,8 @@ git commit -m "feat(ui): ask-the-agent screen with live progress"
 
 ### Session 21: Approvals screen
 
+> **As built:** as planned. Verified by posting the real HTML form (works without JavaScript): approve → used with a fake card and an approved charge; decline → declined; badge cleared; page shows "Nothing to approve".
+
 **Files:**
 - Modify: `src/app/actions.ts` (add `decideApproval`)
 - Replace: `src/app/approvals/page.tsx`
@@ -3861,7 +3863,7 @@ git commit -m "feat(ui): ask-the-agent screen with live progress"
 - Consumes: `userDecides` (Session 12), `fulfil` (Session 14).
 - Produces: server action `decideApproval(formData: FormData): Promise<void>` (fields `id`, `choice` = `approve` | `decline`).
 
-- [ ] **Step 1: Add `decideApproval` to `src/app/actions.ts`**
+- [x] **Step 1: Add `decideApproval` to `src/app/actions.ts`**
 
 ```ts
 import { userDecides } from '@/approvals/approvals';
@@ -3879,7 +3881,7 @@ export async function decideApproval(formData: FormData): Promise<void> {
 
 (Imports go at the top of the file.)
 
-- [ ] **Step 2: Replace `src/app/approvals/page.tsx`**
+- [x] **Step 2: Replace `src/app/approvals/page.tsx`**
 
 ```tsx
 import { decideApproval } from '@/app/actions';
@@ -3916,12 +3918,12 @@ export default function ApprovalsPage() {
 
 The listing link is safe to render because `PurchaseRequest.url` only accepts http(s) (Session 2).
 
-- [ ] **Step 3: Verify in the browser**
+- [x] **Step 3: Verify in the browser**
 
 Run: `npm run typecheck`, `npm run dev`. Run the nephew task on /ask, then open /approvals.
 Expected: "Agent wants to spend £60 at LEGO", "Asking because: …gift…", with Approve / Decline buttons. Approve: the card disappears and the badge clears. Run it again and Decline: same. Check `data/db.json`: the first approval is `used` with a `card`, the second is `declined`.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/app
