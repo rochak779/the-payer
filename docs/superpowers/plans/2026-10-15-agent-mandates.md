@@ -1907,13 +1907,15 @@ git commit -m "feat(evals): eval runner, metrics and saved results"
 
 ### Session 10: Eval cases, part 1 (to 35)
 
+> **As built:** 25 cases appended as written; research sources added to within-04, against-06 and ambiguous-03. Keyword baseline on 35 cases: 25/35, 7 wrong approvals, 3 needless asks (e.g. "grocery delivery" read as an extra cost).
+
 Content session. Append the 25 cases below to `evals/cases.json`. First check `research/rules-test.md` and `research/incidents.md`. Where a real rule or incident fits a scenario, adapt the case to match it and add `"source": "<link> (<date>)"`. Keep the label consistent with `evals/README.md`. No case may name Rochak's employer or its products.
 
 **Files:**
 - Modify: `evals/cases.json`
 - Test: `src/evals/load.test.ts` (append coverage test)
 
-- [ ] **Step 1: Append these cases to the array in `evals/cases.json`**
+- [x] **Step 1: Append these cases to the array in `evals/cases.json`**
 
 ```json
   { "id": "within-03", "category": "within", "expected": "approve", "why": "Under every limit, refundable, for the person themselves.",
@@ -1968,7 +1970,7 @@ Content session. Append the 25 cases below to `evals/cases.json`. First check `r
     "request": { "item": "The Economist, 12-month print subscription", "merchant": "The Economist", "category": "subscription", "total": { "minor": 4500, "currency": "GBP" }, "agentNote": "Gift for the user's dad.", "listingText": "Renews automatically every year at the standard rate." } }
 ```
 
-- [ ] **Step 2: Append a coverage test to `src/evals/load.test.ts`**
+- [x] **Step 2: Append a coverage test to `src/evals/load.test.ts`**
 
 ```ts
 it('covers every category with at least 6 cases once complete', () => {
@@ -1979,12 +1981,12 @@ it('covers every category with at least 6 cases once complete', () => {
 });
 ```
 
-- [ ] **Step 3: Run**
+- [x] **Step 3: Run**
 
 Run: `npm test && npm run eval -- --label part1`
 Expected: tests PASS; the report covers 35 cases. Delete the `part1` result file.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add evals/cases.json src/evals/load.test.ts

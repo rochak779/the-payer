@@ -22,4 +22,11 @@ describe('loadEvalSet', () => {
     fs.writeFileSync(path.join(dir, 'cases.json'), JSON.stringify([one, one]));
     expect(() => loadEvalSet(dir)).toThrow('Duplicate eval case id: within-01');
   });
+
+  it('covers every category with at least 6 cases once complete', () => {
+    const { cases } = loadEvalSet();
+    const counts = new Map<string, number>();
+    for (const c of cases) counts.set(c.category, (counts.get(c.category) ?? 0) + 1);
+    for (const cat of ['within', 'against', 'ambiguous', 'conflict']) expect(counts.get(cat)).toBeGreaterThanOrEqual(6);
+  });
 });
