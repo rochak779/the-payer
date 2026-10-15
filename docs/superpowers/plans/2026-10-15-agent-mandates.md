@@ -4543,6 +4543,8 @@ git commit -m "feat(claude): checker prompt v2 (<cluster>) with before/after eva
 
 ### Session 28: Claude: rule reading + rule-reading eval
 
+> **As built:** rule reader uses beta parse + fallbacks like Session 25 (test stub adjusted). 5 research cases added (p16–p20, with sources), so 20 parse cases. Pattern reader: 13/20, missing the five predicted plus the two $ limits. **Claude parse eval and the /rules UI check are pending a key.**
+
 Brief metric: "rule-reading accuracy (did 'here's what I understood' match the intent?)".
 
 **Files:**
@@ -4553,7 +4555,7 @@ Brief metric: "rule-reading accuracy (did 'here's what I understood' match the i
 **Interfaces:**
 - Produces: `toRule(p: ParsedRule): Rule` (misread hard rules fall back to a judgement rule), `createClaudeRuleParser(opts?: { model?: string; client?: Anthropic; today?: () => string }): RuleParser`, `type ExpectedRule`, `keyOf(r: ExpectedRule): string`, `sameRules(actual: Rule[], expected: ExpectedRule[]): boolean`. Registry accepts `'claude'`. CLI `npm run eval:parse -- --parser pattern|claude`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // src/evals/parseEval.test.ts
@@ -4616,12 +4618,12 @@ describe('createClaudeRuleParser', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `npm test -- src/evals/parseEval src/integrations/claude/ruleParser`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement `src/evals/parseEval.ts`**
+- [x] **Step 3: Implement `src/evals/parseEval.ts`**
 
 ```ts
 import type { Category, Money, OnBreach, Rule } from '@/domain/types';
@@ -4656,7 +4658,7 @@ export function sameRules(actual: Rule[], expected: ExpectedRule[]): boolean {
 }
 ```
 
-- [ ] **Step 4: Implement `src/integrations/claude/ruleParser.ts`**
+- [x] **Step 4: Implement `src/integrations/claude/ruleParser.ts`**
 
 ```ts
 import type Anthropic from '@anthropic-ai/sdk';
@@ -4740,9 +4742,9 @@ export function createClaudeRuleParser(opts: { model?: string; client?: Anthropi
 }
 ```
 
-- [ ] **Step 5: Register in `src/rules/registry.ts`**: add `case 'claude': return createClaudeRuleParser();` and update the options text to `pattern, claude`.
+- [x] **Step 5: Register in `src/rules/registry.ts`**: add `case 'claude': return createClaudeRuleParser();` and update the options text to `pattern, claude`.
 
-- [ ] **Step 6: Create `evals/parse-cases.json`**
+- [x] **Step 6: Create `evals/parse-cases.json`**
 
 ```json
 [
@@ -4768,7 +4770,7 @@ export function createClaudeRuleParser(opts: { model?: string; client?: Anthropi
 
 Before running, add 5–10 more cases using real rules from `research/rules-test.md` (their exact words, with `"source"`).
 
-- [ ] **Step 7: Create `scripts/eval-parse.ts`**
+- [x] **Step 7: Create `scripts/eval-parse.ts`**
 
 ```ts
 import fs from 'node:fs';
@@ -4805,16 +4807,16 @@ main().catch((err) => { console.error(err); process.exit(1); });
 npm pkg set scripts.eval:parse="node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts"
 ```
 
-- [ ] **Step 8: Run tests, then both parsers**
+- [ ] **Step 8: Run tests, then both parsers** (pattern done: 13/20; Claude pending a key)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 Run: `npm run eval:parse -- --parser pattern` then `npm run eval:parse -- --parser claude`
 Expected: the pattern parser misses p05, p09, p12, p14, p15 (dates, compound sentences, partial rules, €). Claude should get most. Add a "Rule-reading accuracy" table to `evals/RESULTS.md` with both rows.
 
-- [ ] **Step 9: Live check in the UI.** Set `PARSER=claude` in `.env.local`, restart `npm run dev`, then on /rules type `Keep train tickets under £100 and never buy first class.` Expected: two rules shown (a cap that asks, a judgement rule that blocks).
+- [ ] **Step 9: Live check in the UI.** (pending a key) Set `PARSER=claude` in `.env.local`, restart `npm run dev`, then on /rules type `Keep train tickets under £100 and never buy first class.` Expected: two rules shown (a cap that asks, a judgement rule that blocks).
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```bash
 git add src/integrations/claude src/evals/parseEval.ts src/evals/parseEval.test.ts src/rules/registry.ts evals scripts/eval-parse.ts package.json
