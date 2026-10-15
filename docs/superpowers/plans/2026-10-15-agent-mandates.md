@@ -3096,6 +3096,8 @@ git commit -m "feat(agent): agent interfaces, fixture search and scripted shoppe
 
 ### Session 17: End-to-end flow in the terminal + demo seed data
 
+> **As built:** as planned; terminal demo output matches all three expectations (Lisbon approved and paid; nephew gift pending; headphones wrongly approved by the keyword baseline).
+
 **Files:**
 - Create: `src/flow/runs.ts`, `src/deps.ts`, `scripts/seed.ts`, `scripts/demo-flow.ts`
 - Test: `src/flow/runs.test.ts`
@@ -3112,7 +3114,7 @@ git commit -m "feat(agent): agent interfaces, fixture search and scripted shoppe
   - `type Deps = FlowDeps & { parser: RuleParser }`, `getDeps(): Deps`
   - `DEMO_RULES: string` (in `scripts/seed.ts`); CLI `npm run seed`, `npm run demo:flow -- "<task>"`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/flow/runs.test.ts
@@ -3176,12 +3178,12 @@ describe('executeRun', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/flow`
 Expected: FAIL, cannot find module `./runs`.
 
-- [ ] **Step 3: Implement `src/flow/runs.ts`**
+- [x] **Step 3: Implement `src/flow/runs.ts`**
 
 ```ts
 import type { Shopper, ShopperEvent, ShopperTools, WebSearch } from '@/agent/types';
@@ -3256,7 +3258,7 @@ export function viewRun(db: Db, runId: string): RunView | null {
 }
 ```
 
-- [ ] **Step 4: Implement `src/deps.ts`**
+- [x] **Step 4: Implement `src/deps.ts`**
 
 ```ts
 import { fixtureSearch } from '@/agent/fixtures';
@@ -3286,7 +3288,7 @@ export function getDeps(): Deps {
 }
 ```
 
-- [ ] **Step 5: Create the scripts**
+- [x] **Step 5: Create the scripts**
 
 ```ts
 // scripts/seed.ts
@@ -3334,7 +3336,7 @@ npm pkg set scripts.seed="node --env-file-if-exists=.env.local --import tsx scri
 npm pkg set scripts.demo:flow="node --env-file-if-exists=.env.local --import tsx scripts/demo-flow.ts"
 ```
 
-- [ ] **Step 6: Run tests and the terminal demo**
+- [x] **Step 6: Run tests and the terminal demo**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
@@ -3345,7 +3347,7 @@ Expected: `[decision] Asking you: …gift…`, run done, purchase `ask/pending`.
 Run: `npm run demo:flow -- "Get me noise-cancelling headphones"`
 Expected with the keyword baseline: **approved**. That's the baseline missing "All sales final". Session 25's Claude checker should block it.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/flow src/deps.ts scripts package.json

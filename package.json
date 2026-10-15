@@ -9,7 +9,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "typecheck": "next typegen && tsc --noEmit",
-    "eval": "node --env-file-if-exists=.env.local --import tsx scripts/eval.ts"
+    "eval": "node --env-file-if-exists=.env.local --import tsx scripts/eval.ts",
+    "seed": "node --env-file-if-exists=.env.local --import tsx scripts/seed.ts",
+    "demo:flow": "node --env-file-if-exists=.env.local --import tsx scripts/demo-flow.ts"
   },
   "dependencies": {
     "next": "16.4.2",
