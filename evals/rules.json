@@ -1,0 +1,12 @@
+[
+  {"id": "hotel-cap", "kind": "amount_cap", "source": "Hotels up to £150 a night.", "onBreach": "ask", "max": {"minor": 15000, "currency": "GBP"}, "per": "unit", "unitLabel": "night", "category": "hotel"},
+  {"id": "single-cap", "kind": "amount_cap", "source": "Never spend more than £400 on one purchase.", "onBreach": "block", "max": {"minor": 40000, "currency": "GBP"}, "per": "purchase"},
+  {"id": "no-gift-cards", "kind": "category", "source": "No gift cards.", "onBreach": "block", "mode": "block", "categories": ["gift_card"]},
+  {"id": "no-ryanair", "kind": "merchant", "source": "Never book with Ryanair.", "onBreach": "block", "mode": "block", "merchants": ["Ryanair"]},
+  {"id": "window", "kind": "date_window", "source": "Never buy anything outside 1 Nov – 31 Dec 2026.", "onBreach": "block", "from": "2026-11-01", "to": "2026-12-31"},
+  {"id": "refundable", "kind": "judgement", "source": "Nothing non-refundable.", "onBreach": "block", "text": "Nothing non-refundable."},
+  {"id": "gifts", "kind": "judgement", "source": "Ask me before buying anything that's a gift or for someone else.", "onBreach": "ask", "text": "Ask me before buying anything that's a gift or for someone else."},
+  {"id": "auto-renew", "kind": "judgement", "source": "Ask me before signing up to anything that renews automatically.", "onBreach": "ask", "text": "Ask me before signing up to anything that renews automatically."},
+  {"id": "hotel-rating", "kind": "judgement", "source": "Only hotels rated 8/10 or better.", "onBreach": "ask", "text": "Only hotels rated 8/10 or better."},
+  {"id": "genuine-shop", "kind": "judgement", "source": "Ask me before buying from a shop that might not be genuine.", "onBreach": "ask", "text": "Ask me before buying from a shop that might not be genuine."}
+]

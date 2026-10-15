@@ -149,6 +149,8 @@ src/
 
 ### Session 0.1: Rules test (research, go/no-go)
 
+> **As built (15 Oct 2026):** GO, narrowly: 12 of 27 rules need judgement (44%; 30% if mixed cap+judgement rules count as presets). Reddit read via the Arctic Shift archive API (Reddit and Firecrawl block it); full article copies gitignored. PR #1.
+
 This is "First task: the rules test" from BRIEF.md, unchanged. It gates all code. It also supplies the real rules and incidents used in Sessions 8, 10, 11 and 28.
 
 **Files:**
@@ -156,9 +158,9 @@ This is "First task: the rules test" from BRIEF.md, unchanged. It gates all code
 - Create: `research/incidents.md`
 - Modify: `BRIEF.md` (add verdict under "Build order", step 1)
 
-- [ ] **Step 1: Load the research tool.** Invoke the `firecrawl` skill (Firecrawl CLI is installed at `/opt/homebrew/bin/firecrawl`). Save raw search output under `research/raw/`.
+- [x] **Step 1: Load the research tool.** Invoke the `firecrawl` skill (Firecrawl CLI is installed at `/opt/homebrew/bin/firecrawl`). Save raw search output under `research/raw/`.
 
-- [ ] **Step 2: Collect 20–30 real rules** people say they would give (or wish they had given) a shopping or booking agent. Search Reddit, X, Hacker News, LinkedIn, product forums and incident threads. Starter queries:
+- [x] **Step 2: Collect 20–30 real rules** people say they would give (or wish they had given) a shopping or booking agent. Search Reddit, X, Hacker News, LinkedIn, product forums and incident threads. Starter queries:
   - `"I would only let an AI agent buy" site:reddit.com`
   - `"AI agent" "without asking" purchase bought`
   - `Meta Muse sold without asking`
@@ -169,7 +171,7 @@ This is "First task: the rules test" from BRIEF.md, unchanged. It gates all code
 
   Keep the person's own words, the source link and the date.
 
-- [ ] **Step 3: Write `research/rules-test.md`** with this table and a verdict:
+- [x] **Step 3: Write `research/rules-test.md`** with this table and a verdict:
 
 ```markdown
 | # | Rule (their words) | Source | Date | Type | Why |
@@ -183,11 +185,11 @@ This is "First task: the rules test" from BRIEF.md, unchanged. It gates all code
 
 Type a = fits a preset (amount cap, merchant, category, time window). Type b = needs judgement (refundability, quality, "only if…", gifts, other people, context).
 
-- [ ] **Step 4: Write `research/incidents.md`.** Record ~30 real agent spending incidents, one row each: what happened, source, date.
+- [x] **Step 4: Write `research/incidents.md`.** Record ~30 real agent spending incidents, one row each: what happened, source, date.
 
-- [ ] **Step 5: Report** in done / blocked / next format with the table and a one-line recommendation. **Stop here if the verdict is STOP.**
+- [x] **Step 5: Report** in done / blocked / next format with the table and a one-line recommendation. **Stop here if the verdict is STOP.**
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add research BRIEF.md
@@ -195,6 +197,8 @@ git commit -m "research: rules test and agent incident log"
 ```
 
 ### Session 0.2: Account pre-flight (Rochak, ~20 min, no code)
+
+> **Status (15 Oct 2026):** terminal checks recorded in BRIEF.md. Stripe Issuing access, GBP funding, cardholder, Stripe CLI and an Anthropic key are still Rochak's to do (needed from Phase 8).
 
 Integration code comes last, but access problems surface first. A Stripe access request can take days.
 
@@ -212,6 +216,8 @@ Integration code comes last, but access problems surface first. A Stripe access 
 
 ### Session 1: Scaffold the app
 
+> **As built:** temp folder `am-scaffold` (npm rejects names starting with "."); `@types/node` ^26 for Vitest 5; `typecheck` = `next typegen && tsc --noEmit` (Next 16 generates `LayoutProps`); config is `vitest.config.mts`. Next 16.4 has Cache Components on by default: check `force-dynamic` against `node_modules/next/dist/docs` before Session 18. PR #2.
+
 **Files:**
 - Create (generated): Next.js app at repo root (`package.json`, `src/app/*`, `tsconfig.json`, …)
 - Create: `vitest.config.ts`, `.env.example`
@@ -220,7 +226,7 @@ Integration code comes last, but access problems surface first. A Stripe access 
 **Interfaces:**
 - Produces: `npm run dev`, `npm test`, `npm run typecheck`; path alias `@/*` → `src/*` (Next, Vitest and tsx)
 
-- [ ] **Step 1: Generate into a temp folder.** `create-next-app` refuses non-empty folders, and `BRIEF.md` is here.
+- [x] **Step 1: Generate into a temp folder.** `create-next-app` refuses non-empty folders, and `BRIEF.md` is here.
 
 ```bash
 cd "/Users/rochakagarwal/orca/projects/Agent Mandates"
@@ -232,7 +238,7 @@ npm install zod
 npm install -D vitest tsx
 ```
 
-- [ ] **Step 2: Add `vitest.config.ts`**
+- [x] **Step 2: Add `vitest.config.ts`**
 
 ```ts
 import { defineConfig } from 'vitest/config';
@@ -244,13 +250,13 @@ export default defineConfig({
 });
 ```
 
-- [ ] **Step 3: Add scripts**
+- [x] **Step 3: Add scripts**
 
 ```bash
 npm pkg set scripts.test="vitest run" scripts.typecheck="tsc --noEmit"
 ```
 
-- [ ] **Step 4: Ignore local data, keep the env example.** Append to `.gitignore`:
+- [x] **Step 4: Ignore local data, keep the env example.** Append to `.gitignore`:
 
 ```
 # app data (local JSON store)
@@ -258,7 +264,7 @@ npm pkg set scripts.test="vitest run" scripts.typecheck="tsc --noEmit"
 !.env.example
 ```
 
-- [ ] **Step 5: Create `.env.example`**
+- [x] **Step 5: Create `.env.example`**
 
 ```bash
 # Copy to .env.local. Everything defaults to offline fakes.
@@ -272,13 +278,13 @@ npm pkg set scripts.test="vitest run" scripts.typecheck="tsc --noEmit"
 # ISSUER=fake          # fake | stripe
 ```
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `npm run typecheck && npx vitest run --passWithNoTests`
 Expected: both exit 0.
 Run: `npm run dev`, open http://localhost:3000. Expected: Next.js starter page. Stop the server.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add -A
@@ -294,7 +300,7 @@ git commit -m "chore: scaffold Next.js app with Vitest, Zod and tsx"
 **Interfaces:**
 - Produces (used by every later session): Zod schemas + types `Currency`, `Money`, `Category`, `Outcome`, `OnBreach`, `Rule` (+ `AmountCapRule`, `MerchantRule`, `CategoryRule`, `DateWindowRule`, `JudgementRule`, `HardRule`), `PurchaseRequest`; plain types `Reason`, `Decision`, `ApprovalStatus`, `CardRef`, `Approval`, `LogType`, `LogEntry`, `RunEventKind`, `RunEvent`, `Run`, `Settings`. Functions `formatMoney(m: Money): string`, `money(amount: number, currency?: Currency): Money`, `newId(prefix: string): string`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 `src/domain/money.test.ts`:
 
@@ -361,12 +367,12 @@ describe('Rule', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `npm test`
 Expected: FAIL, cannot find module `./money` / `./types`.
 
-- [ ] **Step 3: Implement `src/domain/types.ts`**
+- [x] **Step 3: Implement `src/domain/types.ts`**
 
 ```ts
 import { z } from 'zod';
@@ -510,7 +516,7 @@ export type Run = {
 export type Settings = { agentEnabled: boolean };
 ```
 
-- [ ] **Step 4: Implement `src/domain/money.ts` and `src/domain/ids.ts`**
+- [x] **Step 4: Implement `src/domain/money.ts` and `src/domain/ids.ts`**
 
 ```ts
 // src/domain/money.ts
@@ -537,12 +543,12 @@ export function newId(prefix: string): string {
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/domain
@@ -560,7 +566,7 @@ git commit -m "feat: core domain types, money helpers and ids"
 - Consumes: types from Session 2.
 - Produces: `type Db = { rules: Rule[]; approvals: Approval[]; log: LogEntry[]; runs: Run[]; settings: Settings }`, `type Store = { read(): Db; update<T>(fn: (db: Db) => T): T }`, `emptyDb(): Db`, `createStore(filePath: string): Store`, `defaultStore(): Store`. Test helper `tempStore(): Store`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/store/store.test.ts
@@ -596,12 +602,12 @@ describe('store', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/store`
 Expected: FAIL, cannot find module `./store`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/store/store.ts
@@ -656,12 +662,12 @@ export function tempStore(): Store {
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/store src/test
@@ -674,6 +680,8 @@ git commit -m "feat: JSON file store with atomic writes"
 
 ### Session 4: Checker: amount limits and currency
 
+> **As built:** as planned. PR #3 (Sessions 4–7).
+
 **Files:**
 - Create: `src/checker/hardLimits.ts`, `src/test/factories.ts`
 - Test: `src/checker/hardLimits.test.ts`
@@ -682,7 +690,7 @@ git commit -m "feat: JSON file store with atomic writes"
 - Consumes: `PurchaseRequest`, `Rule`, `HardRule`, `AmountCapRule`, `Reason` (Session 2), `formatMoney` (Session 2).
 - Produces: `checkHardLimits(req: PurchaseRequest, rules: Rule[]): Reason[]` (empty array = all clear; skips judgement rules). Test helper `makeRequest(overrides?: Partial<PurchaseRequest>): PurchaseRequest`.
 
-- [ ] **Step 1: Add the test factory**
+- [x] **Step 1: Add the test factory**
 
 ```ts
 // src/test/factories.ts
@@ -706,7 +714,7 @@ export function makeRequest(overrides: Partial<PurchaseRequest> = {}): PurchaseR
 }
 ```
 
-- [ ] **Step 2: Write the failing test**
+- [x] **Step 2: Write the failing test**
 
 ```ts
 // src/checker/hardLimits.test.ts
@@ -764,12 +772,12 @@ describe('amount caps', () => {
 });
 ```
 
-- [ ] **Step 3: Run to verify it fails**
+- [x] **Step 3: Run to verify it fails**
 
 Run: `npm test -- src/checker`
 Expected: FAIL, cannot find module `./hardLimits`.
 
-- [ ] **Step 4: Implement**
+- [x] **Step 4: Implement**
 
 ```ts
 // src/checker/hardLimits.ts
@@ -818,12 +826,12 @@ function checkAmountCap(req: PurchaseRequest, rule: AmountCapRule): Reason | nul
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/checker src/test
@@ -831,6 +839,8 @@ git commit -m "feat(checker): amount caps with per-unit and currency handling"
 ```
 
 ### Session 5: Checker: merchant, category and date rules
+
+> **As built:** accent regex written as `/[\u0300-\u036f]/g` (same behaviour, no invisible characters).
 
 **Files:**
 - Create: `src/checker/merchant.ts`, `src/domain/labels.ts`
@@ -840,7 +850,7 @@ git commit -m "feat(checker): amount caps with per-unit and currency handling"
 **Interfaces:**
 - Produces: `merchantMatches(merchant: string, pattern: string): boolean` (also used by the payment check in Session 13). `CATEGORY_LABEL: Record<Category, string>`, `OUTCOME_LABEL: Record<Outcome, string>`.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // src/checker/merchant.test.ts
@@ -901,12 +911,12 @@ describe('merchant, category and date rules', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `npm test -- src/checker`
 Expected: FAIL (`./merchant` missing; merchant/category/date tests return `[]`).
 
-- [ ] **Step 3: Implement `src/checker/merchant.ts` and `src/domain/labels.ts`**
+- [x] **Step 3: Implement `src/checker/merchant.ts` and `src/domain/labels.ts`**
 
 ```ts
 // src/checker/merchant.ts
@@ -946,7 +956,7 @@ export const CATEGORY_LABEL: Record<Category, string> = {
 export const OUTCOME_LABEL: Record<Outcome, string> = { approve: 'Approved', ask: 'Asking you', block: 'Blocked' };
 ```
 
-- [ ] **Step 4: Replace `checkRule` in `src/checker/hardLimits.ts`** (and add the two imports)
+- [x] **Step 4: Replace `checkRule` in `src/checker/hardLimits.ts`** (and add the two imports)
 
 ```ts
 import { CATEGORY_LABEL } from '@/domain/labels';
@@ -980,12 +990,12 @@ function checkRule(req: PurchaseRequest, rule: HardRule): Reason | null {
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/checker src/domain/labels.ts
@@ -1011,7 +1021,7 @@ git commit -m "feat(checker): merchant, category and date-window rules"
 
 Design: the AI returns facts (clear / breached / unsure, plus two flags). Code turns them into outcomes. breached → the rule's `onBreach`; unsure, missing verdict, error, timeout or flag → ask. Nothing from the AI can produce approve over a code ask/block.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/checker/checkPurchase.test.ts
@@ -1118,12 +1128,12 @@ describe('checkPurchase', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/checker/checkPurchase`
 Expected: FAIL, cannot find module `./checkPurchase`.
 
-- [ ] **Step 3: Implement `src/checker/fuzzy.ts`**
+- [x] **Step 3: Implement `src/checker/fuzzy.ts`**
 
 ```ts
 import type { PurchaseRequest, Rule } from '@/domain/types';
@@ -1141,7 +1151,7 @@ export interface FuzzyChecker {
 }
 ```
 
-- [ ] **Step 4: Implement `src/checker/checkPurchase.ts`**
+- [x] **Step 4: Implement `src/checker/checkPurchase.ts`**
 
 ```ts
 import type { Decision, JudgementRule, Outcome, PurchaseRequest, Reason, Rule } from '@/domain/types';
@@ -1217,12 +1227,12 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/checker
@@ -1241,7 +1251,7 @@ A deliberately simple keyword checker, like a basic keyword guardrail. It does t
 - Consumes: `FuzzyChecker`, `FuzzyResult` (Session 6).
 - Produces: `keywordChecker: FuzzyChecker` (name `'keyword-baseline'`), `keywordsFor(ruleText: string): string[]`, `getFuzzyChecker(name: string): FuzzyChecker` (accepts `'keyword'`; Claude names added in Session 25).
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/checker/keywordChecker.test.ts
@@ -1287,12 +1297,12 @@ describe('getFuzzyChecker', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/checker/keywordChecker`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/checker/keywordChecker.ts
@@ -1356,12 +1366,12 @@ export function getFuzzyChecker(name: string): FuzzyChecker {
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/checker
@@ -1374,6 +1384,8 @@ git commit -m "feat(checker): keyword baseline checker and checker registry"
 
 ### Session 8: Eval set format, fixed rules, 10 seed cases
 
+> **As built:** added a 10th rule, `genuine-shop` ("Ask me before buying from a shop that might not be genuine.", ask), for merchant legitimacy from the research. The other four judgement rules are kept. Session 11 should add 2–3 cases for it (lookalike site, store with no track record).
+
 **Files:**
 - Create: `evals/rules.json`, `evals/cases.json`, `evals/README.md`
 - Create: `src/evals/schema.ts`, `src/evals/load.ts`
@@ -1383,9 +1395,9 @@ git commit -m "feat(checker): keyword baseline checker and checker registry"
 - Consumes: `Rule`, `PurchaseRequest`, `Outcome` (Session 2).
 - Produces: `EvalCategory` (Zod enum), `type EvalCase = { id: string; category: EvalCategory; split: 'dev' | 'test'; expected: Outcome; why: string; source?: string; request: PurchaseRequest }`, `loadEvalSet(dir?: string): { rules: Rule[]; cases: EvalCase[] }`.
 
-- [ ] **Step 1: Before writing:** skim `research/rules-test.md`. If the most common judgement rules differ from the four below, swap a judgement rule for the real one (keep the same `id` style) and note it in `evals/README.md`.
+- [x] **Step 1: Before writing:** skim `research/rules-test.md`. If the most common judgement rules differ from the four below, swap a judgement rule for the real one (keep the same `id` style) and note it in `evals/README.md`.
 
-- [ ] **Step 2: Create `evals/rules.json`**
+- [x] **Step 2: Create `evals/rules.json`**
 
 ```json
 [
@@ -1410,7 +1422,7 @@ git commit -m "feat(checker): keyword baseline checker and checker registry"
 ]
 ```
 
-- [ ] **Step 3: Create `evals/README.md`**
+- [x] **Step 3: Create `evals/README.md`**
 
 ```markdown
 # Eval set
@@ -1437,7 +1449,7 @@ Request fields left out of a case get these defaults: `url` https://example.com/
 Cases based on a real rule or incident carry `source` (link + date) from `research/`.
 ```
 
-- [ ] **Step 4: Create `evals/cases.json` with the 10 seed cases**
+- [x] **Step 4: Create `evals/cases.json` with the 10 seed cases**
 
 ```json
 [
@@ -1492,7 +1504,7 @@ Cases based on a real rule or incident carry `source` (link + date) from `resear
 ]
 ```
 
-- [ ] **Step 5: Write the failing test**
+- [x] **Step 5: Write the failing test**
 
 ```ts
 // src/evals/load.test.ts
@@ -1523,12 +1535,12 @@ describe('loadEvalSet', () => {
 });
 ```
 
-- [ ] **Step 6: Run to verify it fails**
+- [x] **Step 6: Run to verify it fails**
 
 Run: `npm test -- src/evals`
 Expected: FAIL, cannot find module `./load`.
 
-- [ ] **Step 7: Implement**
+- [x] **Step 7: Implement**
 
 ```ts
 // src/evals/schema.ts
@@ -1586,12 +1598,12 @@ export function loadEvalSet(dir = path.join(process.cwd(), 'evals')): { rules: R
 }
 ```
 
-- [ ] **Step 8: Run tests**
+- [x] **Step 8: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 9: Commit**
+- [x] **Step 9: Commit**
 
 ```bash
 git add evals src/evals
