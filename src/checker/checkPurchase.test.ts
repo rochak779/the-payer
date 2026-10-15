@@ -59,6 +59,15 @@ describe('checkPurchase', () => {
     expect((await checkPurchase(makeRequest(), ctx([refundRule], fuzzy))).outcome).toBe('ask');
   });
 
+  it('takes the strictest answer when the AI gives one rule two verdicts', async () => {
+    const fuzzy = stub(async () => result([
+      { ruleId: 'refundable', verdict: 'clear', explanation: 'Looks fine.' },
+      { ruleId: 'refundable', verdict: 'breached', explanation: 'Non-refundable rate.' },
+    ]));
+    const d = await checkPurchase(makeRequest(), ctx([refundRule], fuzzy));
+    expect(d.outcome).toBe('block');
+  });
+
   it('asks when the AI skips a rule', async () => {
     const fuzzy = stub(async () => result([]));
     expect((await checkPurchase(makeRequest(), ctx([refundRule], fuzzy))).outcome).toBe('ask');

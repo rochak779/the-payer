@@ -29,11 +29,16 @@ export async function checkPurchase(req: PurchaseRequest, ctx: CheckContext): Pr
   return decide([...hard, ...soft], ctx.fuzzy.name);
 }
 
+const VERDICT_RANK = { clear: 0, unsure: 1, breached: 2 } as const;
+
 /** The only place AI output becomes an outcome. It can add ask/block, never approve. */
 function toReasons(result: FuzzyResult, rules: JudgementRule[]): Reason[] {
   const reasons: Reason[] = [];
   for (const rule of rules) {
-    const v = result.verdicts.find((x) => x.ruleId === rule.id);
+    // If the AI answers one rule twice, the stricter answer counts.
+    const v = result.verdicts
+      .filter((x) => x.ruleId === rule.id)
+      .sort((a, b) => VERDICT_RANK[b.verdict] - VERDICT_RANK[a.verdict])[0];
     if (!v) {
       reasons.push({ ruleId: rule.id, by: 'system', outcome: 'ask', message: `I couldn't get a clear answer on "${rule.text}", so I'm asking you.` });
     } else if (v.verdict === 'breached') {
