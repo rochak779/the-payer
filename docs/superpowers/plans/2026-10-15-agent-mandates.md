@@ -2441,7 +2441,7 @@ git commit -m "feat(payments): code-only payment-time check against the approval
   - `fulfil(deps: { store: Store; issuer: CardIssuer }, approvalId: string, now: Date): Promise<ChargeResult>`
   - `setAgentEnabled(deps: { store: Store; issuer: CardIssuer }, enabled: boolean, now: Date): Promise<void>`
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/payments/fulfil.test.ts
@@ -2517,12 +2517,12 @@ describe('setAgentEnabled', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/payments/fulfil`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/payments/cardIssuer.ts
@@ -2628,12 +2628,12 @@ export async function setAgentEnabled(deps: { store: Store; issuer: CardIssuer }
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/payments
