@@ -6,8 +6,11 @@ Fixed rule set: `evals/rules.json` (10 rules). 65 cases (48 dev / 17 held-out te
 |---|---|---|---|---|---|---|---|
 | keyword-baseline | 2026-10-15 | dev | 27/48 (56%) | 12 | 8 | 0 | 1 |
 | keyword-baseline | 2026-10-15 | test | 9/17 (53%) | 5 | 3 | 0 | 0 |
+| claude-sonnet-5-5 v1, v2, final | pending | dev + test | – | – | – | – | – |
 
 Saved run: `evals/results/2026-10-15T22-42-40-898Z_keyword-baseline_baseline.json`.
+
+Claude rows are pending an Anthropic key (no key on the build machine). To fill them: `npm run eval -- --checker claude --label v1` (Session 26), the improvement round (Session 27), then `npm run eval -- --checker claude --label final`. Re-checked 16 Oct 2026: the keyword baseline still gives the numbers above.
 
 ## Notes
 - Baseline = keyword matching, the way a simple guardrail works. It shows both failure modes:

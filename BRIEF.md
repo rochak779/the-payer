@@ -158,9 +158,14 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
    Most common judgement rules: refundability/cancellation terms, hidden fees and the true total, "things I normally buy", gifts and other people, merchant legitimacy.
    Details: `research/rules-test.md`, `research/incidents.md` (29 incidents).
 2. **Checker + eval set,** run from the terminal, no UI. Get the numbers.
+   **Status (16 Oct 2026): built.** 65 cases (48 dev, 17 held out), 10 rules (added `genuine-shop` for merchant legitimacy). Keyword baseline: dev 27/48 with 12 wrong approvals and 8 needless asks; held out 9/17 with 5 and 3. Rule reading: pattern reader 13/20. Claude checker and Claude rule reader are built; **their eval runs (plan Sessions 26–27, 35 step 5) wait on an Anthropic key.**
 3. **Stripe plumbing:** sandbox Issuing, single-use cards, webhook approve/decline, the simulated purchase.
+   **Status: built and tested offline** (fake issuer, Stripe issuer, real-time authorisation webhook checked with locally signed events). **Live run waits on Stripe sandbox access** (plan Sessions 31 steps 5–7, 32 live check, 33 steps 6–7).
 4. **Screens** (4, plus optionally the results page).
+   **Status: done.** Rules, Ask, Approvals, Activity, plus the Evals page and an "AP2 open mandate" view on Rules. README has run instructions, a demo checklist and the video run-of-show; steps 1–5 were dry-run offline.
 5. **5 real users** test it with their own rules and tasks. Then the one-pager and the demo video.
+   **Status: not started.** Left to do first: add the keys and run Sessions 24–33's live steps; run the Claude evals; record the video (README run-of-show).
+   For the user test: run it on Rochak's laptop (in person or a shared screen). Don't deploy as-is: the app stores data in one local JSON file, which doesn't persist on Vercel. Use `PARSER=claude`, since the offline reader misreads 7 of 20 rules. For each person, record whether "here's what I understood" matched what they meant, and whether each decision was the one they'd want (wrong approval, needless ask or fine).
 
 ## Decisions (15 Oct 2026)
 - Implementation plan: `docs/superpowers/plans/2026-10-15-agent-mandates.md` (35 small sessions).
