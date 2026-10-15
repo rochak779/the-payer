@@ -3677,6 +3677,8 @@ git commit -m "feat(ui): rules screen with 'here's what I understood' preview"
 
 ### Session 20: Ask-the-agent screen
 
+> **As built:** as planned. Verified without a browser: called the startTask server action over HTTP (returns the run id; after() finishes the Lisbon run: approved, paid, done), GET /api/runs/:id returns progress (404 for unknown), Approvals badge shows 1 pending.
+
 **Files:**
 - Modify: `src/app/actions.ts` (add `startTask`)
 - Create: `src/app/api/runs/[id]/route.ts`, `src/app/ask/AskAgent.tsx`
@@ -3686,7 +3688,7 @@ git commit -m "feat(ui): rules screen with 'here's what I understood' preview"
 - Consumes: `startRun`, `executeRun`, `viewRun`, `RunView` (Session 17).
 - Produces: server action `startTask(task: string): Promise<string>` (returns run id; work continues after the response via `after()`); `GET /api/runs/:id → RunView`.
 
-- [ ] **Step 1: Add `startTask` to `src/app/actions.ts`**
+- [x] **Step 1: Add `startTask` to `src/app/actions.ts`**
 
 ```ts
 import { after } from 'next/server';
@@ -3704,7 +3706,7 @@ export async function startTask(task: string): Promise<string> {
 
 (Put the two imports with the others at the top of the file.)
 
-- [ ] **Step 2: Create `src/app/api/runs/[id]/route.ts`**
+- [x] **Step 2: Create `src/app/api/runs/[id]/route.ts`**
 
 ```ts
 import { viewRun } from '@/flow/runs';
@@ -3717,7 +3719,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
 }
 ```
 
-- [ ] **Step 3: Create `src/app/ask/AskAgent.tsx`**
+- [x] **Step 3: Create `src/app/ask/AskAgent.tsx`**
 
 ```tsx
 'use client';
@@ -3821,7 +3823,7 @@ export function AskAgent() {
 }
 ```
 
-- [ ] **Step 4: Replace `src/app/ask/page.tsx`**
+- [x] **Step 4: Replace `src/app/ask/page.tsx`**
 
 ```tsx
 import { AskAgent } from './AskAgent';
@@ -3837,12 +3839,12 @@ export default function AskPage() {
 }
 ```
 
-- [ ] **Step 5: Verify in the browser**
+- [x] **Step 5: Verify in the browser**
 
 Run: `npm run typecheck`, `npm run seed`, `npm run dev`, open /ask.
 Expected: click the Lisbon example, then Send. Progress shows Agent / Search / Found ×2 / Wants to buy / Checker "Approved: Within all your rules." / "Paid with a one-time card." / "Done.". Click the nephew example, then Send. Checker shows "Asking you: …", and an amber "Review in Approvals" button appears. The Approvals tab badge shows 1 after navigating.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/app
