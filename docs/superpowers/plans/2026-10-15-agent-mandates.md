@@ -2899,7 +2899,7 @@ git commit -m "feat(rules): offline rule parser and plain-English explanations"
 
 The agent's only tools are search and request purchase. It never holds a card.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/agent/scriptedShopper.test.ts
@@ -2945,12 +2945,12 @@ describe('scripted shopper', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/agent`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement `src/agent/types.ts`**
+- [x] **Step 3: Implement `src/agent/types.ts`**
 
 ```ts
 import type { Decision, PurchaseRequest, RunEvent } from '@/domain/types';
@@ -2976,7 +2976,7 @@ export interface Shopper {
 }
 ```
 
-- [ ] **Step 4: Implement `src/agent/fixtures.ts`**
+- [x] **Step 4: Implement `src/agent/fixtures.ts`**
 
 ```ts
 import type { PurchaseRequest } from '@/domain/types';
@@ -3053,7 +3053,7 @@ export const fixtureSearch: WebSearch = {
 
 Note: the headphones scenario says "All sales final". The keyword baseline misses that and approves; Claude should block it. That makes it a good live demo of why the AI checker matters.
 
-- [ ] **Step 5: Implement `src/agent/scriptedShopper.ts`**
+- [x] **Step 5: Implement `src/agent/scriptedShopper.ts`**
 
 ```ts
 import { formatMoney } from '@/domain/money';
@@ -3082,12 +3082,12 @@ export function createScriptedShopper(clock: () => Date = () => new Date()): Sho
 }
 ```
 
-- [ ] **Step 6: Run tests**
+- [x] **Step 6: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/agent
