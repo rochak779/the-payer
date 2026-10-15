@@ -1612,6 +1612,8 @@ git commit -m "feat(evals): eval format, fixed rule set and 10 seed cases"
 
 ### Session 9: Eval runner and metrics
 
+> **As built:** as planned. Keyword baseline on the 10 seed cases: 5/10, 3 wrong approvals, 2 needless asks (it asks on any mention of "hotel").
+
 **Files:**
 - Create: `src/evals/metrics.ts`, `src/evals/runCases.ts`, `src/evals/results.ts`, `scripts/eval.ts`, `evals/results/.gitkeep`
 - Test: `src/evals/metrics.test.ts`, `src/evals/runCases.test.ts`
@@ -1633,7 +1635,7 @@ Metric definitions (rows = expected, columns = actual):
 - **Wrong blocks** = expected approve/ask, got block. The task fails.
 - **Missed blocks** = expected block, got ask. Mild, because the person is still asked.
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // src/evals/metrics.test.ts
@@ -1688,12 +1690,12 @@ describe('runCases', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `npm test -- src/evals`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement `src/evals/metrics.ts`**
+- [x] **Step 3: Implement `src/evals/metrics.ts`**
 
 ```ts
 import type { Outcome } from '@/domain/types';
@@ -1748,7 +1750,7 @@ export function computeMetrics(results: CaseResult[]): Metrics {
 }
 ```
 
-- [ ] **Step 4: Implement `src/evals/runCases.ts`**
+- [x] **Step 4: Implement `src/evals/runCases.ts`**
 
 ```ts
 import { checkPurchase } from '@/checker/checkPurchase';
@@ -1782,7 +1784,7 @@ export function runCases(cases: EvalCase[], rules: Rule[], fuzzy: FuzzyChecker, 
 }
 ```
 
-- [ ] **Step 5: Implement `src/evals/results.ts`**
+- [x] **Step 5: Implement `src/evals/results.ts`**
 
 ```ts
 import fs from 'node:fs';
@@ -1841,7 +1843,7 @@ export function formatReport(run: SavedRun): string {
 }
 ```
 
-- [ ] **Step 6: Create `scripts/eval.ts` and the npm script**
+- [x] **Step 6: Create `scripts/eval.ts` and the npm script**
 
 ```ts
 // scripts/eval.ts
@@ -1889,14 +1891,14 @@ mkdir -p evals/results && touch evals/results/.gitkeep
 npm pkg set scripts.eval="node --env-file-if-exists=.env.local --import tsx scripts/eval.ts"
 ```
 
-- [ ] **Step 7: Run tests and the CLI**
+- [x] **Step 7: Run tests and the CLI**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 Run: `npm run eval -- --label smoke`
 Expected: a report for 10 cases with a confusion table and failures list, then `Saved evals/results/...json`. Delete that smoke file (`rm evals/results/*smoke*.json`); the real baseline is saved in Session 11.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/evals scripts/eval.ts evals/results/.gitkeep package.json
