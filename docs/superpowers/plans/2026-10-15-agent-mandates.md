@@ -5408,6 +5408,8 @@ git commit -m "feat(stripe): real-time authorisation webhook backed by the payme
 
 ### Session 33: Stripe: real one-time cards, end to end
 
+> **As built:** code and unit test done; ISSUER=stripe switch added. **End-to-end Stripe demo (Step 6) and BRIEF update (Step 7) pending Stripe sandbox access.**
+
 **Files:**
 - Create: `src/integrations/stripe/issuer.ts`
 - Modify: `src/deps.ts`, `BRIEF.md`
@@ -5421,7 +5423,7 @@ Two layers of protection, both visible in the log:
 1. **Stripe's card limit.** The card's all-time spending limit equals the approved amount, so "+£20" and "charge again" are declined by Stripe itself.
 2. **Our payment check.** Called by the webhook, it declines the wrong merchant and anything after "turn off agent".
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/integrations/stripe/issuer.test.ts
@@ -5438,12 +5440,12 @@ describe('describeStripeDecline', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/integrations/stripe/issuer`
 Expected: FAIL, module missing.
 
-- [ ] **Step 3: Implement `src/integrations/stripe/issuer.ts`**
+- [x] **Step 3: Implement `src/integrations/stripe/issuer.ts`**
 
 ```ts
 import { formatMoney } from '@/domain/money';
@@ -5510,7 +5512,7 @@ export function createStripeIssuer(store: Store, clock: () => Date = () => new D
 }
 ```
 
-- [ ] **Step 4: Switch in `src/deps.ts`**
+- [x] **Step 4: Switch in `src/deps.ts`**
 
 ```ts
 import { createStripeIssuer } from '@/integrations/stripe/issuer';
@@ -5518,7 +5520,7 @@ import { createStripeIssuer } from '@/integrations/stripe/issuer';
     issuer: process.env.ISSUER === 'stripe' ? createStripeIssuer(store, clock) : createFakeIssuer(store, clock),
 ```
 
-- [ ] **Step 5: Run tests**
+- [x] **Step 5: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
@@ -5542,7 +5544,7 @@ In the browser:
 
 - [ ] **Step 7: Update BRIEF.md** with what was demonstrated and any surprises (timeout behaviour, dashboard settings).
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/integrations/stripe src/deps.ts BRIEF.md
