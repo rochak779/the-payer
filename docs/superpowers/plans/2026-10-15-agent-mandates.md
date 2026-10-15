@@ -2657,7 +2657,7 @@ The offline parser handles common shapes with patterns. Anything it can't expres
 
 Phrasing policy (same as the eval labels): **never / no / nothing / don't / do not / must not → block; anything else → ask.**
 
-- [ ] **Step 1: Write the failing tests**
+- [x] **Step 1: Write the failing tests**
 
 ```ts
 // src/rules/patternParser.test.ts
@@ -2729,12 +2729,12 @@ describe('explainRule', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify they fail**
+- [x] **Step 2: Run to verify they fail**
 
 Run: `npm test -- src/rules`
 Expected: FAIL, modules missing.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/rules/parser.ts
@@ -2872,12 +2872,12 @@ export function getRuleParser(name: string): RuleParser {
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/rules
