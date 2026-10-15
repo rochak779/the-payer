@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { AmountCapRule } from '@/domain/types';
+import type { AmountCapRule, CategoryRule, DateWindowRule, MerchantRule } from '@/domain/types';
 import { makeRequest } from '@/test/factories';
 import { checkHardLimits } from './hardLimits';
 
@@ -48,5 +48,33 @@ describe('amount caps', () => {
     const [reason] = checkHardLimits(makeRequest({ category: 'electronics', total: { minor: 10000, currency: 'EUR' } }), [totalCap]);
     expect(reason.outcome).toBe('ask');
     expect(reason.message).toContain("can't compare");
+  });
+});
+
+const noRyanair: MerchantRule = { id: 'no-ryanair', source: 'Never book with Ryanair.', onBreach: 'block', kind: 'merchant', mode: 'block', merchants: ['Ryanair'] };
+const onlyTrainline: MerchantRule = { id: 'only-trainline', source: 'Only book trains with Trainline.', onBreach: 'ask', kind: 'merchant', mode: 'allow_only', merchants: ['Trainline'] };
+const noGiftCards: CategoryRule = { id: 'no-gift-cards', source: 'No gift cards.', onBreach: 'block', kind: 'category', mode: 'block', categories: ['gift_card'] };
+const window: DateWindowRule = { id: 'window', source: 'Never buy anything outside Nov–Dec 2026.', onBreach: 'block', kind: 'date_window', from: '2026-11-01', to: '2026-12-31' };
+
+describe('merchant, category and date rules', () => {
+  it('blocks a never-use merchant', () => {
+    const [r] = checkHardLimits(makeRequest({ merchant: 'Ryanair DAC', category: 'flight' }), [noRyanair]);
+    expect(r).toMatchObject({ ruleId: 'no-ryanair', outcome: 'block', message: 'You said never to use Ryanair.' });
+  });
+
+  it('flags a merchant outside an allow-only list', () => {
+    expect(checkHardLimits(makeRequest({ merchant: 'Trainline' }), [onlyTrainline])).toEqual([]);
+    expect(checkHardLimits(makeRequest({ merchant: 'Avanti West Coast' }), [onlyTrainline])[0]?.outcome).toBe('ask');
+  });
+
+  it('blocks a banned category', () => {
+    const [r] = checkHardLimits(makeRequest({ category: 'gift_card' }), [noGiftCards]);
+    expect(r.message).toBe('You said no gift cards.');
+  });
+
+  it('treats the date window as inclusive at both ends', () => {
+    expect(checkHardLimits(makeRequest({ purchaseDate: '2026-11-01' }), [window])).toEqual([]);
+    expect(checkHardLimits(makeRequest({ purchaseDate: '2026-12-31' }), [window])).toEqual([]);
+    expect(checkHardLimits(makeRequest({ purchaseDate: '2027-01-01' }), [window])[0]?.outcome).toBe('block');
   });
 });

@@ -1,5 +1,7 @@
 import { formatMoney } from '@/domain/money';
+import { CATEGORY_LABEL } from '@/domain/labels';
 import type { AmountCapRule, HardRule, PurchaseRequest, Reason, Rule } from '@/domain/types';
+import { merchantMatches } from './merchant';
 
 /** Plain-code checks. One Reason per breached (or uncheckable) hard rule; empty array = all clear. */
 export function checkHardLimits(req: PurchaseRequest, rules: Rule[]): Reason[] {
@@ -16,8 +18,26 @@ function checkRule(req: PurchaseRequest, rule: HardRule): Reason | null {
   switch (rule.kind) {
     case 'amount_cap':
       return checkAmountCap(req, rule);
-    default:
-      return null; // merchant, category and date rules: Session 5
+    case 'merchant': {
+      const hit = rule.merchants.find((m) => merchantMatches(req.merchant, m));
+      if (rule.mode === 'block' && hit) return breach(rule, `You said never to use ${hit}.`);
+      if (rule.mode === 'allow_only' && !hit) {
+        return breach(rule, `${req.merchant} isn't one of the shops you allowed (${rule.merchants.join(', ')}).`);
+      }
+      return null;
+    }
+    case 'category': {
+      const listed = rule.categories.includes(req.category);
+      const label = CATEGORY_LABEL[req.category];
+      if (rule.mode === 'block' && listed) return breach(rule, `You said no ${label.toLowerCase()}.`);
+      if (rule.mode === 'allow_only' && !listed) return breach(rule, `${label} isn't on your list of allowed purchases.`);
+      return null;
+    }
+    case 'date_window':
+      if (req.purchaseDate < rule.from || req.purchaseDate > rule.to) {
+        return breach(rule, `Buying on ${req.purchaseDate} is outside your ${rule.from} to ${rule.to} window.`);
+      }
+      return null;
   }
 }
 
