@@ -13,10 +13,12 @@
     "seed": "node --env-file-if-exists=.env.local --import tsx scripts/seed.ts",
     "demo:flow": "node --env-file-if-exists=.env.local --import tsx scripts/demo-flow.ts",
     "claude:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/claude-smoke.ts",
-    "eval:parse": "node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts"
+    "eval:parse": "node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts",
+    "firecrawl:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/firecrawl-smoke.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
+    "@mendable/firecrawl-js": "^4.46.0",
     "next": "16.4.2",
     "react": "19.3.0",
     "react-dom": "19.3.0",

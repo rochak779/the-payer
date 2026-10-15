@@ -4825,6 +4825,8 @@ git commit -m "feat(claude): rule reading with Claude and a rule-reading eval"
 
 ### Session 29: Firecrawl: real web search
 
+> **As built:** SDK signature confirmed (`search(query, opts)` → `SearchData.web[]`). **Smoke run pending FIRECRAWL_API_KEY in .env.local** (the Firecrawl CLI is logged in, but its stored key wasn't copied into the app).
+
 **Files:**
 - Create: `src/integrations/firecrawl/search.ts`, `scripts/firecrawl-smoke.ts`
 - Modify: `src/deps.ts`, `.env.example`, `package.json`
@@ -4834,7 +4836,7 @@ git commit -m "feat(claude): rule reading with Claude and a rule-reading eval"
 - Consumes: `WebSearch`, `SearchResult` (Session 16).
 - Produces: `toSearchResult(hit: FirecrawlHit): SearchResult | null`, `createFirecrawlSearch(apiKey?: string): WebSearch` (name `'firecrawl'`). `SEARCH=firecrawl` switch.
 
-- [ ] **Step 1: Install and check the SDK's search types**
+- [x] **Step 1: Install and check the SDK's search types**
 
 ```bash
 npm install @mendable/firecrawl-js
@@ -4843,7 +4845,7 @@ grep -n "search(" node_modules/@mendable/firecrawl-js/dist/index.d.ts | head
 
 Confirm the `search(query, options)` signature and that results come back under `web`. Saved research output from the Firecrawl v2 API shows `data.web[]` with `url`, `title`, `description`. With `scrapeOptions`, items also carry `markdown` and `metadata`. The mapper below accepts both shapes.
 
-- [ ] **Step 2: Write the failing test**
+- [x] **Step 2: Write the failing test**
 
 ```ts
 // src/integrations/firecrawl/search.test.ts
@@ -4867,12 +4869,12 @@ describe('toSearchResult', () => {
 });
 ```
 
-- [ ] **Step 3: Run to verify it fails**
+- [x] **Step 3: Run to verify it fails**
 
 Run: `npm test -- src/integrations/firecrawl`
 Expected: FAIL, module missing.
 
-- [ ] **Step 4: Implement `src/integrations/firecrawl/search.ts`**
+- [x] **Step 4: Implement `src/integrations/firecrawl/search.ts`**
 
 ```ts
 import Firecrawl from '@mendable/firecrawl-js';
@@ -4909,7 +4911,7 @@ export function createFirecrawlSearch(apiKey = process.env.FIRECRAWL_API_KEY): W
 }
 ```
 
-- [ ] **Step 5: Switch in `src/deps.ts`**
+- [x] **Step 5: Switch in `src/deps.ts`**
 
 ```ts
 import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
@@ -4917,7 +4919,7 @@ import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
     search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
 ```
 
-- [ ] **Step 6: Smoke script, env and run**
+- [ ] **Step 6: Smoke script, env and run** (script and env done; live run pending FIRECRAWL_API_KEY)
 
 ```ts
 // scripts/firecrawl-smoke.ts
@@ -4941,7 +4943,7 @@ Add to `.env.example`: `# FIRECRAWL_API_KEY=fc-...`
 Run: `npm test && npm run typecheck && npm run firecrawl:smoke`
 Expected: up to 5 real results with titles, URLs and page text. Each search uses Firecrawl credits.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/integrations/firecrawl src/deps.ts scripts/firecrawl-smoke.ts .env.example package.json package-lock.json
