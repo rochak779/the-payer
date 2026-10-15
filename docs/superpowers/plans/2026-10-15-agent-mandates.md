@@ -2280,7 +2280,7 @@ This is phase 2 of the design: milliseconds, no AI, no network. When the card is
 - Consumes: `merchantMatches` (Session 5), `appendLog`, `recordDecision` (Session 12).
 - Produces: `type ChargeAttempt = { approvalId: string | null; amount: Money; merchant: string }`, `type GateResult = { approved: boolean; reasons: string[] }`, `checkCharge(store: Store, attempt: ChargeAttempt, now: Date): GateResult`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/payments/paymentGate.test.ts
@@ -2362,12 +2362,12 @@ describe('checkCharge', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/payments`
 Expected: FAIL, cannot find module `./paymentGate`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/payments/paymentGate.ts
@@ -2414,12 +2414,12 @@ export function checkCharge(store: Store, attempt: ChargeAttempt, now: Date): Ga
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/payments
