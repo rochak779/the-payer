@@ -3523,6 +3523,8 @@ git commit -m "feat(ui): phone-wallet app shell with tab bar"
 
 ### Session 19: Rules screen
 
+> **As built:** on-screen apostrophes changed to ’ for the React lint rule. Checked via HTML: saved rules, explanations and "checked by" labels render. The click-through (preview, remove, save, reload) still needs a browser pass.
+
 **Files:**
 - Create: `src/app/actions.ts`, `src/app/rules/RulesEditor.tsx`
 - Replace: `src/app/rules/page.tsx`
@@ -3531,7 +3533,7 @@ git commit -m "feat(ui): phone-wallet app shell with tab bar"
 - Consumes: `getDeps` (Session 17), `explainRule`, `checkedBy` (Session 15), `appendLog` (Session 12).
 - Produces: server actions `previewRules(text: string): Promise<PreviewItem[]>`, `saveRules(rules: Rule[]): Promise<void>`; `type PreviewItem = { rule: Rule; explanation: string; checkedBy: string }`.
 
-- [ ] **Step 1: Create `src/app/actions.ts`**
+- [x] **Step 1: Create `src/app/actions.ts`**
 
 ```ts
 'use server';
@@ -3561,7 +3563,7 @@ export async function saveRules(rules: Rule[]): Promise<void> {
 }
 ```
 
-- [ ] **Step 2: Create `src/app/rules/RulesEditor.tsx`**
+- [x] **Step 2: Create `src/app/rules/RulesEditor.tsx`**
 
 ```tsx
 'use client';
@@ -3638,7 +3640,7 @@ export function RulesEditor({ initialText, saved }: { initialText: string; saved
 }
 ```
 
-- [ ] **Step 3: Replace `src/app/rules/page.tsx`**
+- [x] **Step 3: Replace `src/app/rules/page.tsx`**
 
 ```tsx
 import { checkedBy, explainRule } from '@/rules/explain';
@@ -3661,12 +3663,12 @@ export default function RulesPage() {
 }
 ```
 
-- [ ] **Step 4: Verify in the browser**
+- [x] **Step 4: Verify in the browser**
 
 Run: `npm run typecheck`, then `npm run dev`, open /rules.
 Expected: textarea pre-filled with the five demo rules; saved rules listed with explanations ("Hotels over £150 per night → I'll ask you first.") and "Hard limit · checked by code" or "Judgement · checked by AI". Add the line `Never book with Ryanair.`, click "Show me what you understood". A merchant rule appears. Remove one item, click Save. The list updates and survives a page reload.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/app
