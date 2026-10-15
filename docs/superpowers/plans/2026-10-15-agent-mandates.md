@@ -5553,6 +5553,8 @@ git commit -m "feat(stripe): real one-time sandbox cards and test charges end to
 
 ### Session 34: AP2 mandate export (optional, cut first)
 
+> **As built:** Read the repo with `gh api` (GitHub is fine without Firecrawl) at commit `e1ea56d` (AP2 v0.2.0, 28 Apr 2026); field names recorded in BRIEF.md. Exports the **open Payment Mandate** (the open Checkout Mandate must list exact items, which standing rules can't know). AP2 v0.2 has no natural-language field, shop deny list, category or per-night cap, so those, plus ask vs block for every rule, go in `x_agent_mandates`. Output is unsigned: `cnf` is empty and `payment.reference` is left out (both need a signed, linked open Checkout Mandate). `ap2.example.json` is the decoded open Payment Mandate from `docs/ap2/payment_mandate.md`. Added an optional `now` to opts, a `defaultValidUntil` helper, and a test that no AP2 field name outside the recorded list appears. /rules checked by curl (no browser): panel renders after seed.
+
 BRIEF.md says to read the AP2 repo rather than guess field names. This session therefore starts with research, and the mapper uses only names recorded from the repo.
 
 **Files:**
@@ -5562,20 +5564,20 @@ BRIEF.md says to read the AP2 repo rather than guess field names. This session t
 **Interfaces:**
 - Produces: `toAp2OpenMandate(rules: Rule[], opts: { validUntil: string }): Record<string, unknown>`.
 
-- [ ] **Step 1: Research (firecrawl skill).** Read https://github.com/google-agentic-commerce/AP2, especially `docs/ap2/flows.md` and the v0.2 spec / type definitions for the **open Checkout Mandate** and **open Payment Mandate**, and the `unresolved_constraint` error. Copy one official example of an open mandate into `src/rules/ap2.example.json`.
+- [x] **Step 1: Research (firecrawl skill).** Read https://github.com/google-agentic-commerce/AP2, especially `docs/ap2/flows.md` and the v0.2 spec / type definitions for the **open Checkout Mandate** and **open Payment Mandate**, and the `unresolved_constraint` error. Copy one official example of an open mandate into `src/rules/ap2.example.json`.
 
-- [ ] **Step 2: Record in BRIEF.md → "Still to verify"** the exact field names for: amount limits, merchant allow/deny, categories, validity/expiry, and natural-language constraints. Include the repo commit hash and date.
+- [x] **Step 2: Record in BRIEF.md → "Still to verify"** the exact field names for: amount limits, merchant allow/deny, categories, validity/expiry, and natural-language constraints. Include the repo commit hash and date.
 
-- [ ] **Step 3: Write the failing test** (`src/rules/ap2.test.ts`) using the recorded names:
+- [x] **Step 3: Write the failing test** (`src/rules/ap2.test.ts`) using the recorded names:
   - (a) every hard rule from `evals/rules.json` appears in the output under the field Step 2 recorded for its kind;
   - (b) judgement rules appear under the recorded natural-language field, or, if AP2 has none, under `x_agent_mandates.judgement_rules`;
   - (c) the output has every top-level key that `ap2.example.json` has.
 
-- [ ] **Step 4: Implement `toAp2OpenMandate`** to make the test pass, with a header comment linking the spec version. No field name may appear that is not in Step 2's record.
+- [x] **Step 4: Implement `toAp2OpenMandate`** to make the test pass, with a header comment linking the spec version. No field name may appear that is not in Step 2's record.
 
-- [ ] **Step 5: Show it on /rules**: under the saved rules, add a `<details><summary>View as AP2 open mandate</summary><pre>{JSON.stringify(toAp2OpenMandate(rules, { validUntil }), null, 2)}</pre></details>`. Set `validUntil` to the latest `date_window.to`, or 30 days from today.
+- [x] **Step 5: Show it on /rules**: under the saved rules, add a `<details><summary>View as AP2 open mandate</summary><pre>{JSON.stringify(toAp2OpenMandate(rules, { validUntil }), null, 2)}</pre></details>`. Set `validUntil` to the latest `date_window.to`, or 30 days from today.
 
-- [ ] **Step 6: Run** `npm test && npm run typecheck`, check /rules, then commit:
+- [x] **Step 6: Run** `npm test && npm run typecheck`, check /rules, then commit:
 
 ```bash
 git add src/rules src/app/rules BRIEF.md

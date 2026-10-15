@@ -1,0 +1,33 @@
+{
+  "vct": "mandate.payment.open.1",
+  "constraints": [
+    {
+      "type": "payment.amount_range",
+      "currency": "USD",
+      "max": 20000,
+      "min": 0
+    },
+    {
+      "type": "payment.allowed_payees",
+      "allowed": [
+        {
+          "...": "oEH7i1gyb-zn6awwjy57LvzxkQDfD-8tvlC2XuIkgOA"
+        }
+      ]
+    },
+    {
+      "type": "payment.reference",
+      "conditional_transaction_id": "FzLoxbbtgQGYZxoSM2NJYJtkFTSsdfUBoVEQ12k7JN8"
+    }
+  ],
+  "cnf": {
+    "jwk": {
+      "crv": "P-256",
+      "kty": "EC",
+      "x": "QpSyxPQHy38xckypDr54gZ3T42zj9iLtV4koyb5U27c",
+      "y": "37HLd7JJinxjJIn8J7HijssoeclbfhdW-gUL7feI9lw"
+    }
+  },
+  "iat": 1777342357,
+  "exp": 1777345957
+}
