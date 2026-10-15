@@ -2121,7 +2121,7 @@ git commit -m "evals: complete 62-case set and record keyword baseline"
 - Consumes: `Store`, `Db` (Session 3), `Decision`, `Approval`, `PurchaseRequest` (Session 2), `OUTCOME_LABEL` (Session 5).
 - Produces: `appendLog(db: Db, now: Date, type: LogType, approvalId: string | null, message: string): LogEntry` (call inside `store.update`), `APPROVAL_TTL_MINUTES = 30`, `recordDecision(store, req, decision, now): Approval`, `userDecides(store, approvalId, choice: 'approve' | 'decline', now): Approval`.
 
-- [ ] **Step 1: Write the failing test**
+- [x] **Step 1: Write the failing test**
 
 ```ts
 // src/approvals/approvals.test.ts
@@ -2180,12 +2180,12 @@ describe('userDecides', () => {
 });
 ```
 
-- [ ] **Step 2: Run to verify it fails**
+- [x] **Step 2: Run to verify it fails**
 
 Run: `npm test -- src/approvals`
 Expected: FAIL, cannot find module `./approvals`.
 
-- [ ] **Step 3: Implement**
+- [x] **Step 3: Implement**
 
 ```ts
 // src/log/log.ts
@@ -2256,12 +2256,12 @@ export function userDecides(store: Store, approvalId: string, choice: 'approve' 
 }
 ```
 
-- [ ] **Step 4: Run tests**
+- [x] **Step 4: Run tests**
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/log src/approvals
