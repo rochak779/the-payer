@@ -178,6 +178,8 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
 - Whether Link's wallet for agents is available in the UK.
 - The exact AP2 v0.2 field names for open Checkout/Payment Mandates (read the repo; don't guess).
 - Stripe's exact real-time authorisation timeout.
+  **From the docs (read 15 Oct 2026, [real-time authorisations](https://docs.stripe.com/issuing/controls/real-time-authorizations)):** 2 seconds. Reply HTTP 200 with JSON `{"approved": true|false}` and a required `Stripe-Version` header. No reply in time → Stripe approves or declines per the **timeout setting in Issuing settings** (or Autopilot, if configured), logged as `webhook_timeout` (or `webhook_error` for a bad reply). **Set that fallback to decline**: otherwise a slow first request (Next.js compiling the route) could approve a charge. `stripe listen --forward-to` is documented for testing this event locally; whether a CLI-forwarded reply is actually honoured is what the Session 31 spike checks. UK/EU Issuing balances are funded by "push" funding instructions, which the sandbox supports ([testing](https://docs.stripe.com/issuing/testing)).
+  Still unverified (needs the live spike): Issuing access for a UK sandbox account, and CLI vs tunnel in practice.
 
 **Account pre-flight (Session 0.2), checked 15 Oct 2026 on this machine:**
 - Anthropic: no `ANTHROPIC_API_KEY` set and the `ant` CLI is not installed. Needed from Phase 8 (Session 24).

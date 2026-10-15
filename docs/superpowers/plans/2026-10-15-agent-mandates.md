@@ -5125,6 +5125,8 @@ git commit -m "feat(claude): real shopper agent with search and request-purchase
 
 ### Session 31: Stripe: spike to answer the open questions
 
+> **As built:** Steps 1–4 done offline: stripe SDK v23 installed, env names added, docs read (2-second timeout, `{approved}` + required `Stripe-Version`, timeout fallback lives in Issuing settings; recorded in BRIEF.md), spike scripts written with a sandbox-only key guard. **Steps 5–7 (live spike) pending Rochak's Stripe sandbox (Session 0.2).**
+
 No app code. Two throwaway scripts answer four questions before we build on them:
 1. Does Issuing work in the UK sandbox?
 2. What is the real-time authorisation timeout?
@@ -5135,7 +5137,7 @@ No app code. Two throwaway scripts answer four questions before we build on them
 - Create: `scripts/stripe-spike-server.ts`, `scripts/stripe-spike.ts`
 - Modify: `BRIEF.md` ("Still to verify"), `.env.example`
 
-- [ ] **Step 1: Install and configure**
+- [x] **Step 1: Install and configure**
 
 ```bash
 npm install stripe
@@ -5150,13 +5152,13 @@ STRIPE_CARDHOLDER_ID=ich_...
 
 Add the same names (no values) plus `# STRIPE_WEBHOOK_SECRET=whsec_...` and `# ISSUER=stripe` to `.env.example`.
 
-- [ ] **Step 2: Read the current docs** (via the `firecrawl` skill): https://docs.stripe.com/issuing/controls/real-time-authorizations and https://docs.stripe.com/issuing/testing. Write down:
+- [x] **Step 2: Read the current docs** (via the `firecrawl` skill): https://docs.stripe.com/issuing/controls/real-time-authorizations and https://docs.stripe.com/issuing/testing. Write down:
   - the exact response format (expected: HTTP 200, JSON `{"approved": true|false}`, header `Stripe-Version`)
   - the timeout
   - the timeout fallback setting and where it lives
   - whether the Stripe CLI is supported for this endpoint
 
-- [ ] **Step 3: Create `scripts/stripe-spike-server.ts`** (always declines, logs timing)
+- [x] **Step 3: Create `scripts/stripe-spike-server.ts`** (always declines, logs timing)
 
 ```ts
 import http from 'node:http';
@@ -5188,7 +5190,7 @@ http.createServer(async (req, res) => {
 }).listen(4242, () => console.log('spike webhook on http://localhost:4242'));
 ```
 
-- [ ] **Step 4: Create `scripts/stripe-spike.ts`** (card + two test charges)
+- [x] **Step 4: Create `scripts/stripe-spike.ts`** (card + two test charges)
 
 ```ts
 import Stripe from 'stripe';
