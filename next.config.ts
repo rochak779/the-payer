@@ -1,9 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
-  cacheComponents: true,
-  partialPrefetching: true,
+  // Cache Components is off: every page reads the local JSON file per request, so the
+  // previous model with `dynamic = "force-dynamic"` is simpler for this single-user demo.
   turbopack: {
     rules: {
       "*.css": {

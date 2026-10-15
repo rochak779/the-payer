@@ -3362,6 +3362,8 @@ Screens are thin: all logic is already tested. Each session is verified by hand 
 
 ### Session 18: App shell (phone-wallet look, tab bar)
 
+> **As built:** Cache Components and Partial Prefetching turned off in next.config.ts (Next 16.4 enables them by default, and they remove the `dynamic = 'force-dynamic'` setting this plan uses). Every page reads the JSON file per request, so the previous model is simpler. Next 16's docs say both become default in the next major version, so a future Next upgrade will need a small migration (`connection()` + Suspense). Visual check done via HTML (Chrome extension not connected).
+
 **Files:**
 - Replace: `src/app/layout.tsx`, `src/app/globals.css`, `src/app/page.tsx`
 - Create: `src/components/TabBar.tsx`, `src/components/ui.tsx`
@@ -3370,13 +3372,13 @@ Screens are thin: all logic is already tested. Each session is verified by hand 
 **Interfaces:**
 - Produces: `TabBar({ pending }: { pending: number })`, `Card({ children })`, `OutcomeBadge({ outcome })`. Every data page exports `dynamic = 'force-dynamic'` (it reads the JSON file per request).
 
-- [ ] **Step 1: Replace `src/app/globals.css`** (drops the starter's theme variables)
+- [x] **Step 1: Replace `src/app/globals.css`** (drops the starter's theme variables)
 
 ```css
 @import "tailwindcss";
 ```
 
-- [ ] **Step 2: Create `src/components/ui.tsx`**
+- [x] **Step 2: Create `src/components/ui.tsx`**
 
 ```tsx
 import type { ReactNode } from 'react';
@@ -3398,7 +3400,7 @@ export function OutcomeBadge({ outcome }: { outcome: Outcome }) {
 }
 ```
 
-- [ ] **Step 3: Create `src/components/TabBar.tsx`**
+- [x] **Step 3: Create `src/components/TabBar.tsx`**
 
 ```tsx
 'use client';
@@ -3433,7 +3435,7 @@ export function TabBar({ pending }: { pending: number }) {
 }
 ```
 
-- [ ] **Step 4: Replace `src/app/layout.tsx`**
+- [x] **Step 4: Replace `src/app/layout.tsx`**
 
 ```tsx
 import type { Metadata } from 'next';
@@ -3466,7 +3468,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
 }
 ```
 
-- [ ] **Step 5: Replace `src/app/page.tsx` and add the four placeholder pages**
+- [x] **Step 5: Replace `src/app/page.tsx` and add the four placeholder pages**
 
 ```tsx
 // src/app/page.tsx
@@ -3505,14 +3507,14 @@ export default function ActivityPage() {
 }
 ```
 
-- [ ] **Step 6: Verify**
+- [x] **Step 6: Verify**
 
 Run: `npm run typecheck && npm run build`
 Expected: build succeeds.
 Run: `npm run seed && npm run dev`, open http://localhost:3000.
 Expected: redirect to /ask; a dark "Wallet / Agent Mandates" header; bottom tab bar with four tabs; the active tab is bold. At desktop width the app sits in a rounded phone-sized frame.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add src/app src/components
