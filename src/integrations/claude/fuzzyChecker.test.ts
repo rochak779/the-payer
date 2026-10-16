@@ -1,6 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it, vi } from 'vitest';
 import { checkPurchase } from '@/checker/checkPurchase';
+import { CheckerAnswerError } from '@/checker/fuzzy';
 import { getFuzzyChecker } from '@/checker/registry';
 import type { JudgementRule } from '@/domain/types';
 import { makeRequest } from '@/test/factories';
@@ -56,6 +57,13 @@ describe('Claude fuzzy checker', () => {
     const d = await checkPurchase(makeRequest(), { rules: [refundRule], agentEnabled: true, fuzzy: createClaudeFuzzyChecker({ client }) });
     expect(d.outcome).toBe('ask');
     expect(d.summary).toContain('declined');
+  });
+
+  it('marks a refusal and an unreadable answer as the model\'s own answer, not an outage', async () => {
+    for (const response of [{ stop_reason: 'refusal', parsed_output: null }, { stop_reason: 'max_tokens', parsed_output: null }]) {
+      const { client } = fakeClient(response);
+      await expect(createClaudeFuzzyChecker({ client }).check(makeRequest(), [refundRule])).rejects.toBeInstanceOf(CheckerAnswerError);
+    }
   });
 
   it('an unreadable answer becomes "ask"', async () => {

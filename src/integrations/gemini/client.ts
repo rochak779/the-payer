@@ -1,5 +1,6 @@
 import { GoogleGenAI, type HttpRetryOptions } from '@google/genai';
 import { z } from 'zod';
+import { CheckerAnswerError } from '@/checker/fuzzy';
 
 /**
  * Free stopgap until there is an Anthropic key. Same prompts as Claude, so results compare like for like.
@@ -19,7 +20,7 @@ export function gemini(): GoogleGenAI {
 export const RETRY: HttpRetryOptions = { attempts: 4, initialDelay: 2, maxDelay: 20 };
 
 /** The model answered, but not with something we can use. Callers turn this into "ask" or "rephrase". */
-export class UnreadableAnswer extends Error {}
+export class UnreadableAnswer extends CheckerAnswerError {}
 
 const parseJson = (text: string | undefined): unknown => {
   try {

@@ -1,5 +1,5 @@
 import { checkPurchase } from '@/checker/checkPurchase';
-import type { FuzzyChecker } from '@/checker/fuzzy';
+import { CheckerAnswerError, type FuzzyChecker } from '@/checker/fuzzy';
 import type { Rule } from '@/domain/types';
 import type { CaseResult } from './metrics';
 import type { EvalCase } from './schema';
@@ -20,12 +20,26 @@ async function mapPool<T, R>(items: T[], limit: number, fn: (item: T) => Promise
 export function runCases(cases: EvalCase[], rules: Rule[], fuzzy: FuzzyChecker, concurrency = 4): Promise<CaseResult[]> {
   return mapPool(cases, concurrency, async (c) => {
     const started = Date.now();
-    const decision = await checkPurchase(c.request, { rules, agentEnabled: true, fuzzy });
+    let modelAnswered = false; // set if the checker failed because of what the model said, not an outage
+    const tracked: FuzzyChecker = {
+      name: fuzzy.name,
+      async check(req, caseRules) {
+        try {
+          return await fuzzy.check(req, caseRules);
+        } catch (err) {
+          if (err instanceof CheckerAnswerError) modelAnswered = true;
+          throw err;
+        }
+      },
+    };
+    const decision = await checkPurchase(c.request, { rules, agentEnabled: true, fuzzy: tracked });
+    // checkPurchase's only rule-less "system ask" is the one it adds when the checker throws or times out.
+    const failed = decision.reasons.some((r) => r.by === 'system' && r.ruleId === null && r.outcome === 'ask');
     return {
       id: c.id, category: c.category, split: c.split, expected: c.expected,
       actual: decision.outcome, summary: decision.summary, ms: Date.now() - started,
-      // checkPurchase's only rule-less "system ask" is the one it adds when the checker throws or times out.
-      checkerError: decision.reasons.some((r) => r.by === 'system' && r.ruleId === null && r.outcome === 'ask'),
+      checkerError: failed && !modelAnswered,
+      unreadable: failed && modelAnswered,
     };
   });
 }

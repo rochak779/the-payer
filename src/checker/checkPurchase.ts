@@ -60,16 +60,24 @@ function toReasons(result: FuzzyResult, rules: JudgementRule[]): Reason[] {
 /**
  * The agent picks the category, and a steered agent can pick a harmless one ("other" for a gift card).
  * If the checker reads the purchase differently, re-run the hard rules on its reading. Only new breaches
- * count, at each rule's own ask/block, so the AI can make a decision stricter but never looser.
+ * count, so the AI can make a decision stricter but never looser. A ban on the category it reads ("No gift
+ * cards") applies at the rule's own ask/block. Anything else ("only trains and hotels", a cap scoped to one
+ * category) is at most an ask: the agent's label may well be right, and a block can't be overridden.
  */
 function relabelled(req: PurchaseRequest, rules: Rule[], hard: Reason[], result: FuzzyResult): Reason[] {
   const category = result.category;
   if (!category || category === req.category) return [];
   const already = new Set(hard.map((r) => r.ruleId));
   const why = `The agent filed this under "${CATEGORY_LABEL[req.category]}", but it belongs under "${CATEGORY_LABEL[category]}".`;
+  const isBan = (ruleId: string | null) => rules.some((x) => x.id === ruleId && x.kind === 'category' && x.mode === 'block');
   return checkHardLimits({ ...req, category }, rules)
     .filter((r) => !already.has(r.ruleId))
-    .map((r) => ({ ...r, by: 'ai' as const, message: `${why} ${r.message}` }));
+    .map((r) => ({
+      ...r,
+      by: 'ai' as const,
+      outcome: isBan(r.ruleId) ? r.outcome : r.outcome === 'block' ? ('ask' as const) : r.outcome,
+      message: `${why} ${r.message}`,
+    }));
 }
 
 function decide(reasons: Reason[], checker: string): Decision {
