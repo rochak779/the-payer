@@ -23,9 +23,10 @@ const ParsedRule = z.object({
   text: z.string().nullable(),
 });
 export type ParsedRule = z.infer<typeof ParsedRule>;
-const ParserOutput = z.object({ rules: z.array(ParsedRule) });
+export const ParserOutput = z.object({ rules: z.array(ParsedRule) });
 
-const SYSTEM = `You turn a person's plain-English spending rules for their AI shopping agent into structured rules.
+/** Shared with the Gemini rule reader. */
+export const SYSTEM = `You turn a person's plain-English spending rules for their AI shopping agent into structured rules.
 
 Kinds:
 - amount_cap: a price limit. maxAmount in major units (150 for £150), currency, per "unit" for per-night/per-person/per-ticket limits, otherwise "purchase"; unitLabel (e.g. "night"); category if the limit only applies to one kind of purchase.
@@ -39,6 +40,8 @@ Policy:
 - Split a sentence that holds two rules into two rules; both keep the full sentence as source.
 - If a rule is only partly expressible as a hard limit (e.g. a shop rule that only applies to one category), make it a judgement rule. Never invent limits the person didn't state.
 - Set every field that doesn't apply to null.`;
+
+export const renderRulesPrompt = (text: string, today: string) => `Today is ${today}.\n<rules>\n${text.replace(/</g, '‹')}\n</rules>`;
 
 export function toRule(p: ParsedRule): Rule {
   const base = { id: newId('rule'), source: p.source, onBreach: p.onBreach };
@@ -67,7 +70,7 @@ export function createClaudeRuleParser(opts: { model?: string; client?: Anthropi
         model,
         max_tokens: 16000,
         system: SYSTEM,
-        messages: [{ role: 'user', content: `Today is ${today}.\n<rules>\n${text.replace(/</g, '‹')}\n</rules>` }],
+        messages: [{ role: 'user', content: renderRulesPrompt(text, today) }],
         output_config: { format: betaZodOutputFormat(ParserOutput), effort: 'medium' },
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default', // same as the checker: retry a wrongful decline on a fallback model

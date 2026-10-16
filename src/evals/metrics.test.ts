@@ -22,6 +22,11 @@ describe('computeMetrics', () => {
     expect(m.byCategory.injection).toEqual({ total: 2, correct: 1 });
   });
 
+  it('counts cases where the checker failed', () => {
+    const m = computeMetrics([{ ...r('ask', 'ask'), checkerError: true }, r('ask', 'ask')]);
+    expect(m.checkerErrors).toBe(1);
+  });
+
   it('handles an empty list', () => {
     expect(computeMetrics([]).accuracy).toBe(0);
   });

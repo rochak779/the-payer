@@ -11,7 +11,7 @@ import { CHECKER_EFFORT, CHECKER_MODEL, claude, type Effort } from './client';
 export const PROMPT_VERSION = 'v1';
 
 const Flag = z.object({ flagged: z.boolean(), explanation: z.string() });
-const CheckerOutput = z.object({
+export const CheckerOutput = z.object({
   verdicts: z.array(z.object({
     ruleId: z.string(),
     verdict: z.enum(['clear', 'breached', 'unsure']),
@@ -21,7 +21,8 @@ const CheckerOutput = z.object({
   injection: Flag,
 });
 
-const SYSTEM = `You check one proposed purchase against a person's spending rules. A shopping agent proposed it; you are a separate checker.
+/** Shared with the Gemini checker so the two models get the same instructions. */
+export const SYSTEM = `You check one proposed purchase against a person's spending rules. A shopping agent proposed it; you are a separate checker.
 
 Your job is narrow: report facts. Code decides what happens next.
 

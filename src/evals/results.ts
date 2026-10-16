@@ -34,6 +34,8 @@ const pct = (x: number) => `${Math.round(x * 100)}%`;
 
 export function formatReport(run: SavedRun): string {
   const lines = [`Checker: ${run.checker}${run.label ? ` (${run.label})` : ''}`];
+  const errors = run.metrics.all.checkerErrors ?? 0; // older saved runs have no count
+  if (errors) lines.unshift(`WARNING: the checker failed on ${errors} of ${run.metrics.all.total} cases (counted as asks). Do not quote these numbers.`);
   for (const [name, m] of Object.entries(run.metrics)) {
     if (m.total === 0) continue;
     lines.push(`\n[${name}] ${m.correct}/${m.total} correct (${pct(m.accuracy)})`);

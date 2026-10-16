@@ -24,6 +24,8 @@ export function runCases(cases: EvalCase[], rules: Rule[], fuzzy: FuzzyChecker, 
     return {
       id: c.id, category: c.category, split: c.split, expected: c.expected,
       actual: decision.outcome, summary: decision.summary, ms: Date.now() - started,
+      // checkPurchase's only rule-less "system ask" is the one it adds when the checker throws or times out.
+      checkerError: decision.reasons.some((r) => r.by === 'system' && r.ruleId === null && r.outcome === 'ask'),
     };
   });
 }

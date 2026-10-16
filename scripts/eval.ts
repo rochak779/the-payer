@@ -28,6 +28,12 @@ async function main() {
     results,
   };
   console.log(formatReport(run));
+  if (run.metrics.all.checkerErrors) {
+    // Keeps the Evals screen and RESULTS.md free of runs where a quota or outage posed as "ask".
+    console.log('\nNot saved: rerun when the service is available.');
+    process.exitCode = 1;
+    return;
+  }
   console.log(`\nSaved ${saveRun(run)}`);
 }
 

@@ -12,6 +12,12 @@ Saved run: `evals/results/2026-10-15T22-42-40-898Z_keyword-baseline_baseline.jso
 
 Claude rows are pending an Anthropic key (no key on the build machine). To fill them: `npm run eval -- --checker claude --label v1` (Session 26), the improvement round (Session 27), then `npm run eval -- --checker claude --label final`. Re-checked 16 Oct 2026: the keyword baseline still gives the numbers above.
 
+## Gemini stopgap (16 Oct 2026, partial, not a headline)
+While there is no Anthropic key, the checker can run on Google's free `gemini-3.8-flash` with exactly the Claude instructions (`--checker gemini`). The free tier allows about 5 calls a minute and **20 a day**, so a 65-case run stops a third of the way through. Of one attempt, 22 cases got a real answer and 43 hit the limit (or a "high demand" error).
+- On those 22 cases Gemini got **22/22** right, with no wrong approvals. The keyword baseline gets 19/22 on the same cases, with 2 wrong approvals ("refund-01" and "gifts-01").
+- Only 4 of the 22 are held-out cases, and many are hard-rule cases that code decides anyway. So this shows the setup works with a real model and that an AI reading beats keywords on the cases it saw, nothing more.
+- The run wasn't saved: the eval now refuses to save a run where the checker failed on any case (see `checkerErrors`), because those failures used to count silently as "ask".
+
 ## Notes
 - Baseline = keyword matching, the way a simple guardrail works. It shows both failure modes:
   - **Over-asking on harmless words (needless asks):** 11 of the 18 cases that should be approved get an "ask". "Hotel Chocolat" trips the hotel-rating rule, "grocery delivery" reads as an extra cost, "Shop address" trips the genuine-shop rule, and a book marketed as "the perfect gift" is treated as a gift.

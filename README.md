@@ -4,7 +4,7 @@ Plain-English spending rules for a personal AI shopping agent, a checker that de
 
 Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
 
-**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 114 automated tests. Firecrawl search has been smoke-tested live (5 real results). The real Claude checker and agent and the Stripe sandbox cards are built behind switches but **have not been run live yet**, because their keys aren't on the build machine yet. The Claude eval numbers are pending for the same reason.
+**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 126 automated tests. Firecrawl search has been smoke-tested live (5 real results). As a free stopgap, the checker and rule reader can also run on Google Gemini with the same instructions (`CHECKER=gemini`, `PARSER=gemini`); the free tier is too small for a full eval run (see `evals/RESULTS.md`). The real Claude checker and agent and the Stripe sandbox cards are built behind switches but **have not been run live yet**, because their keys aren't on the build machine yet. The Claude eval numbers are pending for the same reason.
 
 ## Run it (offline, no keys)
 Needs Node 22.9 or later.
@@ -25,7 +25,7 @@ CHECKER=claude  PARSER=claude  SEARCH=firecrawl  SHOPPER=claude  ISSUER=stripe
 ANTHROPIC_API_KEY, FIRECRAWL_API_KEY, STRIPE_SECRET_KEY, STRIPE_CARDHOLDER_ID, STRIPE_WEBHOOK_SECRET
 ```
 
-Each switch is separate, so you can turn on one service at a time. Smoke tests: `npm run claude:smoke` and `npm run firecrawl:smoke`.
+Each switch is separate, so you can turn on one service at a time. Smoke tests: `npm run claude:smoke`, `npm run gemini:smoke` and `npm run firecrawl:smoke`.
 
 Stripe needs a **sandbox** account with Issuing turned on, a funded GBP Issuing balance and one cardholder (`ich_…`). The code refuses any key that doesn't start with `sk_test_`. Then run the Stripe CLI:
 
@@ -50,6 +50,7 @@ The agent never holds payment details. After approval the app creates a one-time
 | Keyword baseline | dev (48) | 27 (56%) | 12 | 8 |
 | Keyword baseline | held out (17) | 9 (53%) | 5 | 3 |
 | Claude (`claude-sonnet-5-5`) | both | pending | pending | pending |
+| Gemini (`gemini-3.8-flash`), free tier, partial | 22 of 65 answered | 22 (keyword: 19) | 0 (keyword: 2) | 0 |
 
 The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
 

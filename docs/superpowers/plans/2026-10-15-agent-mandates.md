@@ -4472,6 +4472,8 @@ git commit -m "feat(claude): fuzzy-rule checker with untrusted-data wrapper"
 
 ### Session 26: Claude: first eval run + error analysis
 
+> **Added 16 Oct 2026 (Rochak asked for a free stopgap while there's no Anthropic key):** Gemini checker and rule reader in `src/integrations/gemini/`, sharing the Claude instructions word for word (`CHECKER=gemini`, `PARSER=gemini`, `npm run gemini:smoke`). The free tier (about 5 calls a minute, 20 a day on `gemini-3.8-flash`) can't finish a 65-case run: 22 cases answered, 22/22 correct vs keyword 19/22 on the same cases (see `evals/RESULTS.md`). The eval now marks cases where the checker failed (`checkerError`) and refuses to save such runs. The Claude steps below are still pending the Anthropic key.
+
 **Files:**
 - Modify: `evals/RESULTS.md`, possibly `evals/cases.json` (label fixes only, with justification)
 - Create: `evals/results/<timestamp>_claude_claude-sonnet-5-5_v1_v1.json` (×2)
