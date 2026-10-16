@@ -4,7 +4,7 @@ Plain-English spending rules for a personal AI shopping agent, a checker that de
 
 Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
 
-**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 114 automated tests. The real Claude checker and agent, Firecrawl search and Stripe sandbox cards are built behind switches but **have not been run live yet**, because there are no API keys on the build machine. The Claude eval numbers are pending for the same reason.
+**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 114 automated tests. Firecrawl search has been smoke-tested live (5 real results). The real Claude checker and agent and the Stripe sandbox cards are built behind switches but **have not been run live yet**, because their keys aren't on the build machine yet. The Claude eval numbers are pending for the same reason.
 
 ## Run it (offline, no keys)
 Needs Node 22.9 or later.

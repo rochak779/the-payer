@@ -4825,7 +4825,7 @@ git commit -m "feat(claude): rule reading with Claude and a rule-reading eval"
 
 ### Session 29: Firecrawl: real web search
 
-> **As built:** SDK signature confirmed (`search(query, opts)` → `SearchData.web[]`). **Smoke run pending FIRECRAWL_API_KEY in .env.local** (the Firecrawl CLI is logged in, but its stored key wasn't copied into the app).
+> **As built:** SDK signature confirmed (`search(query, opts)` → `SearchData.web[]`). Smoke run done 16 Oct 2026, with the key copied from the Firecrawl CLI (`firecrawl env --file .env.local`) on Rochak's OK: 5 real results for the default Lisbon query. Note for Session 30: results are mostly forum threads and comparison sites (Facebook, Reddit, Expedia, momondo), with prices in dollars or euros, not single bookable offers, and the page text starts with site navigation. The live shopper has to pull an offer out of that, or ask.
 
 **Files:**
 - Create: `src/integrations/firecrawl/search.ts`, `scripts/firecrawl-smoke.ts`
@@ -4919,7 +4919,7 @@ import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
     search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
 ```
 
-- [ ] **Step 6: Smoke script, env and run** (script and env done; live run pending FIRECRAWL_API_KEY)
+- [x] **Step 6: Smoke script, env and run** (live run 16 Oct 2026: 5 results)
 
 ```ts
 // scripts/firecrawl-smoke.ts
