@@ -4547,7 +4547,7 @@ git commit -m "feat(claude): checker prompt v2 (<cluster>) with before/after eva
 
 ### Session 28: Claude: rule reading + rule-reading eval
 
-> **As built:** rule reader uses beta parse + fallbacks like Session 25 (test stub adjusted). 5 research cases added (p16–p20, with sources), so 20 parse cases. Pattern reader: 13/20, missing the five predicted plus the two $ limits. **Claude parse eval and the /rules UI check are pending a key.**
+> **As built:** rule reader uses beta parse + fallbacks like Session 25 (test stub adjusted). 5 research cases added (p16–p20, with sources), so 20 parse cases. Pattern reader: 13/20, missing the five predicted plus the two $ limits. **Steps 8–9 were run on Gemini instead of Claude (16 Oct, Rochak's decision; no Anthropic key).** `gemini-3.5-flash-lite` with the Claude reader's instructions: 19/20 and 18/20 over two runs. Every miss turned an "only…" sentence into a block rule instead of an ask (p12 both runs, p08 once), which errs strict. /rules check with `PARSER=gemini`: the train sentence gives the two expected rules. The rule reader's action is called from a button, not an HTML form, so the check posted the same `Next-Action` request the browser sends. **The Claude parse eval is still pending a key.**
 
 Brief metric: "rule-reading accuracy (did 'here's what I understood' match the intent?)".
 
@@ -4811,14 +4811,14 @@ main().catch((err) => { console.error(err); process.exit(1); });
 npm pkg set scripts.eval:parse="node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts"
 ```
 
-- [ ] **Step 8: Run tests, then both parsers** (pattern done: 13/20; Claude pending a key)
+- [x] **Step 8: Run tests, then both parsers** (pattern: 13/20; run on Gemini instead of Claude: 19/20 and 18/20; Claude pending a key)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 Run: `npm run eval:parse -- --parser pattern` then `npm run eval:parse -- --parser claude`
 Expected: the pattern parser misses p05, p09, p12, p14, p15 (dates, compound sentences, partial rules, €). Claude should get most. Add a "Rule-reading accuracy" table to `evals/RESULTS.md` with both rows.
 
-- [ ] **Step 9: Live check in the UI.** (pending a key) Set `PARSER=claude` in `.env.local`, restart `npm run dev`, then on /rules type `Keep train tickets under £100 and never buy first class.` Expected: two rules shown (a cap that asks, a judgement rule that blocks).
+- [x] **Step 9: Live check in the UI.** (done with `PARSER=gemini`, 16 Oct; Claude pending a key) Set `PARSER=claude` in `.env.local`, restart `npm run dev`, then on /rules type `Keep train tickets under £100 and never buy first class.` Expected: two rules shown (a cap that asks, a judgement rule that blocks).
 
 - [x] **Step 10: Commit**
 

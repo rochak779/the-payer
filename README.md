@@ -57,7 +57,7 @@ The agent never holds payment details. After approval the app creates a one-time
 
 The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
 
-**Rule reading** ("here's what I understood"): 20 plain-English rules. The offline pattern reader gets 13/20; Claude is pending.
+**Rule reading** ("here's what I understood"): 20 plain-English rules. The offline pattern reader gets 13/20. Gemini Flash-Lite gets 19/20 and 18/20 over two runs; its misses read "only…" as "never" (block instead of ask). Claude is unmeasured (no key).
 
 Commands: `npm run eval -- --checker claude --label v1` and `npm run eval:parse -- --parser claude`. Results are in `evals/RESULTS.md`, on the `/evals` page, and as saved runs in `evals/results/`.
 

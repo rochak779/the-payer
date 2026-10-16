@@ -65,4 +65,7 @@ Does "here's what I understood" match what the person meant? 20 plain-English ru
 | Reader | Date | Correct | Notes |
 |---|---|---|---|
 | pattern (offline) | 2026-10-15 | 13/20 | Misses dates, € and $ limits, and two-part sentences. Two misreads are risky: "I only shop at Tesco for groceries" became "only ever use *tesco for groceries*" (would block everything else), and "No subscriptions that renew automatically" became a ban on all subscriptions. |
-| claude-sonnet-5-5 | pending | – | Needs an Anthropic key: `npm run eval:parse -- --parser claude`. |
+| gemini-3.5-flash-lite (free), run 1 / 2 | 2026-10-16 | 19/20, 18/20 | Same instructions as the Claude reader. Gets the dates, € and $ limits and two-part sentences the pattern reader misses. Every miss turned an "only…" sentence into a "never": "I only shop at Tesco for groceries" (p12, both runs) and "Only hotels rated 8/10 or better" (p08, run 2) became rules that block instead of ask. That errs strict: a purchase outside them is blocked, not approved. `npm run eval:parse -- --parser gemini`. |
+| claude-sonnet-5-5 | pending | – | Built behind `PARSER=claude` but not measured: no Anthropic key. `npm run eval:parse -- --parser claude`. |
+
+UI check (16 Oct, `PARSER=gemini npm run dev`): "Keep train tickets under £100 and never buy first class." on /rules shows two rules, "Trains over £100 → I'll ask you first" (checked by code) and "never buy first class" (judged by AI, blocks). Saved runs: `evals/results/parse/`.

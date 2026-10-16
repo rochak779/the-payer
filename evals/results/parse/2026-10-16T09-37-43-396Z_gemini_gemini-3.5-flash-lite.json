@@ -1,0 +1,229 @@
+{
+  "parser": "gemini:gemini-3.5-flash-lite",
+  "correct": 18,
+  "total": 20,
+  "results": [
+    {
+      "id": "p01",
+      "text": "Hotels up to £150 a night.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",15000,\"GBP\",\"unit\",\"hotel\"]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",15000,\"GBP\",\"unit\",\"hotel\"]"
+      ]
+    },
+    {
+      "id": "p02",
+      "text": "Never spend more than £400 on one purchase.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"block\",40000,\"GBP\",\"purchase\",null]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"block\",40000,\"GBP\",\"purchase\",null]"
+      ]
+    },
+    {
+      "id": "p03",
+      "text": "No gift cards.",
+      "correct": true,
+      "got": [
+        "[\"category\",\"block\",\"block\",[\"gift_card\"]]"
+      ],
+      "want": [
+        "[\"category\",\"block\",\"block\",[\"gift_card\"]]"
+      ]
+    },
+    {
+      "id": "p04",
+      "text": "Never book with Ryanair.",
+      "correct": true,
+      "got": [
+        "[\"merchant\",\"block\",\"block\",[\"ryanair\"]]"
+      ],
+      "want": [
+        "[\"merchant\",\"block\",\"block\",[\"ryanair\"]]"
+      ]
+    },
+    {
+      "id": "p05",
+      "text": "Never buy anything outside 1 Nov – 31 Dec 2026.",
+      "correct": true,
+      "got": [
+        "[\"date_window\",\"block\",\"2026-11-01\",\"2026-12-31\"]"
+      ],
+      "want": [
+        "[\"date_window\",\"block\",\"2026-11-01\",\"2026-12-31\"]"
+      ]
+    },
+    {
+      "id": "p06",
+      "text": "Nothing non-refundable.",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"block\"]"
+      ]
+    },
+    {
+      "id": "p07",
+      "text": "Ask me before buying anything that's a gift or for someone else.",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"ask\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"ask\"]"
+      ]
+    },
+    {
+      "id": "p08",
+      "text": "Only hotels rated 8/10 or better.",
+      "correct": false,
+      "got": [
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"ask\"]"
+      ]
+    },
+    {
+      "id": "p09",
+      "text": "Keep train tickets under £100 and never buy first class.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",10000,\"GBP\",\"purchase\",\"train\"]",
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",10000,\"GBP\",\"purchase\",\"train\"]",
+        "[\"judgement\",\"block\"]"
+      ]
+    },
+    {
+      "id": "p10",
+      "text": "Don't use Amazon or eBay.",
+      "correct": true,
+      "got": [
+        "[\"merchant\",\"block\",\"block\",[\"amazon\",\"ebay\"]]"
+      ],
+      "want": [
+        "[\"merchant\",\"block\",\"block\",[\"amazon\",\"ebay\"]]"
+      ]
+    },
+    {
+      "id": "p11",
+      "text": "Max £50 on restaurants.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",5000,\"GBP\",\"purchase\",\"restaurant\"]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",5000,\"GBP\",\"purchase\",\"restaurant\"]"
+      ]
+    },
+    {
+      "id": "p12",
+      "text": "I only shop at Tesco for groceries.",
+      "correct": false,
+      "got": [
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"ask\"]"
+      ]
+    },
+    {
+      "id": "p13",
+      "text": "Ask me about anything over £200.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",20000,\"GBP\",\"purchase\",null]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",20000,\"GBP\",\"purchase\",null]"
+      ]
+    },
+    {
+      "id": "p14",
+      "text": "No subscriptions that renew automatically.",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"block\"]"
+      ]
+    },
+    {
+      "id": "p15",
+      "text": "Spend up to €300 on flights.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",30000,\"EUR\",\"purchase\",\"flight\"]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",30000,\"EUR\",\"purchase\",\"flight\"]"
+      ]
+    },
+    {
+      "id": "p16",
+      "text": "I'd be OK giving my agent a $100 limit.",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",10000,\"USD\",\"purchase\",null]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",10000,\"USD\",\"purchase\",null]"
+      ]
+    },
+    {
+      "id": "p17",
+      "text": "Ask me before spending more than $500",
+      "correct": true,
+      "got": [
+        "[\"amount_cap\",\"ask\",50000,\"USD\",\"purchase\",null]"
+      ],
+      "want": [
+        "[\"amount_cap\",\"ask\",50000,\"USD\",\"purchase\",null]"
+      ]
+    },
+    {
+      "id": "p18",
+      "text": "Do not show me non-refundable, semi-flexible, or 'basic economy' rates, even if they are significantly cheaper.",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"block\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"block\"]"
+      ]
+    },
+    {
+      "id": "p19",
+      "text": "if it was a tiny amount, like under $20 for something i buy regularly, i could maybe get used to it",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"ask\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"ask\"]"
+      ]
+    },
+    {
+      "id": "p20",
+      "text": "The gift costs a bit more than I budgeted, and the agent must know to contact me in that case.",
+      "correct": true,
+      "got": [
+        "[\"judgement\",\"ask\"]"
+      ],
+      "want": [
+        "[\"judgement\",\"ask\"]"
+      ]
+    }
+  ]
+}
