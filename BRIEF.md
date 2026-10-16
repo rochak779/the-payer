@@ -202,6 +202,8 @@ Run it locally; deploy to Vercel only when I need a shareable link. AI: measured
   - **Slow or missing answers are declined.** The same "approve" sent after 5 seconds was declined, and so was a charge with our server switched off. Through the CLI both show as `webhook_error`, not `webhook_timeout`.
   - **A card-limit decline is reported as `authorization_controls`,** not `spending_controls` as the plan assumed. The app's Activity wording now handles both.
   - **The app's own webhook works:** a charge on a card with no matching approval was declined, and Activity shows "Charge of £10 at Spike Test Shop declined. No approved purchase matches this card."
+  - **End to end with real sandbox cards (Session 33, 16 Oct 2026):** "Buy me a programming book" was approved by the checker. A one-time card was made for up to £35 at Waterstones, and Stripe approved the £35 charge through our webhook (`webhook_approved`). Then "charge £20 more" (£55), "charge from another shop" and "charge again" were all declined by the card's own £35 limit (`authorization_controls`), before our webhook was asked. So live, the card limit is what stops a second shop; our payment check is the backstop.
+  - **Not yet shown live:** the £240 Lisbon booking. The sandbox Issuing balance held £190, and Stripe declined for insufficient funds; the app's Activity said so in plain English.
 
 **Account pre-flight (Session 0.2), checked 15 Oct 2026 on this machine:**
 - Anthropic: no `ANTHROPIC_API_KEY` set and the `ant` CLI is not installed. Needed from Phase 8 (Session 24).

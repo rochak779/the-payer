@@ -5417,7 +5417,7 @@ git commit -m "feat(stripe): real-time authorisation webhook backed by the payme
 
 ### Session 33: Stripe: real one-time cards, end to end
 
-> **As built:** code and unit test done; ISSUER=stripe switch added. **Step 6 started live 16 Oct 2026:** the Lisbon booking was approved and a real sandbox card issued, but Stripe declined the £240 charge because the sandbox Issuing balance held only £200 (the app's log said so in plain English). Pending: Rochak adds test funds, then rerun steps 1–3. Step 7 waits on that.
+> **As built:** code and unit test done; ISSUER=stripe switch added. **Steps 6–7 done live 16 Oct 2026, with one substitution:** the Lisbon booking was approved and a real card issued, but Stripe declined the £240 charge for insufficient funds (the sandbox balance held £190). So steps 1–3 ran on "Buy me a programming book" (£35) instead: paid through our webhook (`webhook_approved`). "charge £20 more", "charge from another shop" and "charge again" were all declined by the card's own limit (`authorization_controls`). The other-shop decline comes from Stripe's limit, not our payment check, as predicted. README and BRIEF updated. Rerun Lisbon once the balance is £240 or more.
 
 **Files:**
 - Create: `src/integrations/stripe/issuer.ts`
@@ -5534,7 +5534,7 @@ import { createStripeIssuer } from '@/integrations/stripe/issuer';
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 6: End-to-end demo check** (`ISSUER=stripe` in `.env.local`; the dev server must be running, because it answers the webhook)
+- [x] **Step 6: End-to-end demo check** (`ISSUER=stripe` in `.env.local`; the dev server must be running, because it answers the webhook) (done live 16 Oct 2026 with the £35 book; Lisbon needs a £240+ balance)
 
 ```bash
 npm run seed
@@ -5551,7 +5551,7 @@ In the browser:
 5. /ask → nephew present → /approvals → Approve. Expected: card issued and paid.
 6. Turn off agent while a purchase is approved but not yet charged (approve one from the Approvals tab with the stripe listener stopped, then turn off). Expected: card shows `canceled` in the Stripe dashboard.
 
-- [ ] **Step 7: Update BRIEF.md** with what was demonstrated and any surprises (timeout behaviour, dashboard settings).
+- [x] **Step 7: Update BRIEF.md** with what was demonstrated and any surprises (timeout behaviour, dashboard settings).
 
 - [x] **Step 8: Commit**
 

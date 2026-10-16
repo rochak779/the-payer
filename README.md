@@ -87,7 +87,8 @@ The Rules tab can show your saved rules as an **AP2 v0.2 open Payment Mandate** 
 
 Notes:
 - Steps 1–5 were dry-run offline on the stand-ins (16 Oct 2026) and behave as above. Offline, the fake card lists every reason for a decline ("already used" as well as "over the approved amount" or "not the approved merchant"). Step 6's rows are in `evals/RESULTS.md`; there are no Claude rows yet (no key).
-- Live with Stripe, step 4 may look different: the card has already paid the full approved amount, so Stripe's own card limit will probably decline "charge from another shop" before our payment check is asked. The Activity log names whichever check declined it. Confirm this on the first live run (plan Session 33, step 6); if so, either say it that way in the video or show the merchant check offline.
+- **Live with Stripe (checked 16 Oct 2026), step 4 looks different:** the card has already paid the full approved amount, so Stripe's own card limit declines "charge from another shop" (and "charge again") before our payment check is asked. Activity says "Declined by the card's own spending limit at Stripe" for all three. In the video, say it that way ("the card itself refuses anything beyond what you approved"), or show the merchant check offline, where Activity names the shop.
+- **Before recording the Lisbon booking live,** the sandbox Issuing balance must hold at least £240. On 16 Oct it held £190, so the live check used the £35 book task instead.
 - Live search results vary. If the agent picks a hotel that triggers an "ask" in step 2, show the reason and approve it: that is still the story.
 - With the AI agent (`SHOPPER=gemini`), run steps 2–3 on live search. The canned search only answers the scripted agent's own queries: asked for "LEGO Star Wars…", it returns a programming book, so the nephew task ends without a purchase. That AI agent run on live search hasn't been finished yet (Gemini's daily limit); dry-run it first.
 
