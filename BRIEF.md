@@ -93,11 +93,11 @@ These are saved as structured rules, stored in AP2-style format.
 
 **Each purchase:**
 1. User: "Book a hotel in Lisbon, 7–9 Nov."
-2. The app sends this to Claude (the shopper agent) with two tools: search the web, and request a purchase.
+2. The app sends this to an AI shopper agent with two tools: search the web, and request a purchase. (Measured on Google's free Gemini Flash-Lite; a Claude version is built behind a switch but unmeasured, for want of an Anthropic key.)
 3. The agent researches real listings with Firecrawl (real prices, real refund policies) and picks one. It has no card.
 4. The agent calls request_purchase(item, merchant, price, refund policy, link).
 5. The checker decides **approve / ask the user / block**, with a plain-English reason.
-   Code checks the hard limits; Claude checks the fuzzy rules.
+   Code checks the hard limits; an AI checker judges the fuzzy rules.
 6. If approved (automatically or by the user's tap): the app creates a Stripe single-use virtual card limited to that merchant and amount.
    It tags the card's metadata with an approval_id.
 7. The purchase is simulated: the app uses Stripe's test helper to act as if the merchant had charged the card. **This is the only fake step.**
@@ -108,7 +108,7 @@ These are saved as structured rules, stored in AP2-style format.
 ## Integrations
 | Piece | Role | Provider | Cost |
 |---|---|---|---|
-| Claude API | The shopper agent + the fuzzy-rule checker | Anthropic | Pennies per run |
+| AI model | The shopper agent, the fuzzy-rule checker and the rule reader | Google Gemini 3.5 Flash-Lite (free tier) for now. Claude (Anthropic) is built behind a switch, unmeasured: no key yet | Free: 500 requests a day; Google may use free-tier prompts, so mock data only. Claude: pennies per run |
 | Web search/scrape | Real listings for the agent | Firecrawl (I already have a key) | Free credits |
 | Stripe **sandbox**, Issuing | Single-use virtual cards, spending controls, real-time authorisation webhook, test purchases | Stripe | Free |
 | Stripe CLI | Forwards webhooks to localhost, so no hosting needed | Stripe | Free |
@@ -130,7 +130,7 @@ These are saved as structured rules, stored in AP2-style format.
 4. **Activity log:** every decision with its reason, plus a "turn off agent" button.
 5. Optional, for interviews: an eval results page.
 Tech: one web app holding both the UI and the checker (e.g. Next.js + TypeScript, SQLite or a JSON file for storage).
-Run it locally; deploy to Vercel only when I need a shareable link. Use the latest Claude models (e.g. claude-sonnet-5-5; claude-haiku-5-5 for cheap checks if useful).
+Run it locally; deploy to Vercel only when I need a shareable link. AI: measured on Google's free `gemini-3.5-flash-lite`, using the instructions written for Claude. The Claude version (claude-sonnet-5-5; claude-haiku-5-5 for cheap checks) is built behind a switch and will be measured once there's an Anthropic key.
 
 ## Evals (the core of the interview story)
 - Test set: 50–100 purchase requests, each labelled approve / ask / block against a fixed set of user rules.
@@ -158,14 +158,14 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
    Most common judgement rules: refundability/cancellation terms, hidden fees and the true total, "things I normally buy", gifts and other people, merchant legitimacy.
    Details: `research/rules-test.md`, `research/incidents.md` (29 incidents).
 2. **Checker + eval set,** run from the terminal, no UI. Get the numbers.
-   **Status (16 Oct 2026): built and measured.** 67 cases (50 dev, 17 held out), 10 rules (added `genuine-shop` for merchant legitimacy; two relabelling cases added 16 Oct). Keyword baseline: dev 28/50 with 12 wrong approvals and 8 needless asks; held out 9/17 with 5 and 3. **Gemini 3.5 Flash-Lite (free, Rochak's call while there's no Anthropic key), prompt v4: held out 14/17 in two runs with no wrong approvals; 0–1 wrong approvals per run across all 67.** Details in `evals/RESULTS.md`. Rule reading: pattern reader 13/20. Claude checker and Claude rule reader are built; **their eval runs (plan Sessions 26–27, 35 step 5) wait on an Anthropic key.**
+   **Status (16 Oct 2026): built and measured.** 67 cases (50 dev, 17 held out), 10 rules (added `genuine-shop` for merchant legitimacy; two relabelling cases added 16 Oct). Keyword baseline: dev 28/50 with 12 wrong approvals and 8 needless asks; held out 9/17 with 5 and 3. **Gemini 3.5 Flash-Lite (free, Rochak's call while there's no Anthropic key), prompt v4: held out 14/17 in two runs with no wrong approvals; 0–1 wrong approvals per run across all 67.** Details in `evals/RESULTS.md`. Rule reading: pattern reader 13/20; Gemini Flash-Lite 19/20 and 18/20 (its misses read "only…" as "never", which errs strict). The Claude checker and rule reader are built behind a switch but **unmeasured: their eval runs wait on an Anthropic key.**
 3. **Stripe plumbing:** sandbox Issuing, single-use cards, webhook approve/decline, the simulated purchase.
    **Status: built and tested offline** (fake issuer, Stripe issuer, real-time authorisation webhook checked with locally signed events). **Live run waits on Stripe sandbox access** (plan Sessions 31 steps 5–7, 32 live check, 33 steps 6–7).
 4. **Screens** (4, plus optionally the results page).
    **Status: done.** Rules, Ask, Approvals, Activity, plus the Evals page and an "AP2 open mandate" view on Rules. README has run instructions, a demo checklist and the video run-of-show; steps 1–5 were dry-run offline.
 5. **5 real users** test it with their own rules and tasks. Then the one-pager and the demo video.
-   **Status: not started.** Left to do first: add the keys and run Sessions 24–33's live steps; run the Claude evals; record the video (README run-of-show).
-   For the user test: run it on Rochak's laptop (in person or a shared screen). Don't deploy as-is: the app stores data in one local JSON file, which doesn't persist on Vercel. Use `PARSER=claude`, since the offline reader misreads 7 of 20 rules. For each person, record whether "here's what I understood" matched what they meant, and whether each decision was the one they'd want (wrong approval, needless ask or fine).
+   **Status: not started.** Left to do first: finish the live steps (plan Session 30's AI agent on live search, cut short by Gemini's free daily limit, and Session 33); record the video (README run-of-show). The Claude evals wait on an Anthropic key.
+   For the user test: run it on Rochak's laptop (in person or a shared screen). Don't deploy as-is: the app stores data in one local JSON file, which doesn't persist on Vercel. Use `PARSER=gemini` (or `claude` once there's a key), since the offline reader misreads 7 of 20 rules. **Gemini's free tier may use prompts to improve Google's products,** and testers type their own rules and tasks: tell them not to enter anything personal, or use a paid key. For each person, record whether "here's what I understood" matched what they meant, and whether each decision was the one they'd want (wrong approval, needless ask or fine).
 
 ## Decisions (15 Oct 2026)
 - Implementation plan: `docs/superpowers/plans/2026-10-15-agent-mandates.md` (35 small sessions).
