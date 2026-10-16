@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { CheckerAnswerError } from '@/checker/fuzzy';
 import { keywordChecker } from '@/checker/keywordChecker';
 import { makeRequest } from '@/test/factories';
 import type { EvalCase } from './schema';
@@ -21,6 +22,14 @@ describe('runCases', () => {
     const rules = [{ id: 'refundable', kind: 'judgement' as const, source: 'Nothing non-refundable.', onBreach: 'block' as const, text: 'Nothing non-refundable.' }];
     const failing = { name: 'down', check: async () => { throw new Error('429 quota exceeded'); } };
     const [result] = await runCases(cases, rules, failing);
-    expect(result).toMatchObject({ actual: 'ask', checkerError: true });
+    expect(result).toMatchObject({ actual: 'ask', checkerError: true, unreadable: false });
+  });
+
+  it('scores a refusal or junk answer as a real "ask", because users meet it too', async () => {
+    const cases: EvalCase[] = [{ id: 'within-01', category: 'within', split: 'dev', expected: 'approve', why: 'x', request: makeRequest() }];
+    const rules = [{ id: 'refundable', kind: 'judgement' as const, source: 'Nothing non-refundable.', onBreach: 'block' as const, text: 'Nothing non-refundable.' }];
+    const refusing = { name: 'refuses', check: async () => { throw new CheckerAnswerError('the model declined'); } };
+    const [result] = await runCases(cases, rules, refusing);
+    expect(result).toMatchObject({ actual: 'ask', checkerError: false, unreadable: true });
   });
 });

@@ -1,7 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import { betaZodOutputFormat } from '@anthropic-ai/sdk/helpers/beta/zod';
 import { z } from 'zod';
-import type { FuzzyChecker } from '@/checker/fuzzy';
+import { CheckerAnswerError, type FuzzyChecker } from '@/checker/fuzzy';
 import { formatMoney } from '@/domain/money';
 import { Category, type JudgementRule, type PurchaseRequest, type Rule } from '@/domain/types';
 import { explainRule } from '@/rules/explain';
@@ -86,8 +86,8 @@ export function createClaudeFuzzyChecker(opts: { model?: string; effort?: Effort
         fallbacks: 'default',
       });
       // Both cases end up as "ask" in checkPurchase: failing safe, never approving.
-      if (response.stop_reason === 'refusal') throw new Error('the model declined to check this purchase');
-      if (!response.parsed_output) throw new Error(`no readable answer (stop reason: ${response.stop_reason})`);
+      if (response.stop_reason === 'refusal') throw new CheckerAnswerError('the model declined to check this purchase');
+      if (!response.parsed_output) throw new CheckerAnswerError(`no readable answer (stop reason: ${response.stop_reason})`);
       return response.parsed_output;
     },
   };

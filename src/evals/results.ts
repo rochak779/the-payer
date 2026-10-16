@@ -36,6 +36,8 @@ export function formatReport(run: SavedRun): string {
   const lines = [`Checker: ${run.checker}${run.label ? ` (${run.label})` : ''}`];
   const errors = run.metrics.all.checkerErrors ?? 0; // older saved runs have no count
   if (errors) lines.unshift(`WARNING: the checker failed on ${errors} of ${run.metrics.all.total} cases (counted as asks). Do not quote these numbers.`);
+  const unreadable = run.metrics.all.unreadableAnswers ?? 0;
+  if (unreadable) lines.push(`The model refused or gave an unreadable answer on ${unreadable} of ${run.metrics.all.total} cases (scored as asks).`);
   for (const [name, m] of Object.entries(run.metrics)) {
     if (m.total === 0) continue;
     lines.push(`\n[${name}] ${m.correct}/${m.total} correct (${pct(m.accuracy)})`);

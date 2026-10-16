@@ -132,6 +132,16 @@ describe('checkPurchase', () => {
       expect(d.outcome).toBe('approve');
     });
 
+    it("asks, never blocks, when the reading only breaks an \"only…\" rule or a scoped cap", async () => {
+      // The agent's label is right and the code cleared it; the checker's different reading is uncertain.
+      const onlyTravel: Rule = { id: 'only-travel', source: 'Only buy train tickets and hotels.', onBreach: 'block', kind: 'category', mode: 'allow_only', categories: ['train', 'hotel'] };
+      const req = makeRequest({ item: 'Eurostar London to Paris', category: 'train' });
+      expect((await checkPurchase(req, ctx([onlyTravel], readsAs('event_ticket')))).outcome).toBe('ask');
+      const strictHotelCap: Rule = { ...hotelCap, id: 'hotel-cap-block', onBreach: 'block' };
+      const big = makeRequest({ category: 'other', total: { minor: 38000, currency: 'GBP' }, units: 2, unitLabel: 'night' });
+      expect((await checkPurchase(big, ctx([strictHotelCap], readsAs('hotel')))).outcome).toBe('ask');
+    });
+
     it('never removes a breach the label caused', async () => {
       const req = makeRequest({ category: 'gift_card' });
       const d = await checkPurchase(req, ctx([noGiftCards], readsAs('home')));

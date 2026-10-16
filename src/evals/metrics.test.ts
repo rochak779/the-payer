@@ -27,6 +27,11 @@ describe('computeMetrics', () => {
     expect(m.checkerErrors).toBe(1);
   });
 
+  it('counts refusals and unreadable answers separately from outages', () => {
+    const m = computeMetrics([{ ...r('approve', 'ask'), unreadable: true }, r('ask', 'ask')]);
+    expect(m).toMatchObject({ unreadableAnswers: 1, checkerErrors: 0 });
+  });
+
   it('handles an empty list', () => {
     expect(computeMetrics([]).accuracy).toBe(0);
   });

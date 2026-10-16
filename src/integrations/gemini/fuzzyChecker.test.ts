@@ -1,6 +1,7 @@
 import type { GoogleGenAI } from '@google/genai';
 import { describe, expect, it, vi } from 'vitest';
 import { checkPurchase } from '@/checker/checkPurchase';
+import { CheckerAnswerError } from '@/checker/fuzzy';
 import { getFuzzyChecker } from '@/checker/registry';
 import type { JudgementRule } from '@/domain/types';
 import { PROMPT_VERSION, renderPrompt } from '@/integrations/claude/fuzzyChecker';
@@ -46,6 +47,13 @@ describe('Gemini fuzzy checker', () => {
     const d = await checkPurchase(makeRequest(), { rules: [refundRule], agentEnabled: true, fuzzy: createGeminiFuzzyChecker({ client }) });
     expect(d.outcome).toBe('ask');
     expect(d.summary).toContain('declined');
+  });
+
+  it('marks a blocked prompt and a junk answer as the model\'s own answer, not an outage', async () => {
+    for (const response of [{ promptFeedback: { blockReason: 'SAFETY' } }, { text: 'not json' }]) {
+      const { client } = fakeClient(response);
+      await expect(createGeminiFuzzyChecker({ client }).check(makeRequest(), [refundRule])).rejects.toBeInstanceOf(CheckerAnswerError);
+    }
   });
 
   it('an answer that is not the expected JSON becomes "ask"', async () => {
