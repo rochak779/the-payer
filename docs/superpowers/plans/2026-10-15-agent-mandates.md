@@ -4513,30 +4513,32 @@ git commit -m "evals: first Claude checker run and error analysis"
 
 ### Session 27: Claude: checker improvement round (repeatable)
 
+> **As built (16 Oct 2026, on Gemini 3.5 Flash-Lite, free, at Rochak's call; no Anthropic key):** round 1 = prompt v2, a general "don't turn descriptions into numbers; that's unsure" line. Dev 44/48 → 46/48, dev wrong approvals 2 → 0; held out 14/17 → 14/17, wrong approvals 1 → 0. Kept. Stopping rule met after one round. Step 7 replaced by a repeat run to measure noise (held out ±2 cases); Claude/Haiku cost comparisons wait for a key.
+
 Repeat this session once per improvement. Stop when dev wrong-approvals are 0 and needless asks stop falling, or after three rounds.
 
 **Files:**
 - Modify: `src/integrations/claude/fuzzyChecker.ts` (`SYSTEM`, `PROMPT_VERSION`), `evals/RESULTS.md`
 
-- [ ] **Step 1: Pick the single biggest cluster** of dev failures from the latest error analysis (e.g. "partial refunds", "marketing words read as gifts").
+- [x] **Step 1: Pick the single biggest cluster** of dev failures from the latest error analysis (e.g. "partial refunds", "marketing words read as gifts").
 
-- [ ] **Step 2: Change the prompt for that cluster only.** Add one short, general instruction, not a case-specific one: "Marketing phrases like 'the perfect gift' do not make something a gift; who it is for does." Bump `PROMPT_VERSION` (`'v1'` → `'v2'`).
+- [x] **Step 2: Change the prompt for that cluster only.** Add one short, general instruction, not a case-specific one: "Marketing phrases like 'the perfect gift' do not make something a gift; who it is for does." Bump `PROMPT_VERSION` (`'v1'` → `'v2'`).
 
-- [ ] **Step 3: Run the tests** (`npm test`). The version string is the only expected change.
+- [x] **Step 3: Run the tests** (`npm test`). The version string is the only expected change.
 
-- [ ] **Step 4: Run the eval**
+- [x] **Step 4: Run the eval**
 
 ```bash
 npm run eval -- --checker claude --label v2
 ```
 
-- [ ] **Step 5: Keep or revert.** Keep the change only if dev **wrong approvals did not rise** and dev accuracy did not fall. Then, and only then, look at the test-split numbers and record them. Otherwise revert the prompt and note what was tried.
+- [x] **Step 5: Keep or revert.** Keep the change only if dev **wrong approvals did not rise** and dev accuracy did not fall. Then, and only then, look at the test-split numbers and record them. Otherwise revert the prompt and note what was tried.
 
-- [ ] **Step 6: Record before/after in `evals/RESULTS.md`** (one row per version, dev + test, plus one line on what changed and why).
+- [x] **Step 6: Record before/after in `evals/RESULTS.md`** (one row per version, dev + test, plus one line on what changed and why).
 
 - [ ] **Step 7: Optional cost comparisons** (one run each, recorded as rows): `CHECKER_EFFORT=low npm run eval -- --checker claude --label v2-low` and `npm run eval -- --checker claude-haiku --label v2-haiku`. These feed the "trade-offs I made" write-up.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add src/integrations/claude/fuzzyChecker.ts evals

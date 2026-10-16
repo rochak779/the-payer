@@ -8,13 +8,23 @@ Fixed rule set: `evals/rules.json` (10 rules). 65 cases (48 dev / 17 held-out te
 | keyword-baseline | 2026-10-15 | test | 9/17 (53%) | 5 | 3 | 0 | 0 |
 | gemini-3.5-flash-lite v1 (free) | 2026-10-16 | dev | 44/48 (92%) | 2 | 1 | 1 | 0 |
 | gemini-3.5-flash-lite v1 (free) | 2026-10-16 | test | 14/17 (82%) | 1 | 1 | 1 | 0 |
+| gemini-3.5-flash-lite v2 (free) | 2026-10-16 | dev | 46/48 (96%) | 0 | 1 | 1 | 0 |
+| gemini-3.5-flash-lite v2 (free) | 2026-10-16 | test | 14/17 (82%) | 0 | 2 | 1 | 0 |
 | claude-sonnet-5-5 v1, v2, final | pending | dev + test | – | – | – | – | – |
 
-Saved runs: `evals/results/2026-10-15T22-42-40-898Z_keyword-baseline_baseline.json`, `evals/results/2026-10-16T08-34-42-700Z_gemini_gemini-3.5-flash-lite_v1_flash-lite-v1.json`.
+Saved runs: `evals/results/2026-10-15T22-42-40-898Z_keyword-baseline_baseline.json`, `evals/results/2026-10-16T08-48-36-027Z_gemini_gemini-3.5-flash-lite_v2_v2.json`, `evals/results/2026-10-16T08-34-42-700Z_gemini_gemini-3.5-flash-lite_v1_flash-lite-v1.json`.
 
 Claude rows are pending an Anthropic key (no key on the build machine). To fill them: `npm run eval -- --checker claude --label v1` (Session 26), the improvement round (Session 27), then `npm run eval -- --checker claude --label final`. Re-checked 16 Oct 2026: the keyword baseline still gives the numbers above.
 
-## Gemini 3.5 Flash-Lite, first full run (16 Oct 2026)
+## Improvement round 1: prompt v2 (16 Oct 2026)
+- **Change:** one general line under "unsure": if a rule needs a specific fact (a number, a date, a policy) and the text only describes it in general words, answer "unsure", and don't turn descriptions like "very good" into numbers. Picked because both dev wrong approvals were "should have said unsure". The prompt is shared, so the Claude checker gets the same change.
+- **Dev:** 44/48 → **46/48**; wrong approvals 2 → **0**. Kept, by the plan's rule (dev wrong approvals didn't rise, dev accuracy didn't fall).
+- **Held out:** 14/17 → 14/17; wrong approvals 1 → **0**; needless asks 1 → 2 (a book with no word on who it's for became "not sure" about the gifts rule).
+- **Zero wrong approvals across all 65 cases.** Still wrong: 2 wrong blocks (a 100% first-night fee, "store credit only") and 3 needless asks (all the gifts rule).
+- **How noisy is one run?** A repeat of v2 gave dev 46/48 again, held out 15–16/17, and zero wrong approvals among the 64 cases answered. One call failed, so that run wasn't saved; the failed case was one where "ask" was right, so it may have counted as correct by accident. Read held-out scores as ±2 cases.
+- **Stopping rule met** (dev wrong approvals 0, needless asks no longer falling), so no round 2 on prompt wording.
+
+## Gemini 3.5 Flash-Lite, first full run: prompt v1 (16 Oct 2026)
 Google's free `gemini-3.5-flash-lite`, same instructions as the Claude checker (prompt v1), one call at a time. All 65 cases answered; no limit or outage errors. About 4.4 seconds per check (median).
 - **Held out: 14/17 (82%)** vs keyword 9/17. **All cases: 58/65** vs keyword 36/65. Wrong approvals 3 (keyword 17), needless asks 2 (keyword 11).
 - **Wrong approvals (3), the money-at-risk kind:** all three are "should have said unsure". `price-02`: a £12/night city tax payable at the hotel takes £145 to £157, over the £150 limit, and it wasn't flagged as a hidden cost. `ambiguous-06`: "Very good" isn't a number, so the 8/10 rating rule can't be confirmed. `ambiguous-07`: two ratings disagree (9.2 on the hotel's own site, 6.8 elsewhere).

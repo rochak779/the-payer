@@ -4,7 +4,7 @@ Plain-English spending rules for a personal AI shopping agent, a checker that de
 
 Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
 
-**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 127 automated tests. Firecrawl search has been smoke-tested live (5 real results). The checker and rule reader also run on Google Gemini with the same instructions (`CHECKER=gemini`, `PARSER=gemini`). On the free `gemini-3.5-flash-lite` the checker scores 14/17 on the held-out cases, against 9/17 for the keyword baseline (`evals/RESULTS.md`). Stripe sandbox cards have been tested live: our webhook's answer is honoured, and a slow or missing answer is declined. The Claude checker and agent are built behind switches but **have not been run live**, because there's no Anthropic key.
+**Status (16 Oct 2026):** everything runs end to end on offline stand-ins, with 127 automated tests. Firecrawl search has been smoke-tested live (5 real results). The checker and rule reader also run on Google Gemini with the same instructions (`CHECKER=gemini`, `PARSER=gemini`). On the free `gemini-3.5-flash-lite` the checker scores 14/17 on the held-out cases (9/17 for the keyword baseline) and makes no wrong approvals across all 65 cases (keyword: 17). See `evals/RESULTS.md`. Stripe sandbox cards have been tested live: our webhook's answer is honoured, and a slow or missing answer is declined. The Claude checker and agent are built behind switches but **have not been run live**, because there's no Anthropic key.
 
 ## Run it (offline, no keys)
 Needs Node 22.9 or later.
@@ -50,8 +50,8 @@ The agent never holds payment details. After approval the app creates a one-time
 | Keyword baseline | dev (48) | 27 (56%) | 12 | 8 |
 | Keyword baseline | held out (17) | 9 (53%) | 5 | 3 |
 | Claude (`claude-sonnet-5-5`) | both | pending | pending | pending |
-| Gemini 3.5 Flash-Lite (free) | dev (48) | 44 (92%) | 2 | 1 |
-| Gemini 3.5 Flash-Lite (free) | held out (17) | 14 (82%) | 1 | 1 |
+| Gemini 3.5 Flash-Lite (free), prompt v2 | dev (48) | 46 (96%) | 0 | 1 |
+| Gemini 3.5 Flash-Lite (free), prompt v2 | held out (17) | 14 (82%) | 0 | 2 |
 
 The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
 
