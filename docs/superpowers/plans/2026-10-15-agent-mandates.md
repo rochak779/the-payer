@@ -4472,7 +4472,7 @@ git commit -m "feat(claude): fuzzy-rule checker with untrusted-data wrapper"
 
 ### Session 26: Claude: first eval run + error analysis
 
-> **Added 16 Oct 2026 (Rochak asked for a free stopgap while there's no Anthropic key):** Gemini checker and rule reader in `src/integrations/gemini/`, sharing the Claude instructions word for word (`CHECKER=gemini`, `PARSER=gemini`, `npm run gemini:smoke`). The free tier (about 5 calls a minute, 20 a day on `gemini-3.8-flash`) can't finish a 65-case run: 22 cases answered, 22/22 correct vs keyword 19/22 on the same cases (see `evals/RESULTS.md`). The eval now marks cases where the checker failed (`checkerError`) and refuses to save such runs. The Claude steps below are still pending the Anthropic key.
+> **Added 16 Oct 2026 (Rochak asked for a free stopgap while there's no Anthropic key):** Gemini checker and rule reader in `src/integrations/gemini/`, sharing the Claude instructions word for word (`CHECKER=gemini`, `PARSER=gemini`, `npm run gemini:smoke`). The free tier (about 5 calls a minute, 20 a day on `gemini-3.8-flash`) can't finish a 65-case run: 22 cases answered, 22/22 correct vs keyword 19/22 on the same cases (see `evals/RESULTS.md`). The eval now marks cases where the checker failed (`checkerError`) and refuses to save such runs. First full free run on `gemini-3.5-flash-lite` (no quota errors): held out 14/17, all 58/65, 3 wrong approvals (keyword 17); error analysis in `evals/RESULTS.md`. The Claude steps below are still pending the Anthropic key.
 
 **Files:**
 - Modify: `evals/RESULTS.md`, possibly `evals/cases.json` (label fixes only, with justification)
@@ -5127,7 +5127,7 @@ git commit -m "feat(claude): real shopper agent with search and request-purchase
 
 ### Session 31: Stripe: spike to answer the open questions
 
-> **As built:** Steps 1–4 done offline: stripe SDK v23 installed, env names added, docs read (2-second timeout, `{approved}` + required `Stripe-Version`, timeout fallback lives in Issuing settings; recorded in BRIEF.md), spike scripts written with a sandbox-only key guard. **Steps 5–7 (live spike) pending Rochak's Stripe sandbox (Session 0.2).**
+> **As built:** Steps 1–4 done offline: stripe SDK v23 installed, env names added, docs read (2-second timeout, `{approved}` + required `Stripe-Version`, timeout fallback lives in Issuing settings; recorded in BRIEF.md), spike scripts written with a sandbox-only key guard. Steps 5–7 done live 16 Oct 2026: the CLI route is honoured (`webhook_declined` in 9 ms; a fast approve → `webhook_approved`), and a slow (5 s) or missing answer is declined (`webhook_error` through the CLI). The card-limit reason is `authorization_controls`, not `spending_controls`; `describeStripeDecline` now handles both (test added). Results in BRIEF.md.
 
 No app code. Two throwaway scripts answer four questions before we build on them:
 1. Does Issuing work in the UK sandbox?
@@ -5221,7 +5221,7 @@ async function main() {
 main().catch((err) => { console.error(err); process.exit(1); });
 ```
 
-- [ ] **Step 5: Run it, CLI route first**
+- [x] **Step 5: Run it, CLI route first**
 
 ```bash
 # terminal 1
@@ -5244,9 +5244,9 @@ cloudflared tunnel --url http://localhost:4242
 
 Paste the printed `https://….trycloudflare.com` URL as the **authorisation endpoint in Issuing settings** (sandbox), put that endpoint's signing secret in `STRIPE_WEBHOOK_SECRET`, and rerun. Note: the tunnel URL changes every run.
 
-- [ ] **Step 6: Set the timeout fallback to "decline"** in Issuing settings, if such a setting exists. Test it: stop the spike server and rerun the script. Expect a 1000p charge declined with a `webhook_timeout`-type reason.
+- [x] **Step 6: Set the timeout fallback to "decline"** in Issuing settings, if such a setting exists. Test it: stop the spike server and rerun the script. Expect a 1000p charge declined with a `webhook_timeout`-type reason.
 
-- [ ] **Step 7: Record answers in BRIEF.md → "Still to verify"**: Issuing access in the UK sandbox, the timeout (with a docs link and date), CLI vs tunnel, and the fallback behaviour. Delete the two spike scripts or keep them under `scripts/` (they are useful for debugging; keep).
+- [x] **Step 7: Record answers in BRIEF.md → "Still to verify"**: Issuing access in the UK sandbox, the timeout (with a docs link and date), CLI vs tunnel, and the fallback behaviour. Delete the two spike scripts or keep them under `scripts/` (they are useful for debugging; keep).
 
 - [ ] **Step 8: Commit**
 
@@ -5257,7 +5257,7 @@ git commit -m "spike(stripe): verify sandbox issuing and real-time authorisation
 
 ### Session 32: Stripe: real-time authorisation webhook
 
-> **As built:** test restores STRIPE_SECRET_KEY with `delete` when it was unset (assigning undefined stores "undefined"). Verified offline with locally signed events against the real route: approved purchase → `{approved:true}` + Stripe-Version echoed; repeat → declined (used); unknown card → declined; unsigned → 400. **Live wiring check with `stripe listen` pending Stripe access.**
+> **As built:** test restores STRIPE_SECRET_KEY with `delete` when it was unset (assigning undefined stores "undefined"). Verified offline with locally signed events against the real route: approved purchase → `{approved:true}` + Stripe-Version echoed; repeat → declined (used); unknown card → declined; unsigned → 400. Live wiring check done 16 Oct 2026: the spike charge against the app's webhook was declined (`webhook_declined`) and Activity showed "Charge of £10 at Spike Test Shop declined. No approved purchase matches this card."
 
 **Files:**
 - Create: `src/integrations/stripe/client.ts`, `src/integrations/stripe/authorization.ts`, `src/app/api/stripe/webhook/route.ts`
@@ -5390,7 +5390,7 @@ export async function POST(req: Request) {
 Run: `npm test && npm run typecheck`
 Expected: PASS.
 
-- [ ] **Step 5: Live wiring check with the spike script** (pending Stripe access; offline signed-event check passed)
+- [x] **Step 5: Live wiring check with the spike script** (done live 16 Oct 2026)
 
 ```bash
 npm run dev                                   # terminal 1
@@ -5410,7 +5410,7 @@ git commit -m "feat(stripe): real-time authorisation webhook backed by the payme
 
 ### Session 33: Stripe: real one-time cards, end to end
 
-> **As built:** code and unit test done; ISSUER=stripe switch added. **End-to-end Stripe demo (Step 6) and BRIEF update (Step 7) pending Stripe sandbox access.**
+> **As built:** code and unit test done; ISSUER=stripe switch added. **Step 6 started live 16 Oct 2026:** the Lisbon booking was approved and a real sandbox card issued, but Stripe declined the £240 charge because the sandbox Issuing balance held only £200 (the app's log said so in plain English). Pending: Rochak adds test funds, then rerun steps 1–3. Step 7 waits on that.
 
 **Files:**
 - Create: `src/integrations/stripe/issuer.ts`

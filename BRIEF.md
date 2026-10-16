@@ -179,6 +179,7 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
 
 ## Still to verify
 - Whether Stripe's Issuing sandbox unlocks immediately for a UK account, or needs "request access" first.
+  **Answered 16 Oct 2026:** Rochak switched Issuing on from the sandbox dashboard within minutes, with no access wait. Account country GB, currency GBP; the sandbox Issuing balance was funded with test money from the dashboard.
 - Whether the SPT "select European countries" list includes the UK.
 - Whether Link's wallet for agents is available in the UK.
 - The exact AP2 v0.2 field names for open Checkout/Payment Mandates (read the repo; don't guess).
@@ -196,12 +197,17 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
   - **So what for the pitch:** AP2 v0.2 can carry simple caps and allow lists but has no place for "nothing non-refundable" or "ask me about gifts". That gap is this product.
 - Stripe's exact real-time authorisation timeout.
   **From the docs (read 15 Oct 2026, [real-time authorisations](https://docs.stripe.com/issuing/controls/real-time-authorizations)):** 2 seconds. Reply HTTP 200 with JSON `{"approved": true|false}` and a required `Stripe-Version` header. No reply in time → Stripe approves or declines per the **timeout setting in Issuing settings** (or Autopilot, if configured), logged as `webhook_timeout` (or `webhook_error` for a bad reply). **Set that fallback to decline**: otherwise a slow first request (Next.js compiling the route) could approve a charge. `stripe listen --forward-to` is documented for testing this event locally; whether a CLI-forwarded reply is actually honoured is what the Session 31 spike checks. UK/EU Issuing balances are funded by "push" funding instructions, which the sandbox supports ([testing](https://docs.stripe.com/issuing/testing)).
-  Still unverified (needs the live spike): Issuing access for a UK sandbox account, and CLI vs tunnel in practice.
+  **Verified live 16 Oct 2026 (Session 31 spike, Stripe CLI 1.53.1, API version 2025-12-15.clover):**
+  - **The CLI route works; no tunnel needed.** With `stripe listen --forward-to`, our server's `{"approved": false}` came back as `webhook_declined`, answered in 9 ms. A fast `{"approved": true}` came back as `webhook_approved`.
+  - **Slow or missing answers are declined.** The same "approve" sent after 5 seconds was declined, and so was a charge with our server switched off. Through the CLI both show as `webhook_error`, not `webhook_timeout`.
+  - **A card-limit decline is reported as `authorization_controls`,** not `spending_controls` as the plan assumed. The app's Activity wording now handles both.
+  - **The app's own webhook works:** a charge on a card with no matching approval was declined, and Activity shows "Charge of £10 at Spike Test Shop declined. No approved purchase matches this card."
 
 **Account pre-flight (Session 0.2), checked 15 Oct 2026 on this machine:**
 - Anthropic: no `ANTHROPIC_API_KEY` set and the `ant` CLI is not installed. Needed from Phase 8 (Session 24).
 - Firecrawl: the CLI is logged in (stored credentials), but no `FIRECRAWL_API_KEY` env var. The app needs the key in `.env.local` from Session 29.
 - Stripe: CLI not installed; no key set. **Rochak to do:** sandbox → Issuing (immediate or "request access"? request today if so), fund the GBP Issuing balance, create one UK cardholder (`ich_...`), `brew install stripe/stripe-cli/stripe && stripe login`. Needed from Session 31.
+  **Update 16 Oct 2026:** all done. The sandbox key, cardholder and CLI signing secret are in `.env.local`. The CLI is installed and runs with the sandbox key (`STRIPE_API_KEY`), so no `stripe login` is needed. Firecrawl's key is in `.env.local` too. Gemini (free) stands in for Claude in the checker and rule reader; there's still no Anthropic key.
 - None of this blocks Phases 1–7, which run on offline fakes.
 
 ## Earlier research (raw files)

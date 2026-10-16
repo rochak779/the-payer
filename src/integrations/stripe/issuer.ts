@@ -9,6 +9,7 @@ export function describeStripeDecline(reason: string | undefined): string {
     case 'webhook_declined':
       return 'Declined by our payment check (see log).';
     case 'spending_controls':
+    case 'authorization_controls': // what the sandbox actually returns for a card-limit decline
       return "Declined by the card's own spending limit at Stripe.";
     case 'card_canceled':
     case 'card_inactive':
