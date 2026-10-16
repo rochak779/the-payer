@@ -18,7 +18,7 @@ export function describeStripeDecline(reason: string | undefined): string {
     case 'webhook_error':
       return "Our payment check didn't answer in time, so Stripe's fallback setting decided.";
     case 'insufficient_funds':
-      return 'The sandbox Issuing balance is empty. Top it up in the Stripe dashboard.';
+      return 'The sandbox Issuing balance is too low for this charge. Top it up in the Stripe dashboard.';
     default:
       return `Declined by Stripe (${reason ?? 'no reason given'}).`;
   }
