@@ -57,6 +57,6 @@ describe('Gemini fuzzy checker', () => {
   });
 
   it('is available from the registry without making a call', () => {
-    expect(getFuzzyChecker('gemini').name).toMatch(/^gemini:gemini-3\.8-flash:/);
+    expect(getFuzzyChecker('gemini').name).toMatch(/^gemini:gemini-3\.5-flash-lite:/);
   });
 });

@@ -27,6 +27,8 @@ ANTHROPIC_API_KEY, FIRECRAWL_API_KEY, STRIPE_SECRET_KEY, STRIPE_CARDHOLDER_ID, S
 
 Each switch is separate, so you can turn on one service at a time. Smoke tests: `npm run claude:smoke`, `npm run gemini:smoke` and `npm run firecrawl:smoke`.
 
+Gemini uses the free `gemini-3.5-flash-lite` unless `GEMINI_MODEL` says otherwise. The bigger `gemini-3.8-flash` allows only 20 free calls a day, too few for one eval run.
+
 Stripe needs a **sandbox** account with Issuing turned on, a funded GBP Issuing balance and one cardholder (`ich_…`). The code refuses any key that doesn't start with `sk_test_`. Then run the Stripe CLI:
 
 ```bash

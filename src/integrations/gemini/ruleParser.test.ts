@@ -29,6 +29,6 @@ describe('Gemini rule reader', () => {
   });
 
   it('is available from the registry', () => {
-    expect(getRuleParser('gemini').name).toBe('gemini:gemini-3.8-flash');
+    expect(getRuleParser('gemini').name).toBe('gemini:gemini-3.5-flash-lite');
   });
 });
