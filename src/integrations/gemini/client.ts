@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 /**
  * Free stopgap until there is an Anthropic key. Same prompts as Claude, so results compare like for like.
- * Flash-Lite by default: its free tier ran hundreds of calls a day without limit errors, while 3.8 Flash allows 20.
+ * Flash-Lite by default: its free tier allows 500 calls a day (one eval run is 67), while 3.8 Flash allows 20.
  */
 export const GEMINI_MODEL = process.env.GEMINI_MODEL ?? 'gemini-3.5-flash-lite';
 
