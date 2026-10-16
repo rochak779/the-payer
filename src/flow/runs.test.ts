@@ -46,7 +46,8 @@ describe('executeRun', () => {
     const greedy: Shopper = {
       name: 'greedy',
       run: async (_task, tools) => {
-        for (let i = 0; i < 3; i++) await tools.requestPurchase({ ...FALLBACK.pick, purchaseDate: '2026-11-10' });
+        // Different prices, so these are three different purchases, not repeats of one.
+        for (let i = 0; i < 3; i++) await tools.requestPurchase({ ...FALLBACK.pick, total: { minor: 3500 + i * 100, currency: 'GBP' }, purchaseDate: '2026-11-10' });
       },
     };
     const d = { ...deps(), shopper: greedy };
@@ -54,5 +55,56 @@ describe('executeRun', () => {
     expect(view.status).toBe('failed');
     expect(view.approvals).toHaveLength(2);
     expect(view.events.at(-1)?.text).toContain('Only 2 purchase requests');
+  });
+
+  describe('double booking', () => {
+    const book = { ...FALLBACK.pick, purchaseDate: '2026-11-10' };
+
+    it('never buys the same thing twice in one task, even reworded', async () => {
+      const decisions: string[] = [];
+      const repeater: Shopper = {
+        name: 'repeater',
+        run: async (_task, tools) => {
+          decisions.push((await tools.requestPurchase(book)).outcome);
+          decisions.push((await tools.requestPurchase({ ...book, item: `${book.item} (paperback)`, merchant: book.merchant.toUpperCase() })).outcome);
+        },
+      };
+      const d = { ...deps(), shopper: repeater };
+      const view = await runTask(d, 'buy a book');
+      expect(decisions).toEqual(['approve', 'block']);
+      expect(view.approvals).toEqual([{ id: expect.any(String), status: 'used', outcome: 'approve' }]);
+      expect(view.events.filter((e) => e.text === 'Paid with a one-time card.')).toHaveLength(1);
+      expect(view.events.at(-1)?.text).toContain('Not buying it twice');
+    });
+
+    it('does not retry into a second booking when a charge fails part-way', async () => {
+      const d = deps();
+      let failures = 0;
+      const flaky = { ...d.issuer, simulateCharge: async (...args: Parameters<typeof d.issuer.simulateCharge>) => {
+        if (failures++ === 0) throw new Error('network error after the charge');
+        return d.issuer.simulateCharge(...args);
+      } };
+      const retrier: Shopper = {
+        name: 'retrier',
+        run: async (_task, tools) => {
+          await tools.requestPurchase(book).catch(() => tools.requestPurchase(book));
+        },
+      };
+      const view = await runTask({ ...d, issuer: flaky, shopper: retrier }, 'buy a book');
+      expect(view.approvals).toHaveLength(1);
+      expect(failures).toBe(1);
+    });
+
+    it('still allows two different purchases in one task', async () => {
+      const two: Shopper = {
+        name: 'two',
+        run: async (_task, tools) => {
+          await tools.requestPurchase(book);
+          await tools.requestPurchase({ ...book, item: 'Clean Code', total: { minor: 3000, currency: 'GBP' } });
+        },
+      };
+      const view = await runTask({ ...deps(), shopper: two }, 'buy two books');
+      expect(view.approvals.map((a) => a.status)).toEqual(['used', 'used']);
+    });
   });
 });

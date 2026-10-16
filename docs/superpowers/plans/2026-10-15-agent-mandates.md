@@ -3096,7 +3096,7 @@ git commit -m "feat(agent): agent interfaces, fixture search and scripted shoppe
 
 ### Session 17: End-to-end flow in the terminal + demo seed data
 
-> **As built:** as planned; terminal demo output matches all three expectations (Lisbon approved and paid; nephew gift pending; headphones wrongly approved by the keyword baseline).
+> **As built:** as planned; terminal demo output matches all three expectations (Lisbon approved and paid; nephew gift pending; headphones wrongly approved by the keyword baseline). Added 16 Oct 2026 (review follow-up, Rochak: two purchases per task are fine, double booking isn't): `executeRun` refuses a repeat request at the same shop and price as a standing (waiting, approved or paid) request in the same run, without calling the checker. Tests: reworded repeat, retry after a failed charge, two different purchases still allowed.
 
 **Files:**
 - Create: `src/flow/runs.ts`, `src/deps.ts`, `scripts/seed.ts`, `scripts/demo-flow.ts`
