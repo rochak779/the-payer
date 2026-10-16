@@ -12,7 +12,7 @@ export default function EvalsPage() {
     <div className="space-y-4">
       <h2 className="text-base font-semibold">How well does the checker decide?</h2>
       <p className="text-sm text-neutral-600">
-        65 purchase requests, each labelled approve / ask / block against one fixed set of rules. 17 are held back as a test set and never used for tuning.
+        67 purchase requests, each labelled approve / ask / block against one fixed set of rules. 17 are held back as a test set and never used for tuning.
       </p>
       {!latest && <p className="text-sm text-neutral-500">No runs yet. Run <code>npm run eval</code>.</p>}
       {latest && (

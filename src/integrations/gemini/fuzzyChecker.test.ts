@@ -9,7 +9,7 @@ import { createGeminiFuzzyChecker } from './fuzzyChecker';
 
 const refundRule: JudgementRule = { id: 'refundable', source: 'Nothing non-refundable.', onBreach: 'block', kind: 'judgement', text: 'Nothing non-refundable.' };
 const noFlag = { flagged: false, explanation: '' };
-const ok = { verdicts: [{ ruleId: 'refundable', verdict: 'breached', explanation: 'This rate is non-refundable.' }], hiddenCosts: noFlag, injection: noFlag };
+const ok = { verdicts: [{ ruleId: 'refundable', verdict: 'breached', explanation: 'This rate is non-refundable.' }], hiddenCosts: noFlag, injection: noFlag, category: 'hotel' };
 
 function fakeClient(response: { text?: string; promptFeedback?: { blockReason?: string } }) {
   const generateContent = vi.fn().mockResolvedValue(response);
@@ -29,7 +29,8 @@ describe('Gemini fuzzy checker', () => {
       contents: renderPrompt(req, [refundRule]),
       config: { systemInstruction: expect.stringContaining('untrusted data'), responseMimeType: 'application/json' },
     });
-    expect(args.config.responseJsonSchema).toMatchObject({ type: 'object', required: expect.arrayContaining(['verdicts', 'hiddenCosts', 'injection']) });
+    expect(args.config.systemInstruction).toContain('not from the label the agent gave');
+    expect(args.config.responseJsonSchema).toMatchObject({ type: 'object', required: expect.arrayContaining(['verdicts', 'hiddenCosts', 'injection', 'category']) });
   });
 
   it('retries rate limits, but gives up well inside the 60-second check timeout', async () => {

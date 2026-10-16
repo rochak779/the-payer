@@ -107,4 +107,35 @@ describe('checkPurchase', () => {
     const fuzzy2 = stub(async () => result([{ ruleId: 'refundable', verdict: 'clear', explanation: '' }], { injection: flagged }));
     expect((await checkPurchase(makeRequest(), ctx([refundRule], fuzzy2))).outcome).toBe('ask');
   });
+
+  describe("when the checker reads the purchase as a different category from the agent's label", () => {
+    const noGiftCards: Rule = { id: 'no-gift-cards', source: 'No gift cards.', onBreach: 'block', kind: 'category', mode: 'block', categories: ['gift_card'] };
+    const readsAs = (category: FuzzyResult['category']) => stub(async () => result([], { category }));
+
+    it('applies the category rule the label dodged', async () => {
+      const req = makeRequest({ item: '£50 gift card', merchant: 'Amazon', category: 'other' });
+      const d = await checkPurchase(req, ctx([noGiftCards], readsAs('gift_card')));
+      expect(d.outcome).toBe('block');
+      expect(d.summary).toContain('The agent filed this under "Other", but it belongs under "Gift cards". You said no gift cards.');
+      expect(d.reasons).toContainEqual(expect.objectContaining({ ruleId: 'no-gift-cards', by: 'ai' }));
+    });
+
+    it('applies a price cap that only covers the real category', async () => {
+      const req = makeRequest({ category: 'other', total: { minor: 38000, currency: 'GBP' }, units: 2, unitLabel: 'night' });
+      const d = await checkPurchase(req, ctx([hotelCap], readsAs('hotel')));
+      expect(d.outcome).toBe('ask');
+      expect(d.summary).toContain('over your £150 limit');
+    });
+
+    it('changes nothing when the reading breaks no rule', async () => {
+      const d = await checkPurchase(makeRequest({ category: 'other' }), ctx([noGiftCards], readsAs('home')));
+      expect(d.outcome).toBe('approve');
+    });
+
+    it('never removes a breach the label caused', async () => {
+      const req = makeRequest({ category: 'gift_card' });
+      const d = await checkPurchase(req, ctx([noGiftCards], readsAs('home')));
+      expect(d.outcome).toBe('block');
+    });
+  });
 });

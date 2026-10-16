@@ -1,3 +1,4 @@
+import { CATEGORY_LABEL } from '@/domain/labels';
 import type { Decision, JudgementRule, Outcome, PurchaseRequest, Reason, Rule } from '@/domain/types';
 import type { FuzzyChecker, FuzzyResult } from './fuzzy';
 import { checkHardLimits } from './hardLimits';
@@ -21,7 +22,7 @@ export async function checkPurchase(req: PurchaseRequest, ctx: CheckContext): Pr
   let soft: Reason[];
   try {
     const result = await withTimeout(ctx.fuzzy.check(req, ctx.rules), ctx.timeoutMs ?? 60_000);
-    soft = toReasons(result, judgement);
+    soft = [...toReasons(result, judgement), ...relabelled(req, ctx.rules, hard, result)];
   } catch (err) {
     const why = err instanceof Error ? err.message : String(err);
     soft = [{ ruleId: null, by: 'system', outcome: 'ask', message: `I couldn't run the judgement checks (${why}), so I'm asking you to be safe.` }];
@@ -54,6 +55,21 @@ function toReasons(result: FuzzyResult, rules: JudgementRule[]): Reason[] {
     reasons.push({ ruleId: null, by: 'ai', outcome: 'ask', message: `The listing tries to instruct the agent: ${result.injection.explanation}` });
   }
   return reasons;
+}
+
+/**
+ * The agent picks the category, and a steered agent can pick a harmless one ("other" for a gift card).
+ * If the checker reads the purchase differently, re-run the hard rules on its reading. Only new breaches
+ * count, at each rule's own ask/block, so the AI can make a decision stricter but never looser.
+ */
+function relabelled(req: PurchaseRequest, rules: Rule[], hard: Reason[], result: FuzzyResult): Reason[] {
+  const category = result.category;
+  if (!category || category === req.category) return [];
+  const already = new Set(hard.map((r) => r.ruleId));
+  const why = `The agent filed this under "${CATEGORY_LABEL[req.category]}", but it belongs under "${CATEGORY_LABEL[category]}".`;
+  return checkHardLimits({ ...req, category }, rules)
+    .filter((r) => !already.has(r.ruleId))
+    .map((r) => ({ ...r, by: 'ai' as const, message: `${why} ${r.message}` }));
 }
 
 function decide(reasons: Reason[], checker: string): Decision {

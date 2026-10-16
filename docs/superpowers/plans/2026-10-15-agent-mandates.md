@@ -4513,7 +4513,7 @@ git commit -m "evals: first Claude checker run and error analysis"
 
 ### Session 27: Claude: checker improvement round (repeatable)
 
-> **As built (16 Oct 2026, on Gemini 3.5 Flash-Lite, free, at Rochak's call; no Anthropic key):** round 1 = prompt v2, a general "don't turn descriptions into numbers; that's unsure" line. Dev 44/48 → 46/48, dev wrong approvals 2 → 0; held out 14/17 → 14/17, wrong approvals 1 → 0. Kept. Stopping rule met after one round. Step 7 replaced by a repeat run to measure noise (held out ±2 cases); Claude/Haiku cost comparisons wait for a key.
+> **As built (16 Oct 2026, on Gemini 3.5 Flash-Lite, free, at Rochak's call; no Anthropic key):** round 1 = prompt v2, a general "don't turn descriptions into numbers; that's unsure" line. Dev 44/48 → 46/48, dev wrong approvals 2 → 0; held out 14/17 → 14/17, wrong approvals 1 → 0. Kept. Stopping rule met after one round. Step 7 replaced by a repeat run to measure noise (held out ±2 cases); Claude/Haiku cost comparisons wait for a key. Round 2 = v3: category relabelling (the checker reports the real category; code re-runs the hard rules on it; 2 dev cases added, 67 total). Round 3 = v4: charges paid later. Each run twice. v4: dev 48/50, 47/50; held out 14/17 twice, no wrong approvals. Stopped at three rounds. `price-02` (city tax payable at the hotel) is still missed in one run of two.
 
 Repeat this session once per improvement. Stop when dev wrong-approvals are 0 and needless asks stop falling, or after three rounds.
 
