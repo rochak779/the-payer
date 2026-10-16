@@ -1,0 +1,92 @@
+import { CATEGORY_LABEL } from '@/domain/labels';
+import type { Decision, JudgementRule, Outcome, PurchaseRequest, Reason, Rule } from '@/domain/types';
+import type { FuzzyChecker, FuzzyResult } from './fuzzy';
+import { checkHardLimits } from './hardLimits';
+
+const RANK: Record<Outcome, number> = { approve: 0, ask: 1, block: 2 };
+
+export function strictest(outcomes: Outcome[]): Outcome {
+  return outcomes.reduce<Outcome>((a, b) => (RANK[b] > RANK[a] ? b : a), 'approve');
+}
+
+export type CheckContext = { rules: Rule[]; agentEnabled: boolean; fuzzy: FuzzyChecker; timeoutMs?: number };
+
+export async function checkPurchase(req: PurchaseRequest, ctx: CheckContext): Promise<Decision> {
+  if (!ctx.agentEnabled) {
+    return decide([{ ruleId: null, by: 'system', outcome: 'block', message: 'The agent is turned off.' }], ctx.fuzzy.name);
+  }
+  const hard = checkHardLimits(req, ctx.rules);
+  if (hard.some((r) => r.outcome === 'block')) return decide(hard, ctx.fuzzy.name); // code already said no
+
+  const judgement = ctx.rules.filter((r): r is JudgementRule => r.kind === 'judgement');
+  let soft: Reason[];
+  try {
+    const result = await withTimeout(ctx.fuzzy.check(req, ctx.rules), ctx.timeoutMs ?? 60_000);
+    soft = [...toReasons(result, judgement), ...relabelled(req, ctx.rules, hard, result)];
+  } catch (err) {
+    const why = err instanceof Error ? err.message : String(err);
+    soft = [{ ruleId: null, by: 'system', outcome: 'ask', message: `I couldn't run the judgement checks (${why}), so I'm asking you to be safe.` }];
+  }
+  return decide([...hard, ...soft], ctx.fuzzy.name);
+}
+
+const VERDICT_RANK = { clear: 0, unsure: 1, breached: 2 } as const;
+
+/** The only place AI output becomes an outcome. It can add ask/block, never approve. */
+function toReasons(result: FuzzyResult, rules: JudgementRule[]): Reason[] {
+  const reasons: Reason[] = [];
+  for (const rule of rules) {
+    // If the AI answers one rule twice, the stricter answer counts.
+    const v = result.verdicts
+      .filter((x) => x.ruleId === rule.id)
+      .sort((a, b) => VERDICT_RANK[b.verdict] - VERDICT_RANK[a.verdict])[0];
+    if (!v) {
+      reasons.push({ ruleId: rule.id, by: 'system', outcome: 'ask', message: `I couldn't get a clear answer on "${rule.text}", so I'm asking you.` });
+    } else if (v.verdict === 'breached') {
+      reasons.push({ ruleId: rule.id, by: 'ai', outcome: rule.onBreach, message: v.explanation });
+    } else if (v.verdict === 'unsure') {
+      reasons.push({ ruleId: rule.id, by: 'ai', outcome: 'ask', message: `Not sure about "${rule.text}": ${v.explanation}` });
+    }
+  }
+  if (result.hiddenCosts.flagged) {
+    reasons.push({ ruleId: null, by: 'ai', outcome: 'ask', message: `Possible extra costs: ${result.hiddenCosts.explanation}` });
+  }
+  if (result.injection.flagged) {
+    reasons.push({ ruleId: null, by: 'ai', outcome: 'ask', message: `The listing tries to instruct the agent: ${result.injection.explanation}` });
+  }
+  return reasons;
+}
+
+/**
+ * The agent picks the category, and a steered agent can pick a harmless one ("other" for a gift card).
+ * If the checker reads the purchase differently, re-run the hard rules on its reading. Only new breaches
+ * count, at each rule's own ask/block, so the AI can make a decision stricter but never looser.
+ */
+function relabelled(req: PurchaseRequest, rules: Rule[], hard: Reason[], result: FuzzyResult): Reason[] {
+  const category = result.category;
+  if (!category || category === req.category) return [];
+  const already = new Set(hard.map((r) => r.ruleId));
+  const why = `The agent filed this under "${CATEGORY_LABEL[req.category]}", but it belongs under "${CATEGORY_LABEL[category]}".`;
+  return checkHardLimits({ ...req, category }, rules)
+    .filter((r) => !already.has(r.ruleId))
+    .map((r) => ({ ...r, by: 'ai' as const, message: `${why} ${r.message}` }));
+}
+
+function decide(reasons: Reason[], checker: string): Decision {
+  const outcome = strictest(reasons.map((r) => r.outcome));
+  const summary =
+    outcome === 'approve'
+      ? 'Within all your rules.'
+      : reasons.filter((r) => r.outcome === outcome).map((r) => r.message).join(' ');
+  return { outcome, reasons, summary, checker };
+}
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error(`timed out after ${ms}ms`)), ms);
+    promise.then(
+      (value) => { clearTimeout(timer); resolve(value); },
+      (error) => { clearTimeout(timer); reject(error); },
+    );
+  });
+}

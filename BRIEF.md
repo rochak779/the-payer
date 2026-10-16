@@ -93,11 +93,11 @@ These are saved as structured rules, stored in AP2-style format.
 
 **Each purchase:**
 1. User: "Book a hotel in Lisbon, 7–9 Nov."
-2. The app sends this to Claude (the shopper agent) with two tools: search the web, and request a purchase.
+2. The app sends this to an AI shopper agent with two tools: search the web, and request a purchase. (Measured on Google's free Gemini Flash-Lite; a Claude version is built behind a switch but unmeasured, for want of an Anthropic key.)
 3. The agent researches real listings with Firecrawl (real prices, real refund policies) and picks one. It has no card.
 4. The agent calls request_purchase(item, merchant, price, refund policy, link).
 5. The checker decides **approve / ask the user / block**, with a plain-English reason.
-   Code checks the hard limits; Claude checks the fuzzy rules.
+   Code checks the hard limits; an AI checker judges the fuzzy rules.
 6. If approved (automatically or by the user's tap): the app creates a Stripe single-use virtual card limited to that merchant and amount.
    It tags the card's metadata with an approval_id.
 7. The purchase is simulated: the app uses Stripe's test helper to act as if the merchant had charged the card. **This is the only fake step.**
@@ -108,7 +108,7 @@ These are saved as structured rules, stored in AP2-style format.
 ## Integrations
 | Piece | Role | Provider | Cost |
 |---|---|---|---|
-| Claude API | The shopper agent + the fuzzy-rule checker | Anthropic | Pennies per run |
+| AI model | The shopper agent, the fuzzy-rule checker and the rule reader | Google Gemini 3.5 Flash-Lite (free tier) for now. Claude (Anthropic) is built behind a switch, unmeasured: no key yet | Free: 500 requests a day; Google may use free-tier prompts, so mock data only. Claude: pennies per run |
 | Web search/scrape | Real listings for the agent | Firecrawl (I already have a key) | Free credits |
 | Stripe **sandbox**, Issuing | Single-use virtual cards, spending controls, real-time authorisation webhook, test purchases | Stripe | Free |
 | Stripe CLI | Forwards webhooks to localhost, so no hosting needed | Stripe | Free |
@@ -130,7 +130,7 @@ These are saved as structured rules, stored in AP2-style format.
 4. **Activity log:** every decision with its reason, plus a "turn off agent" button.
 5. Optional, for interviews: an eval results page.
 Tech: one web app holding both the UI and the checker (e.g. Next.js + TypeScript, SQLite or a JSON file for storage).
-Run it locally; deploy to Vercel only when I need a shareable link. Use the latest Claude models (e.g. claude-sonnet-5-5; claude-haiku-5-5 for cheap checks if useful).
+Run it locally; deploy to Vercel only when I need a shareable link. AI: measured on Google's free `gemini-3.5-flash-lite`, using the instructions written for Claude. The Claude version (claude-sonnet-5-5; claude-haiku-5-5 for cheap checks) is built behind a switch and will be measured once there's an Anthropic key.
 
 ## Evals (the core of the interview story)
 - Test set: 50–100 purchase requests, each labelled approve / ask / block against a fixed set of user rules.
@@ -158,9 +158,14 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
    Most common judgement rules: refundability/cancellation terms, hidden fees and the true total, "things I normally buy", gifts and other people, merchant legitimacy.
    Details: `research/rules-test.md`, `research/incidents.md` (29 incidents).
 2. **Checker + eval set,** run from the terminal, no UI. Get the numbers.
+   **Status (16 Oct 2026): built and measured.** 67 cases (50 dev, 17 held out), 10 rules (added `genuine-shop` for merchant legitimacy; two relabelling cases added 16 Oct). Keyword baseline: dev 28/50 with 12 wrong approvals and 8 needless asks; held out 9/17 with 5 and 3. **Gemini 3.5 Flash-Lite (free, Rochak's call while there's no Anthropic key), prompt v4: held out 14/17 in two runs with no wrong approvals; 0–1 wrong approvals per run across all 67.** Details in `evals/RESULTS.md`. Rule reading: pattern reader 13/20; Gemini Flash-Lite 19/20 and 18/20 (its misses read "only…" as "never", which errs strict). The Claude checker and rule reader are built behind a switch but **unmeasured: their eval runs wait on an Anthropic key.**
 3. **Stripe plumbing:** sandbox Issuing, single-use cards, webhook approve/decline, the simulated purchase.
+   **Status: built and tested offline** (fake issuer, Stripe issuer, real-time authorisation webhook checked with locally signed events). **Live run waits on Stripe sandbox access** (plan Sessions 31 steps 5–7, 32 live check, 33 steps 6–7).
 4. **Screens** (4, plus optionally the results page).
+   **Status: done.** Rules, Ask, Approvals, Activity, plus the Evals page and an "AP2 open mandate" view on Rules. README has run instructions, a demo checklist and the video run-of-show; steps 1–5 were dry-run offline.
 5. **5 real users** test it with their own rules and tasks. Then the one-pager and the demo video.
+   **Status: not started.** Left to do first: finish the live steps (plan Session 30's AI agent on live search, cut short by Gemini's free daily limit, and Session 33); record the video (README run-of-show). The Claude evals wait on an Anthropic key.
+   For the user test: run it on Rochak's laptop (in person or a shared screen). Don't deploy as-is: the app stores data in one local JSON file, which doesn't persist on Vercel. Use `PARSER=gemini` (or `claude` once there's a key), since the offline reader misreads 7 of 20 rules. **Gemini's free tier may use prompts to improve Google's products,** and testers type their own rules and tasks: tell them not to enter anything personal, or use a paid key. For each person, record whether "here's what I understood" matched what they meant, and whether each decision was the one they'd want (wrong approval, needless ask or fine).
 
 ## Decisions (15 Oct 2026)
 - Implementation plan: `docs/superpowers/plans/2026-10-15-agent-mandates.md` (35 small sessions).
@@ -174,15 +179,37 @@ Run it locally; deploy to Vercel only when I need a shareable link. Use the late
 
 ## Still to verify
 - Whether Stripe's Issuing sandbox unlocks immediately for a UK account, or needs "request access" first.
+  **Answered 16 Oct 2026:** Rochak switched Issuing on from the sandbox dashboard within minutes, with no access wait. Account country GB, currency GBP; the sandbox Issuing balance was funded with test money from the dashboard.
 - Whether the SPT "select European countries" list includes the UK.
 - Whether Link's wallet for agents is available in the UK.
 - The exact AP2 v0.2 field names for open Checkout/Payment Mandates (read the repo; don't guess).
+  **Answered (read 15 Oct 2026, v0.2.0 released 28 Apr 2026, repo commit [`e1ea56d`](https://github.com/google-agentic-commerce/AP2/tree/e1ea56db72a6385bce3e5c1112b3a56ce60acb43); schemas unchanged since the v0.2.0 tag):**
+  Sources: `code/sdk/schemas/ap2/open_payment_mandate.json`, `open_checkout_mandate.json`, `types/merchant.json`, `types/amount.json`, `docs/ap2/payment_mandate.md`, `checkout_mandate.md`, `flows.md`.
+  - **Open Payment Mandate:** `vct` = `mandate.payment.open.1`; `constraints` (array, each with a `type`); `cnf` (agent key, RFC 7800); `iat`, `exp` (Unix seconds). Required: `vct`, `constraints`, `cnf`, and a `payment.reference` constraint.
+  - **Amount limits:** `payment.amount_range` with `currency` (ISO 4217), `max`, optional `min` (integer minor units). `payment.budget` (`max`, `currency`) is a running total, only with `payment.agent_recurrence` (`frequency`, `max_occurrences`).
+  - **Merchant allow list:** `payment.allowed_payees` / `checkout.allowed_merchants`, each with `allowed`: Merchant objects (`id`, `name` required; `website` optional). **No deny list.**
+  - **Categories:** none. **Per-night / per-unit caps:** none.
+  - **Validity:** top-level `exp`; payment window `payment.execution_date` with `not_before`, `not_after` (ISO date-times).
+  - **Natural-language constraints:** none in v0.2 (v0.1's Intent Mandate had `natural_language_description`; v0.2 dropped it). New constraint types are an official extension point (unique `type` + schema + evaluation), but the JSON schema only accepts the listed types.
+  - **Open Checkout Mandate:** `vct` = `mandate.checkout.open.1`; must contain `checkout.line_items` (`items` → `id`, `acceptable_items` [`id`, `title`], `quantity`), so it needs the exact items up front.
+  - **`unresolved_constraint`:** only named in `flows.md`: the merchant or credential provider returns it to turn an unattended purchase back into one the user approves. No schema for it. That is our "ask".
+  - **What we export (Session 34):** the open Payment Mandate. Purchase caps → `payment.amount_range`; allow-only shops → `payment.allowed_payees`; date windows → `payment.execution_date`; validity → `exp`. Everything AP2 can't carry (per-night/category caps, blocked shops, categories, judgement rules, ask vs block) goes in our own `x_agent_mandates` extension. Unsigned: `cnf` left empty and `payment.reference` left out, because both only exist once a trusted surface signs a linked open Checkout Mandate.
+  - **So what for the pitch:** AP2 v0.2 can carry simple caps and allow lists but has no place for "nothing non-refundable" or "ask me about gifts". That gap is this product.
 - Stripe's exact real-time authorisation timeout.
+  **From the docs (read 15 Oct 2026, [real-time authorisations](https://docs.stripe.com/issuing/controls/real-time-authorizations)):** 2 seconds. Reply HTTP 200 with JSON `{"approved": true|false}` and a required `Stripe-Version` header. No reply in time → Stripe approves or declines per the **timeout setting in Issuing settings** (or Autopilot, if configured), logged as `webhook_timeout` (or `webhook_error` for a bad reply). **Set that fallback to decline**: otherwise a slow first request (Next.js compiling the route) could approve a charge. `stripe listen --forward-to` is documented for testing this event locally; whether a CLI-forwarded reply is actually honoured is what the Session 31 spike checks. UK/EU Issuing balances are funded by "push" funding instructions, which the sandbox supports ([testing](https://docs.stripe.com/issuing/testing)).
+  **Verified live 16 Oct 2026 (Session 31 spike, Stripe CLI 1.53.1, API version 2025-12-15.clover):**
+  - **The CLI route works; no tunnel needed.** With `stripe listen --forward-to`, our server's `{"approved": false}` came back as `webhook_declined`, answered in 9 ms. A fast `{"approved": true}` came back as `webhook_approved`.
+  - **Slow or missing answers are declined.** The same "approve" sent after 5 seconds was declined, and so was a charge with our server switched off. Through the CLI both show as `webhook_error`, not `webhook_timeout`.
+  - **A card-limit decline is reported as `authorization_controls`,** not `spending_controls` as the plan assumed. The app's Activity wording now handles both.
+  - **The app's own webhook works:** a charge on a card with no matching approval was declined, and Activity shows "Charge of £10 at Spike Test Shop declined. No approved purchase matches this card."
+  - **End to end with real sandbox cards (Session 33, 16 Oct 2026):** "Buy me a programming book" was approved by the checker. A one-time card was made for up to £35 at Waterstones, and Stripe approved the £35 charge through our webhook (`webhook_approved`). Then "charge £20 more" (£55), "charge from another shop" and "charge again" were all declined by the card's own £35 limit (`authorization_controls`), before our webhook was asked. So live, the card limit is what stops a second shop; our payment check is the backstop.
+  - **Not yet shown live:** the £240 Lisbon booking. The sandbox Issuing balance held £190, and Stripe declined for insufficient funds; the app's Activity said so in plain English.
 
 **Account pre-flight (Session 0.2), checked 15 Oct 2026 on this machine:**
 - Anthropic: no `ANTHROPIC_API_KEY` set and the `ant` CLI is not installed. Needed from Phase 8 (Session 24).
 - Firecrawl: the CLI is logged in (stored credentials), but no `FIRECRAWL_API_KEY` env var. The app needs the key in `.env.local` from Session 29.
 - Stripe: CLI not installed; no key set. **Rochak to do:** sandbox → Issuing (immediate or "request access"? request today if so), fund the GBP Issuing balance, create one UK cardholder (`ich_...`), `brew install stripe/stripe-cli/stripe && stripe login`. Needed from Session 31.
+  **Update 16 Oct 2026:** all done. The sandbox key, cardholder and CLI signing secret are in `.env.local`. The CLI is installed and runs with the sandbox key (`STRIPE_API_KEY`), so no `stripe login` is needed. Firecrawl's key is in `.env.local` too. Gemini (free) stands in for Claude in the checker and rule reader; there's still no Anthropic key.
 - None of this blocks Phases 1–7, which run on offline fakes.
 
 ## Earlier research (raw files)
