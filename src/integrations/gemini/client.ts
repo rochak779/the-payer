@@ -29,20 +29,25 @@ const parseJson = (text: string | undefined): unknown => {
   }
 };
 
+/** A Zod schema as the JSON Schema Gemini accepts: a subset of JSON Schema, with no `$schema` keyword. */
+export function geminiJsonSchema(schema: z.ZodType): Record<string, unknown> {
+  const json: Record<string, unknown> = z.toJSONSchema(schema);
+  delete json.$schema;
+  return json;
+}
+
 /** One call whose reply must match `schema`. */
 export async function generateJson<S extends z.ZodType>(
   c: GoogleGenAI,
   call: { model: string; system: string; prompt: string; schema: S },
 ): Promise<z.output<S>> {
-  // Gemini accepts a subset of JSON Schema, which has no `$schema` keyword.
-  const { $schema: _unused, ...responseJsonSchema } = z.toJSONSchema(call.schema);
   const response = await c.models.generateContent({
     model: call.model,
     contents: call.prompt,
     config: {
       systemInstruction: call.system,
       responseMimeType: 'application/json',
-      responseJsonSchema,
+      responseJsonSchema: geminiJsonSchema(call.schema),
       httpOptions: { retryOptions: RETRY },
     },
   });

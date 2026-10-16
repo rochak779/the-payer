@@ -4956,7 +4956,12 @@ git commit -m "feat(firecrawl): real web search behind SEARCH=firecrawl"
 
 ### Session 30: Claude: real shopper agent
 
-> **As built:** as planned; SDK types accept `fallbacks` on the tool runner. **Live run pending Anthropic + Firecrawl keys.**
+> **As built:** as planned; SDK types accept `fallbacks` on the tool runner. **The Claude agent's live run is still pending an Anthropic key.**
+>
+> **Gemini port (16 Oct, Rochak's decision; no Anthropic key):** `src/integrations/gemini/shopper.ts` behind `SHOPPER=gemini`. Same instructions, tool names, descriptions and input schemas (exported from the Claude file), same 12-call cap, and tool errors go back to the model as errors, as Claude's tool runner does. Claude's SDK runs the tool loop itself; on Gemini it is written out, with the model's turn sent back unchanged (Gemini needs its thought signatures). One difference: when the cap is hit, the Gemini agent says "Stopped after 12 steps without finding a suitable option." Claude's runner ends silently there. Live runs on `gemini-3.5-flash-lite`:
+> - Fixture search, "Book a hotel in Lisbon, 7–9 Nov": one search, the two canned hotels, a request for Hotel Lisboa Plaza at £240, approved, paid with a (fake) one-time card. Matches Step 5.
+> - Fixture search with `CHECKER=gemini`, "Buy a birthday present for my nephew, about £60": the agent searched for LEGO sets 12 times and stopped without asking to buy. The fixture search matches the query's own words (gift, present, birthday, nephew), so every "LEGO Star Wars…" query got the fallback programming book, which the agent rightly didn't buy. This is a limit of the canned search, not of the agent.
+> - Firecrawl search with `CHECKER=gemini`, Lisbon: two real searches (Booking.com, Tripadvisor, IHG, Kayak; the first Booking.com hit was Lisbon, *United States*), then the agent narrowed to one IHG hotel. Then Google refused the next call: **the free Flash-Lite tier allows 500 requests a day**, and today's evals had used them. The Firecrawl Lisbon run and the nephew run wait for the daily reset.
 
 **Files:**
 - Create: `src/integrations/claude/shopper.ts`
@@ -5113,7 +5118,7 @@ import { createClaudeShopper } from '@/integrations/claude/shopper';
     shopper: process.env.SHOPPER === 'claude' ? createClaudeShopper({ clock }) : createScriptedShopper(clock),
 ```
 
-- [ ] **Step 5: Run tests, then live** (tests pass; live run pending keys)
+- [ ] **Step 5: Run tests, then live** (tests pass; Gemini agent run live on fixture search; Firecrawl run cut short by the free Gemini daily cap; Claude pending a key)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.

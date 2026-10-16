@@ -1,9 +1,11 @@
 import { fixtureSearch } from '@/agent/fixtures';
 import { createScriptedShopper } from '@/agent/scriptedShopper';
+import type { Shopper } from '@/agent/types';
 import { getFuzzyChecker } from '@/checker/registry';
 import type { FlowDeps } from '@/flow/runs';
 import { createClaudeShopper } from '@/integrations/claude/shopper';
 import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
+import { createGeminiShopper } from '@/integrations/gemini/shopper';
 import { createStripeIssuer } from '@/integrations/stripe/issuer';
 import { createFakeIssuer } from '@/payments/fakeIssuer';
 import type { RuleParser } from '@/rules/parser';
@@ -22,7 +24,13 @@ export function getDeps(): Deps {
     fuzzy: getFuzzyChecker(process.env.CHECKER ?? 'keyword'),
     parser: getRuleParser(process.env.PARSER ?? 'pattern'),
     search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
-    shopper: process.env.SHOPPER === 'claude' ? createClaudeShopper({ clock }) : createScriptedShopper(clock),
+    shopper: getShopper(process.env.SHOPPER, clock),
     issuer: process.env.ISSUER === 'stripe' ? createStripeIssuer(store, clock) : createFakeIssuer(store, clock),
   };
+}
+
+function getShopper(name: string | undefined, clock: () => Date): Shopper {
+  if (name === 'claude') return createClaudeShopper({ clock });
+  if (name === 'gemini') return createGeminiShopper({ clock });
+  return createScriptedShopper(clock);
 }

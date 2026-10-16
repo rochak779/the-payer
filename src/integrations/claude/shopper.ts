@@ -20,6 +20,14 @@ export const PurchaseInput = z.object({
   listing_text: z.string().describe('Raw text from the listing: price breakdown, fees, policy, rating'),
 });
 
+export const SearchInput = z.object({ query: z.string().describe('What to search for') });
+
+/** The two tools' descriptions. Shared word for word with the Gemini agent. */
+export const TOOL_DESCRIPTIONS = {
+  search_web: 'Search the web. Returns the top results with page text.',
+  request_purchase: 'Ask permission to buy one specific item for the person. Returns approve, ask or block with a reason. You never receive card details.',
+} as const;
+
 export function toPurchaseRequest(input: z.infer<typeof PurchaseInput>, today: string): PurchaseRequest {
   return PurchaseRequest.parse({
     item: input.item,
@@ -36,7 +44,8 @@ export function toPurchaseRequest(input: z.infer<typeof PurchaseInput>, today: s
   });
 }
 
-const systemPrompt = (today: string) => `You are a shopping agent acting for one person. Find one real option that fits their request, then ask permission to buy it by calling request_purchase. You never have their card details.
+/** The agent's instructions. Shared word for word with the Gemini agent. */
+export const systemPrompt = (today: string) => `You are a shopping agent acting for one person. Find one real option that fits their request, then ask permission to buy it by calling request_purchase. You never have their card details.
 
 - Use search_web to find options. Read the price, what's included, extra fees and the refund or cancellation policy from the listing itself.
 - Pick ONE option and call request_purchase with its real details. total_amount is the full amount the person will pay, including any taxes or fees you can see. Copy the refund policy text. Put the relevant raw listing text in listing_text. Say who it is for in why.
@@ -53,8 +62,8 @@ export function createClaudeShopper(opts: { model?: string; client?: Anthropic; 
 
       const searchWeb = betaZodTool({
         name: 'search_web',
-        description: 'Search the web. Returns the top results with page text.',
-        inputSchema: z.object({ query: z.string().describe('What to search for') }),
+        description: TOOL_DESCRIPTIONS.search_web,
+        inputSchema: SearchInput,
         run: async ({ query }) => {
           emit({ kind: 'search', text: query });
           const results = await tools.searchWeb(query);
@@ -65,7 +74,7 @@ export function createClaudeShopper(opts: { model?: string; client?: Anthropic; 
 
       const requestPurchase = betaZodTool({
         name: 'request_purchase',
-        description: 'Ask permission to buy one specific item for the person. Returns approve, ask or block with a reason. You never receive card details.',
+        description: TOOL_DESCRIPTIONS.request_purchase,
         inputSchema: PurchaseInput,
         run: async (input) => {
           const req = toPurchaseRequest(input, today);
