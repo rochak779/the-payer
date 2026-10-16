@@ -14,13 +14,13 @@ Fixed rule set: `evals/rules.json` (10 rules). 67 cases (50 dev / 17 held-out te
 | keyword-baseline (67 cases) | 2026-10-16 | test | 9/17 (53%) | 5 | 3 | 0 | 0 |
 | gemini-3.5-flash-lite v3, run 1 / 2 | 2026-10-16 | dev | 48/50, 47/50 | 0, 1 | 1, 1 | 1, 1 | 0, 0 |
 | gemini-3.5-flash-lite v3, run 1 / 2 | 2026-10-16 | test | 13/17, 14/17 | 1, 0 | 2, 2 | 1, 1 | 0, 0 |
-| **gemini-3.5-flash-lite v4, run 1 / 2 (current)** | 2026-10-16 | dev | 48/50, 47/50 | 0, 1 | 1, 1 | 1, 1 | 0, 0 |
-| **gemini-3.5-flash-lite v4, run 1 / 2 (current)** | 2026-10-16 | test | 14/17, 14/17 | 0, 0 | 2, 2 | 1, 1 | 0, 0 |
+| **gemini-3.5-flash-lite v4, run 1 / 2 (current, final)** | 2026-10-16 | dev | 48/50, 47/50 | 0, 1 | 1, 1 | 1, 1 | 0, 0 |
+| **gemini-3.5-flash-lite v4, run 1 / 2 (current, final)** | 2026-10-16 | test | 14/17, 14/17 | 0, 0 | 2, 2 | 1, 1 | 0, 0 |
 | claude-sonnet-5-5 v1, v2, final | pending | dev + test | – | – | – | – | – |
 
 Saved runs: `evals/results/2026-10-15T22-42-40-898Z_keyword-baseline_baseline.json`, `evals/results/2026-10-16T08-48-36-027Z_gemini_gemini-3.5-flash-lite_v2_v2.json`, `evals/results/2026-10-16T08-34-42-700Z_gemini_gemini-3.5-flash-lite_v1_flash-lite-v1.json`.
 
-Claude rows are pending an Anthropic key (no key on the build machine). To fill them: `npm run eval -- --checker claude --label v1` (Session 26), the improvement round (Session 27), then `npm run eval -- --checker claude --label final`. Re-checked 16 Oct 2026: the keyword baseline still gives the numbers above.
+Final rows (plan Session 35 step 5): the two prompt v4 runs, marked above. The checker's code, prompt and cases haven't changed since those runs. Claude rows are pending an Anthropic key (no key on the build machine). To fill them: `npm run eval -- --checker claude --label v1` (Session 26), the improvement round (Session 27), then `npm run eval -- --checker claude --label final`. Re-checked 16 Oct 2026: the keyword baseline still gives the numbers above.
 
 ## Rounds 2 and 3: prompts v3 and v4 (16 Oct 2026)
 Each version was run twice, because one run moves by a case or two.
