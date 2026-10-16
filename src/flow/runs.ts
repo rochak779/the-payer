@@ -2,14 +2,36 @@ import type { Shopper, ShopperEvent, ShopperTools, WebSearch } from '@/agent/typ
 import { recordDecision } from '@/approvals/approvals';
 import { checkPurchase } from '@/checker/checkPurchase';
 import type { FuzzyChecker } from '@/checker/fuzzy';
+import { merchantMatches } from '@/checker/merchant';
 import { newId } from '@/domain/ids';
-import { OUTCOME_LABEL } from '@/domain/labels';
-import type { ApprovalStatus, Outcome, Run } from '@/domain/types';
+import { OUTCOME_LABEL, STATUS_LABEL } from '@/domain/labels';
+import { formatMoney } from '@/domain/money';
+import type { Approval, ApprovalStatus, Decision, Outcome, PurchaseRequest, Run } from '@/domain/types';
 import type { CardIssuer } from '@/payments/cardIssuer';
 import { fulfil } from '@/payments/fulfil';
 import type { Db, Store } from '@/store/store';
 
 export const MAX_REQUESTS_PER_RUN = 2;
+
+/** Requests in these states still stand: a repeat of one would be a double booking. */
+const STANDING: ApprovalStatus[] = ['pending', 'approved', 'used'];
+
+/**
+ * An earlier request in this run at the same shop for the same price that is waiting, approved or paid.
+ * Matching on shop and price, not item wording, catches an agent that retries with different words,
+ * e.g. after a charge failed part-way. Two different purchases in one task are still fine.
+ */
+function earlierSame(db: Db, run: Run, req: PurchaseRequest): Approval | undefined {
+  const sameShop = (a: string, b: string) => merchantMatches(a, b) || merchantMatches(b, a);
+  return db.approvals.find(
+    (a) =>
+      run.approvalIds.includes(a.id) &&
+      STANDING.includes(a.status) &&
+      a.request.total.minor === req.total.minor &&
+      a.request.total.currency === req.total.currency &&
+      sameShop(a.request.merchant, req.merchant),
+  );
+}
 
 export type FlowDeps = { store: Store; fuzzy: FuzzyChecker; search: WebSearch; shopper: Shopper; issuer: CardIssuer; clock: () => Date };
 export type RunView = Run & { approvals: { id: string; status: ApprovalStatus; outcome: Outcome }[] };
@@ -38,7 +60,15 @@ export async function executeRun(deps: FlowDeps, runId: string): Promise<void> {
     requestPurchase: async (req) => {
       requests += 1;
       if (requests > MAX_REQUESTS_PER_RUN) throw new Error(`Only ${MAX_REQUESTS_PER_RUN} purchase requests are allowed per task.`);
-      const { rules, settings } = deps.store.read();
+      const db = deps.store.read();
+      const earlier = earlierSame(db, findRun(db, runId), req);
+      if (earlier) {
+        const message = `Already requested in this task: ${earlier.request.item} at ${earlier.request.merchant} for ${formatMoney(earlier.request.total)} (${STATUS_LABEL[earlier.status]}). Not buying it twice.`;
+        emit({ kind: 'decision', text: `${OUTCOME_LABEL.block}: ${message}` });
+        const duplicate: Decision = { outcome: 'block', reasons: [{ ruleId: null, by: 'system', outcome: 'block', message }], summary: message, checker: 'duplicate-check' };
+        return duplicate;
+      }
+      const { rules, settings } = db;
       const decision = await checkPurchase(req, { rules, agentEnabled: settings.agentEnabled, fuzzy: deps.fuzzy });
       const approval = recordDecision(deps.store, req, decision, deps.clock());
       deps.store.update((db) => { findRun(db, runId).approvalIds.push(approval.id); });
