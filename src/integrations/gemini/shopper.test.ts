@@ -41,6 +41,10 @@ function setup(replies: GenerateContentResponse[]) {
 /** The parts of the last message sent in model call `n` (0-based). */
 const lastSent = (generateContent: ReturnType<typeof vi.fn>, n: number): Part[] => generateContent.mock.calls[n][0].contents.at(-1).parts;
 
+/** A call that never answers, and fails the way the SDK's fetch does when its signal fires. */
+const stalls = (signal: AbortSignal) =>
+  new Promise((_, reject) => signal.addEventListener('abort', () => reject(Object.assign(new Error('This operation was aborted'), { name: 'AbortError' }))));
+
 describe('Gemini shopper', () => {
   it('searches, asks to buy one option, and reports the answer', async () => {
     const searchTurn: Part[] = [{ ...call('search_web', { query: 'Lisbon hotel 7-9 Nov' }), thoughtSignature: 'sig-1' }];
@@ -113,6 +117,26 @@ describe('Gemini shopper', () => {
     await shopper.run('Book a hotel', tools, (e) => events.push(e));
     expect(generateContent).toHaveBeenCalledTimes(12);
     expect(events.at(-1)).toEqual({ kind: 'status', text: 'Stopped after 12 steps without finding a suitable option.' });
+  });
+
+  it('cancels a stalled call at its deadline, so the task can\'t hang on "running"', async () => {
+    const generateContent = vi.fn().mockImplementation(({ config }: { config: { abortSignal: AbortSignal } }) => stalls(config.abortSignal));
+    const shopper = createGeminiShopper({ client: { models: { generateContent } } as unknown as GoogleGenAI, clock, callTimeoutMs: 20 });
+    const tools = { searchWeb: vi.fn(), requestPurchase: vi.fn() };
+    await expect(shopper.run('Book a hotel', tools, () => {})).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
+  it('says why it stopped when an answer is cut off or unreadable, instead of ending silently', async () => {
+    const cases: [string, string][] = [
+      ['MALFORMED_FUNCTION_CALL', "The agent stopped: it sent a step the app couldn't read. Try the task again."],
+      ['MAX_TOKENS', 'The agent stopped: its answer ran over the length limit. Try the task again.'],
+      ['OTHER', 'The agent stopped early (OTHER). Try the task again.'],
+    ];
+    for (const [finishReason, text] of cases) {
+      const { events, run } = setup([Object.assign(new GenerateContentResponse(), { candidates: [{ finishReason }] })]);
+      await run();
+      expect(events.at(-1)).toEqual({ kind: 'status', text });
+    }
   });
 
   it('a blocked prompt or a safety stop fails the run', async () => {

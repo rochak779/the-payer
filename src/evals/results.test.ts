@@ -20,6 +20,12 @@ describe('formatReport', () => {
     expect(report).toContain('The model refused or gave an unreadable answer on 1 of 2 cases (scored as asks).');
   });
 
+  it('names the cases that failed or were unreadable, so they can be looked at', () => {
+    const report = formatReport(run([{ ...result(true), id: 'price-02' }, { ...result(false, true), id: 'against-10' }, result(false)]));
+    expect(report.split('\n')[1]).toBe('Failed cases: price-02');
+    expect(report).toContain('(scored as asks).\nUnreadable cases: against-10');
+  });
+
   it('has no warning when every check ran', () => {
     expect(formatReport(run([result(false)]))).not.toContain('WARNING');
   });
