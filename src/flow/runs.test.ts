@@ -23,7 +23,12 @@ describe('executeRun', () => {
   it('auto-approved task: issues a card, charges it, and finishes', async () => {
     const view = await runTask(deps(), 'Book a hotel in Lisbon');
     expect(view.status).toBe('done');
-    expect(view.approvals).toEqual([{ id: expect.any(String), status: 'used', outcome: 'approve' }]);
+    // Enough of each purchase for the Ask screen to print its receipt, without the listing's raw text.
+    expect(view.approvals).toEqual([{
+      id: expect.any(String), status: 'used', outcome: 'approve',
+      item: expect.stringContaining('Hotel Lisboa Plaza'), merchant: 'Hotel Lisboa Plaza', total: { minor: 24000, currency: 'GBP' },
+      summary: 'Within all your rules.', reasons: [], last4: expect.stringMatching(/^\d{4}$/),
+    }]);
     expect(view.events.map((e) => e.kind)).toEqual(['status', 'search', 'found', 'found', 'request', 'decision', 'status', 'status']);
   });
 
@@ -88,7 +93,7 @@ describe('executeRun', () => {
       const d = { ...deps(), shopper: repeater };
       const view = await runTask(d, 'buy a book');
       expect(decisions).toEqual(['approve', 'block']);
-      expect(view.approvals).toEqual([{ id: expect.any(String), status: 'used', outcome: 'approve' }]);
+      expect(view.approvals).toEqual([expect.objectContaining({ status: 'used', outcome: 'approve' })]);
       expect(view.events.filter((e) => e.text === 'Paid with a one-time card.')).toHaveLength(1);
       expect(view.events.at(-1)?.text).toContain('Not buying it twice');
     });

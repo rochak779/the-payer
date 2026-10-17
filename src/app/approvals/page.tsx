@@ -1,30 +1,45 @@
-import { decideApproval } from '@/app/actions';
-import { Card } from '@/components/ui';
+import Link from 'next/link';
+import { ArrowIcon, CheckIcon } from '@/components/icons';
+import { buttonClass, Nudge, ScreenTitle } from '@/components/ui';
 import { formatMoney } from '@/domain/money';
 import { defaultStore } from '@/store/store';
+import { ApprovalReceipt } from './ApprovalReceipt';
 
 export const dynamic = 'force-dynamic';
 
 export default function ApprovalsPage() {
   const pending = defaultStore().read().approvals.filter((a) => a.status === 'pending').reverse();
   return (
-    <div className="space-y-3">
-      <h2 className="text-base font-semibold">Waiting for you</h2>
-      {pending.length === 0 && <p className="text-sm text-neutral-500">Nothing to approve.</p>}
-      {pending.map((a) => (
-        <Card key={a.id}>
-          <p className="text-sm font-semibold">Agent wants to spend {formatMoney(a.request.total)} at {a.request.merchant}</p>
-          <p className="text-sm text-neutral-600">{a.request.item}</p>
-          <p className="mt-3 text-sm"><span className="font-medium">Asking because:</span> {a.decision.summary}</p>
-          {a.request.refundPolicy && <p className="mt-1 text-xs text-neutral-500">Refunds: {a.request.refundPolicy}</p>}
-          <a href={a.request.url} target="_blank" rel="noreferrer" className="mt-1 block text-xs text-blue-700 underline">View listing</a>
-          <form action={decideApproval} className="mt-4 grid grid-cols-2 gap-2">
-            <input type="hidden" name="id" value={a.id} />
-            <button name="choice" value="decline" className="rounded-full py-2 text-sm ring-1 ring-neutral-300">Decline</button>
-            <button name="choice" value="approve" className="rounded-full bg-neutral-900 py-2 text-sm font-medium text-white">Approve</button>
-          </form>
-        </Card>
-      ))}
+    <div>
+      <ScreenTitle before="Waiting for " script="you" />
+      {pending.length === 0 ? (
+        <div className="step-in flex flex-col items-center rounded-[20px] border border-dashed border-line px-6 py-10 text-center">
+          <span className="flex size-11 items-center justify-center rounded-full bg-forest/[0.08] text-forest">
+            <CheckIcon width={22} height={22} strokeWidth={2.25} />
+          </span>
+          <p className="mt-3 text-[0.9375rem] font-semibold text-forest">Nothing to approve.</p>
+          <Link href="/ask" className={buttonClass('quiet', 'md', 'mt-2')}>
+            Ask the agent
+            <Nudge><ArrowIcon width={16} height={16} strokeWidth={2} /></Nudge>
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-5">
+          {pending.map((a) => (
+            <ApprovalReceipt
+              key={a.id}
+              id={a.id}
+              item={a.request.item}
+              merchant={a.request.merchant}
+              amount={formatMoney(a.request.total)}
+              summary={a.decision.summary}
+              reasons={a.decision.reasons.filter((r) => r.outcome !== 'approve')}
+              refundPolicy={a.request.refundPolicy}
+              url={a.request.url}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

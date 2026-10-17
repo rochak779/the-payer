@@ -1,49 +1,66 @@
 import Link from 'next/link';
-import { demoCharge, toggleAgent } from '@/app/actions';
-import { Card, OutcomeBadge } from '@/components/ui';
+import { demoCharge } from '@/app/actions';
+import { ArrowIcon, CardIcon, ChartIcon } from '@/components/icons';
+import { SubmitButton } from '@/components/SubmitButton';
+import { buttonClass, Nudge, Panel, ReasonLines, Receipt, ReceiptHead, ReceiptSection, ScreenTitle, Stamp, stampFor } from '@/components/ui';
 import { STATUS_LABEL } from '@/domain/labels';
 import { formatMoney } from '@/domain/money';
 import type { Approval, LogEntry } from '@/domain/types';
 import { defaultStore } from '@/store/store';
+import { AgentSwitch } from './AgentSwitch';
 
 export const dynamic = 'force-dynamic';
 
 const time = (iso: string) => new Date(iso).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
+function LogLines({ log }: { log: LogEntry[] }) {
+  return (
+    <ol className="space-y-1.5">
+      {log.map((l) => (
+        <li key={l.id} className="flex gap-2.5 text-[0.75rem] leading-relaxed text-ink-soft">
+          <span className="shrink-0 font-semibold text-muted tabular-nums">{time(l.at)}</span>
+          <span className="min-w-0">{l.message}</span>
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry[] }) {
   const shown = a.decision.reasons.filter((r) => r.outcome !== 'approve');
   return (
-    <Card>
-      <div className="flex items-start justify-between gap-2">
-        <div>
-          <p className="text-sm font-semibold">{a.request.item}</p>
-          <p className="text-xs text-neutral-500">{a.request.merchant} · {formatMoney(a.request.total)} · {STATUS_LABEL[a.status]}</p>
-        </div>
-        <OutcomeBadge outcome={a.decision.outcome} />
-      </div>
-      <ul className="mt-2 space-y-1">
-        {shown.length === 0 && <li className="text-xs text-neutral-600">{a.decision.summary}</li>}
-        {shown.map((r, i) => (
-          <li key={i} className="text-xs">
-            <span className="mr-1 rounded bg-neutral-100 px-1 text-[10px] uppercase text-neutral-600">{r.by}</span>
-            {r.message}
-          </li>
-        ))}
-      </ul>
-      {a.card && <p className="mt-2 text-xs text-neutral-600">One-time card •••• {a.card.last4} ({a.card.provider})</p>}
-      <ol className="mt-2 space-y-0.5 border-l border-neutral-200 pl-3">
-        {log.map((l) => <li key={l.id} className="text-[11px] text-neutral-600">{time(l.at)} · {l.message}</li>)}
-      </ol>
+    <Receipt>
+      <ReceiptHead title={a.request.item} sub={`${a.request.merchant} · ${STATUS_LABEL[a.status]}`} amount={formatMoney(a.request.total)} />
+      <ReceiptSection className="space-y-3">
+        <Stamp outcome={stampFor(a.status, a.decision.outcome)} />
+        <ReasonLines reasons={shown} fallback={a.decision.summary} />
+      </ReceiptSection>
       {a.card && (
-        <form action={demoCharge} className="mt-3 flex flex-wrap gap-2">
-          <input type="hidden" name="id" value={a.id} />
-          <span className="w-full text-[11px] font-medium text-neutral-500">Demo: pretend a merchant tries to…</span>
-          <button name="kind" value="more" className="rounded-full px-3 py-1 text-xs ring-1 ring-neutral-300">charge £20 more</button>
-          <button name="kind" value="other_merchant" className="rounded-full px-3 py-1 text-xs ring-1 ring-neutral-300">charge from another shop</button>
-          <button name="kind" value="repeat" className="rounded-full px-3 py-1 text-xs ring-1 ring-neutral-300">charge again</button>
-        </form>
+        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
+          <CardIcon width={18} height={18} />
+          One-time card <span className="font-bold tracking-[0.12em] text-forest tabular-nums">•••• {a.card.last4}</span>
+          <span className="text-muted">({a.card.provider})</span>
+        </ReceiptSection>
       )}
-    </Card>
+      {log.length > 0 && (
+        <ReceiptSection>
+          <LogLines log={log} />
+        </ReceiptSection>
+      )}
+      {a.card && (
+        <ReceiptSection>
+          <form action={demoCharge}>
+            <input type="hidden" name="id" value={a.id} />
+            <p className="mb-2 text-[0.75rem] font-semibold text-ink-soft">Demo: pretend a merchant tries to…</p>
+            <div className="flex flex-wrap gap-1.5">
+              <SubmitButton name="kind" value="more">charge £20 more</SubmitButton>
+              <SubmitButton name="kind" value="other_merchant">charge from another shop</SubmitButton>
+              <SubmitButton name="kind" value="repeat">charge again</SubmitButton>
+            </div>
+          </form>
+        </ReceiptSection>
+      )}
+    </Receipt>
   );
 }
 
@@ -53,33 +70,30 @@ export default function ActivityPage() {
   const system = db.log.filter((l) => l.approvalId === null).reverse().slice(0, 10);
   const on = db.settings.agentEnabled;
   return (
-    <div className="space-y-4">
-      <h2 className="text-base font-semibold">Activity</h2>
-      <Card>
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-sm font-semibold">Agent is {on ? 'on' : 'off'}</p>
-            <p className="text-xs text-neutral-500">Turning it off cancels every open approval and card.</p>
-          </div>
-          <form action={toggleAgent}>
-            <input type="hidden" name="enabled" value={on ? 'false' : 'true'} />
-            <button className={`rounded-full px-3 py-1.5 text-xs font-medium text-white ${on ? 'bg-red-700' : 'bg-emerald-700'}`}>
-              {on ? 'Turn off agent' : 'Turn on'}
-            </button>
-          </form>
+    <div className="space-y-5">
+      <ScreenTitle script="Activity" />
+      <Panel className="flex items-center justify-between gap-4 p-4">
+        <div>
+          <p className="text-[0.9375rem] font-bold text-forest">Agent is {on ? 'on' : 'off'}</p>
+          <p className="text-[0.8125rem] leading-snug text-muted">Turning it off cancels every open approval and card.</p>
         </div>
-      </Card>
-      {purchases.length === 0 && <p className="text-sm text-neutral-500">No purchases yet.</p>}
+        <AgentSwitch on={on} />
+      </Panel>
+      {purchases.length === 0 && (
+        <p className="rounded-[20px] border border-dashed border-line px-4 py-6 text-center text-sm text-muted">No purchases yet.</p>
+      )}
       {purchases.map((a) => <PurchaseEntry key={a.id} approval={a} log={db.log.filter((l) => l.approvalId === a.id)} />)}
       {system.length > 0 && (
-        <section>
-          <h3 className="mb-1 text-xs font-semibold uppercase text-neutral-500">Other events</h3>
-          <ol className="space-y-0.5">
-            {system.map((l) => <li key={l.id} className="text-[11px] text-neutral-600">{time(l.at)} · {l.message}</li>)}
-          </ol>
+        <section className="space-y-2 pt-1">
+          <h3 className="text-sm font-bold text-forest">Other events</h3>
+          <LogLines log={system} />
         </section>
       )}
-      <Link href="/evals" className="block text-center text-xs text-blue-700 underline">How well does the checker decide? →</Link>
+      <Link href="/evals" className={buttonClass('secondary', 'md', 'w-full')}>
+        <ChartIcon width={17} height={17} />
+        How well does the checker decide?
+        <Nudge><ArrowIcon width={16} height={16} strokeWidth={2} /></Nudge>
+      </Link>
     </div>
   );
 }

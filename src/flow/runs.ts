@@ -35,7 +35,11 @@ function earlierSame(db: Db, run: Run, req: PurchaseRequest): Approval | undefin
 }
 
 export type FlowDeps = { store: Store; fuzzy: FuzzyChecker; search: WebSearch; shopper: Shopper; issuer: CardIssuer; clock: () => Date };
-export type RunView = Run & { approvals: { id: string; status: ApprovalStatus; outcome: Outcome }[] };
+/** A purchase as the Ask screen prints it: enough for its receipt, without the listing's raw text. */
+export type RunPurchase = Pick<PurchaseRequest, 'item' | 'merchant' | 'total'> & Pick<Decision, 'summary' | 'reasons'> & {
+  id: string; status: ApprovalStatus; outcome: Outcome; last4: string | null;
+};
+export type RunView = Run & { approvals: RunPurchase[] };
 
 export function startRun(store: Store, task: string, now: Date): Run {
   const run: Run = { id: newId('run'), task, status: 'running', createdAt: now.toISOString(), events: [], approvalIds: [] };
@@ -99,6 +103,10 @@ export function viewRun(db: Db, runId: string): RunView | null {
   if (!run) return null;
   const approvals = db.approvals
     .filter((a) => run.approvalIds.includes(a.id))
-    .map((a) => ({ id: a.id, status: a.status, outcome: a.decision.outcome }));
+    .map((a) => ({
+      id: a.id, status: a.status, outcome: a.decision.outcome,
+      item: a.request.item, merchant: a.request.merchant, total: a.request.total,
+      summary: a.decision.summary, reasons: a.decision.reasons, last4: a.card?.last4 ?? null,
+    }));
   return { ...run, approvals };
 }

@@ -1,10 +1,14 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useState, useTransition } from 'react';
+import { useEffect, useState, useTransition, type ComponentType, type SVGProps } from 'react';
 import { startTask } from '@/app/actions';
-import { Card } from '@/components/ui';
-import type { RunView } from '@/flow/runs';
+import { AgentIcon, AlertIcon, ArrowIcon, BagIcon, CardIcon, SearchIcon, StampIcon } from '@/components/icons';
+import { Button, buttonClass, CHIP, FIELD, Note, Nudge, ReasonLines, Receipt, ReceiptHead, ReceiptSection, Stamp, stampFor } from '@/components/ui';
+import { OUTCOME_LABEL, STATUS_LABEL } from '@/domain/labels';
+import { formatMoney } from '@/domain/money';
+import type { RunEvent } from '@/domain/types';
+import type { RunPurchase, RunView } from '@/flow/runs';
 
 const EXAMPLES = [
   'Book a hotel in Lisbon, 7–9 Nov',
@@ -12,9 +16,70 @@ const EXAMPLES = [
   'Get me some noise-cancelling headphones',
 ];
 
-const KIND_LABEL: Record<string, string> = {
-  status: 'Agent', search: 'Search', found: 'Found', request: 'Wants to buy', decision: 'Checker', error: 'Error',
+/** The icon says what kind of step it is; a few kinds also lead with a word, inline. */
+const KIND: Record<string, { lead?: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }> = {
+  status: { Icon: AgentIcon },
+  search: { lead: 'Searched', Icon: SearchIcon },
+  request: { Icon: BagIcon },
+  decision: { lead: 'Checker', Icon: StampIcon },
+  error: { lead: 'Error', Icon: AlertIcon },
 };
+
+/** A search result arrives as "Title (url)": show the title, keep the link. */
+const splitFound = (text: string) => {
+  const m = text.match(/^(.*) \((https?:\/\/[^)]+)\)$/);
+  return m ? { name: m[1], url: m[2] } : { name: text, url: null };
+};
+
+/** A decision event's own purchase: its text is the outcome label and summary the checker gave. */
+function purchaseFor(e: RunEvent, purchases: RunPurchase[], used: Set<string>): RunPurchase | undefined {
+  const match = purchases.find((p) => !used.has(p.id) && e.text === `${OUTCOME_LABEL[p.outcome]}: ${p.summary}`);
+  if (match) used.add(match.id);
+  return match;
+}
+
+function RunReceipt({ p }: { p: RunPurchase }) {
+  const shown = p.reasons.filter((r) => r.outcome !== 'approve');
+  return (
+    <Receipt className="step-in">
+      <ReceiptHead title={p.item} sub={`${p.merchant} · ${STATUS_LABEL[p.status]}`} amount={formatMoney(p.total)} />
+      <ReceiptSection className="space-y-3">
+        <Stamp outcome={stampFor(p.status, p.outcome)} land />
+        <ReasonLines reasons={shown} fallback={p.summary} />
+      </ReceiptSection>
+      {p.last4 && (
+        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
+          <CardIcon width={18} height={18} />
+          One-time card <span className="font-bold tracking-[0.12em] text-forest tabular-nums">•••• {p.last4}</span>
+        </ReceiptSection>
+      )}
+    </Receipt>
+  );
+}
+
+function Step({ e }: { e: RunEvent }) {
+  if (e.kind === 'found') {
+    const { name, url } = splitFound(e.text);
+    return (
+      <li className="step-in truncate pl-10 text-[0.8125rem] text-muted">
+        {url ? <a href={url} target="_blank" rel="noreferrer" title={url} className="hover:text-forest hover:underline">{name}</a> : name}
+      </li>
+    );
+  }
+  const { lead, Icon } = KIND[e.kind] ?? KIND.status;
+  const error = e.kind === 'error';
+  return (
+    <li className="step-in relative flex items-start gap-3">
+      <span className={`relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full ring-4 ring-cream ${error ? 'bg-peach text-orange-ink' : 'bg-forest/[0.08] text-forest'}`}>
+        <Icon width={15} height={15} strokeWidth={2} />
+      </span>
+      <p className={`min-w-0 pt-1 text-sm leading-relaxed ${error ? 'text-orange-ink' : 'text-slate'}`}>
+        {lead && <span className={`font-bold ${error ? '' : 'text-forest'}`}>{lead}: </span>}
+        {e.text}
+      </p>
+    </li>
+  );
+}
 
 export function AskAgent() {
   const [task, setTask] = useState('');
@@ -51,48 +116,66 @@ export function AskAgent() {
       }
     });
 
+  const used = new Set<string>();
+
   return (
-    <div className="space-y-4">
-      <textarea
-        value={task}
-        onChange={(e) => setTask(e.target.value)}
-        rows={3}
-        placeholder="What should the agent buy?"
-        className="w-full rounded-2xl border border-neutral-300 bg-white p-3 text-sm"
-      />
-      <div className="flex flex-wrap gap-2">
-        {EXAMPLES.map((ex) => (
-          <button key={ex} type="button" onClick={() => setTask(ex)} className="rounded-full bg-white px-3 py-1 text-xs ring-1 ring-neutral-200">
-            {ex}
-          </button>
-        ))}
+    <div className="space-y-6">
+      <div className="space-y-3">
+        <label htmlFor="task" className="sr-only">What should the agent buy?</label>
+        <textarea
+          id="task"
+          value={task}
+          onChange={(e) => setTask(e.target.value)}
+          onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey) && !busy && task.trim()) submit(); }}
+          rows={3}
+          placeholder="What should the agent buy?"
+          className={FIELD}
+        />
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLES.map((ex) => (
+            <button key={ex} type="button" onClick={() => setTask(ex)} aria-pressed={task === ex} className={`${CHIP} ${task === ex ? 'bg-peach ring-orange-soft' : ''}`}>
+              {ex}
+            </button>
+          ))}
+        </div>
+        <Button className="w-full" busy={busy} disabled={busy || !task.trim()} onClick={submit}>
+          {busy ? 'Agent is working…' : 'Send to agent'}
+          {!busy && <Nudge><ArrowIcon width={18} height={18} strokeWidth={2} /></Nudge>}
+        </Button>
+        {error && <Note tone="error">{error}</Note>}
       </div>
-      <button disabled={busy || !task.trim()} onClick={submit} className="w-full rounded-full bg-neutral-900 py-2.5 text-sm font-medium text-white disabled:opacity-40">
-        {busy ? 'Agent is working…' : 'Send to agent'}
-      </button>
-      {error && <p className="text-sm text-red-700">{error}</p>}
 
       {run && (
-        <Card>
-          <p className="text-xs uppercase tracking-wide text-neutral-500">Agent progress</p>
-          <ol className="mt-2 space-y-2">
-            {run.events.map((e, i) => (
-              <li key={i} className="text-sm">
-                <span className="mr-2 text-[11px] font-medium uppercase text-neutral-500">{KIND_LABEL[e.kind]}</span>
-                <span className={e.kind === 'error' ? 'text-red-700' : ''}>{e.text}</span>
+        <section aria-live="polite" aria-label="Agent progress" className="space-y-4">
+          <ol className="relative space-y-3 before:absolute before:bottom-3 before:left-[13px] before:top-3 before:w-px before:bg-line">
+            {run.events.map((e, i) => {
+              const p = e.kind === 'decision' ? purchaseFor(e, run.approvals, used) : undefined;
+              return p ? <li key={i} className="relative z-10 py-1"><RunReceipt p={p} /></li> : <Step key={i} e={e} />;
+            })}
+            {run.status === 'running' && (
+              <li className="relative flex items-center gap-3">
+                <span className="thinking relative z-10 flex size-7 items-center justify-center gap-[3px] rounded-full bg-forest/[0.08] ring-4 ring-cream">
+                  <span className="size-1 rounded-full bg-forest" />
+                  <span className="size-1 rounded-full bg-forest" />
+                  <span className="size-1 rounded-full bg-forest" />
+                </span>
+                <span className="text-sm text-muted">Working…</span>
               </li>
-            ))}
-            {run.status === 'running' && <li className="text-sm text-neutral-400">…</li>}
+            )}
           </ol>
           {waitingForYou && (
-            <Link href="/approvals" className="mt-3 block rounded-full bg-amber-500 py-2 text-center text-sm font-medium text-white">
+            <Link href="/approvals" className={buttonClass('needs', 'lg', 'step-in w-full')}>
               Review in Approvals
+              <Nudge><ArrowIcon width={18} height={18} strokeWidth={2} /></Nudge>
             </Link>
           )}
           {run.status !== 'running' && !waitingForYou && (
-            <Link href="/activity" className="mt-3 block text-center text-xs text-blue-700 underline">See it in the activity log</Link>
+            <Link href="/activity" className={buttonClass('quiet', 'md', 'step-in w-full')}>
+              See it in the activity log
+              <Nudge><ArrowIcon width={16} height={16} strokeWidth={2} /></Nudge>
+            </Link>
           )}
-        </Card>
+        </section>
       )}
     </div>
   );

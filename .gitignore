@@ -43,3 +43,6 @@ next-env.d.ts
 # app data (local JSON store)
 /data
 !.env.example
+.firecrawl/
+.impeccable/review/
+.impeccable/questions/

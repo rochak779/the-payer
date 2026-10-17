@@ -1,3 +1,5 @@
+import { ChevronIcon } from '@/components/icons';
+import { ScreenTitle } from '@/components/ui';
 import { defaultValidUntil, toAp2OpenMandate } from '@/rules/ap2';
 import { checkedBy, explainRule } from '@/rules/explain';
 import { defaultStore } from '@/store/store';
@@ -11,17 +13,25 @@ export default function RulesPage() {
   const initialText = [...new Set(rules.map((r) => r.source))].join('\n');
   const validUntil = defaultValidUntil(rules);
   return (
-    <div className="space-y-3">
-      <h2 className="text-base font-semibold">Your rules</h2>
-      <p className="text-sm text-neutral-600">Write them the way you’d tell a person. I’ll show you how I read them before anything is saved.</p>
+    <div>
+      <ScreenTitle before="Your rules">
+        Write them the way you’d tell a person. I’ll show you how I read them before anything is saved.
+      </ScreenTitle>
       <RulesEditor initialText={initialText} saved={saved} />
       {rules.length > 0 && (
-        <details className="rounded-2xl bg-white p-4 text-sm shadow-sm ring-1 ring-neutral-200">
-          <summary className="cursor-pointer font-medium">View as AP2 open mandate</summary>
-          <p className="mt-2 text-xs text-neutral-500">
-            Your saved rules in the AP2 v0.2 open Payment Mandate format, valid until {validUntil}. Rules that AP2 has no field for are kept in <code>x_agent_mandates</code>.
-          </p>
-          <pre className="mt-2 overflow-x-auto text-xs">{JSON.stringify(toAp2OpenMandate(rules, { validUntil }), null, 2)}</pre>
+        <details className="group mt-8 rounded-[20px] bg-paper ring-1 ring-line [&_summary::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-3 rounded-[20px] px-4 py-3.5 text-sm font-semibold text-forest transition-colors duration-200 hover:bg-cream">
+            View as AP2 open mandate
+            <ChevronIcon width={18} height={18} className="shrink-0 text-muted transition-transform duration-300 ease-out group-open:rotate-90" />
+          </summary>
+          <div className="px-4 pb-4">
+            <p className="text-[0.8125rem] leading-relaxed text-ink-soft">
+              Your saved rules in the AP2 v0.2 open Payment Mandate format, valid until {validUntil}. Rules that AP2 has no field for are kept in <code className="rounded bg-cream px-1 font-mono text-[0.75rem]">x_agent_mandates</code>.
+            </p>
+            <pre className="mt-3 max-h-80 overflow-auto rounded-2xl bg-cream p-3 font-mono text-[0.6875rem] leading-relaxed text-slate ring-1 ring-line">
+              {JSON.stringify(toAp2OpenMandate(rules, { validUntil }), null, 2)}
+            </pre>
+          </div>
         </details>
       )}
     </div>
