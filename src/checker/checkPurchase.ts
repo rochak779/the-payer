@@ -1,4 +1,5 @@
 import { CATEGORY_LABEL } from '@/domain/labels';
+import { serviceProblem } from '@/domain/serviceError';
 import type { Decision, JudgementRule, Outcome, PurchaseRequest, Reason, Rule } from '@/domain/types';
 import type { FuzzyChecker, FuzzyResult } from './fuzzy';
 import { checkHardLimits } from './hardLimits';
@@ -22,9 +23,10 @@ export async function checkPurchase(req: PurchaseRequest, ctx: CheckContext): Pr
   let soft: Reason[];
   try {
     const result = await withTimeout(ctx.fuzzy.check(req, ctx.rules), ctx.timeoutMs ?? 60_000);
-    soft = [...toReasons(result, judgement), ...relabelled(req, ctx.rules, hard, result)];
+    soft = [...toReasons(result, judgement), ...recheckCategory(req, ctx.rules, hard, result)];
   } catch (err) {
-    const why = err instanceof Error ? err.message : String(err);
+    const problem = serviceProblem(err);
+    const why = problem ? `the AI service ${problem}` : err instanceof Error ? err.message : String(err);
     soft = [{ ruleId: null, by: 'system', outcome: 'ask', message: `I couldn't run the judgement checks (${why}), so I'm asking you to be safe.` }];
   }
   return decide([...hard, ...soft], ctx.fuzzy.name);
@@ -78,6 +80,15 @@ function relabelled(req: PurchaseRequest, rules: Rule[], hard: Reason[], result:
       outcome: isBan(r.ruleId) ? r.outcome : r.outcome === 'block' ? ('ask' as const) : r.outcome,
       message: `${why} ${r.message}`,
     }));
+}
+
+/** A failure re-checking the category adds an ask. It never throws away the verdicts already read. */
+function recheckCategory(req: PurchaseRequest, rules: Rule[], hard: Reason[], result: FuzzyResult): Reason[] {
+  try {
+    return relabelled(req, rules, hard, result);
+  } catch {
+    return [{ ruleId: null, by: 'system', outcome: 'ask', message: "I couldn't re-check what kind of purchase this is, so I'm asking you to be safe." }];
+  }
 }
 
 function decide(reasons: Reason[], checker: string): Decision {

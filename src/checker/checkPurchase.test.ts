@@ -37,6 +37,13 @@ describe('checkPurchase', () => {
     expect(d.summary).toBe("The price is in EUR but your limit is in GBP, so I can't compare them safely.");
   });
 
+  it('names an AI service failure in plain English in the reason', async () => {
+    const quota = Object.assign(new Error('{"error":{"code":429,"status":"RESOURCE_EXHAUSTED"}}'), { status: 429 });
+    const d = await checkPurchase(makeRequest(), ctx([refundRule], stub(async () => { throw quota; })));
+    expect(d.outcome).toBe('ask');
+    expect(d.summary).toBe("I couldn't run the judgement checks (the AI service is over its usage limit), so I'm asking you to be safe.");
+  });
+
   it('blocks everything when the agent is off, without calling the AI', async () => {
     const fuzzy = allClear();
     const d = await checkPurchase(makeRequest(), ctx([], fuzzy, { agentEnabled: false }));
@@ -125,6 +132,16 @@ describe('checkPurchase', () => {
       expect(d.outcome).toBe('block');
       expect(d.summary).toContain('The agent filed this under "Other", but it belongs under "Gift cards". You said no gift cards.');
       expect(d.reasons).toContainEqual(expect.objectContaining({ ruleId: 'no-gift-cards', by: 'ai' }));
+    });
+
+    it("if re-checking the category fails, it asks as well, and keeps the AI's other findings", async () => {
+      // A cap with no amount can't be checked: here it fails only once the category changes to hotel.
+      const brokenCap = { ...hotelCap, id: 'broken-cap', max: undefined } as unknown as Rule;
+      const fuzzy = stub(async () => result([{ ruleId: 'refundable', verdict: 'breached', explanation: 'This rate is non-refundable.' }], { category: 'hotel' }));
+      const d = await checkPurchase(makeRequest({ category: 'other' }), ctx([refundRule, brokenCap], fuzzy));
+      expect(d.outcome).toBe('block');
+      expect(d.reasons).toContainEqual(expect.objectContaining({ ruleId: 'refundable', outcome: 'block' }));
+      expect(d.reasons).toContainEqual(expect.objectContaining({ by: 'system', outcome: 'ask', message: "I couldn't re-check what kind of purchase this is, so I'm asking you to be safe." }));
     });
 
     it('applies a price cap that only covers the real category', async () => {

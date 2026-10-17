@@ -6,6 +6,7 @@ import { merchantMatches } from '@/checker/merchant';
 import { newId } from '@/domain/ids';
 import { OUTCOME_LABEL, STATUS_LABEL } from '@/domain/labels';
 import { formatMoney } from '@/domain/money';
+import { serviceProblem } from '@/domain/serviceError';
 import type { Approval, ApprovalStatus, Decision, Outcome, PurchaseRequest, Run } from '@/domain/types';
 import type { CardIssuer } from '@/payments/cardIssuer';
 import { fulfil } from '@/payments/fulfil';
@@ -85,7 +86,10 @@ export async function executeRun(deps: FlowDeps, runId: string): Promise<void> {
     await deps.shopper.run(task, tools, emit);
     deps.store.update((db) => { findRun(db, runId).status = 'done'; });
   } catch (err) {
-    emit({ kind: 'error', text: err instanceof Error ? err.message : String(err) });
+    // A shopper with live search can fail on either service, so the message doesn't say which.
+    const problem = serviceProblem(err);
+    const text = problem ? `The agent stopped: a service it uses ${problem}. Try again later.` : err instanceof Error ? err.message : String(err);
+    emit({ kind: 'error', text });
     deps.store.update((db) => { findRun(db, runId).status = 'failed'; });
   }
 }

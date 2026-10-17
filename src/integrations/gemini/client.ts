@@ -16,8 +16,18 @@ export function gemini(): GoogleGenAI {
   return client;
 }
 
-/** Free-tier rate limits (429) are retried. Waits of 2 + 4 + 8 seconds stay well inside the 60-second check timeout. */
+/**
+ * Rate limits (429) and server errors are retried up to 3 times. The waits start at 2, 4 and 8 seconds and are
+ * randomised up to double, so they add up to about 28 seconds at most.
+ */
 export const RETRY: HttpRetryOptions = { attempts: 4, initialDelay: 2, maxDelay: 20 };
+
+/**
+ * Each call, retries included, is cancelled after 50 seconds. A stalled connection can't leave a task "running",
+ * and a call can't go on retrying, and spending free quota, after the checker's 60-second limit has given up on it.
+ * (The SDK's own `timeout` covers one attempt, and a timed-out attempt is retried.)
+ */
+export const CALL_DEADLINE_MS = 50_000;
 
 /** The model answered, but not with something we can use. Callers turn this into "ask" or "rephrase". */
 export class UnreadableAnswer extends CheckerAnswerError {}
@@ -40,7 +50,7 @@ export function geminiJsonSchema(schema: z.ZodType): Record<string, unknown> {
 /** One call whose reply must match `schema`. */
 export async function generateJson<S extends z.ZodType>(
   c: GoogleGenAI,
-  call: { model: string; system: string; prompt: string; schema: S },
+  call: { model: string; system: string; prompt: string; schema: S; timeoutMs?: number },
 ): Promise<z.output<S>> {
   const response = await c.models.generateContent({
     model: call.model,
@@ -50,6 +60,7 @@ export async function generateJson<S extends z.ZodType>(
       responseMimeType: 'application/json',
       responseJsonSchema: geminiJsonSchema(call.schema),
       httpOptions: { retryOptions: RETRY },
+      abortSignal: AbortSignal.timeout(call.timeoutMs ?? CALL_DEADLINE_MS),
     },
   });
   const blocked = response.promptFeedback?.blockReason;

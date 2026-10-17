@@ -42,6 +42,22 @@ describe('executeRun', () => {
     expect(view.events.at(-1)).toMatchObject({ kind: 'error', text: 'agent crashed' });
   });
 
+  it("explains a service failure in plain English, not the service's raw error", async () => {
+    const quota = Object.assign(new Error('{"error":{"code":429,"message":"You exceeded your current quota","status":"RESOURCE_EXHAUSTED"}}'), { status: 429 });
+    const outage = Object.assign(new Error('{"error":{"code":503,"status":"UNAVAILABLE"}}'), { status: 503 });
+    const slow = Object.assign(new Error('This operation was aborted'), { name: 'AbortError' });
+    const cases: [Error, string][] = [
+      [quota, 'The agent stopped: a service it uses is over its usage limit. Try again later.'],
+      [outage, 'The agent stopped: a service it uses returned an error (HTTP 503). Try again later.'],
+      [slow, "The agent stopped: a service it uses didn't answer in time. Try again later."],
+    ];
+    for (const [err, text] of cases) {
+      const view = await runTask({ ...deps(), shopper: { name: 'x', run: async () => { throw err; } } }, 'anything');
+      expect(view.status).toBe('failed');
+      expect(view.events.at(-1)).toMatchObject({ kind: 'error', text });
+    }
+  });
+
   it('refuses a third purchase request in one task', async () => {
     const greedy: Shopper = {
       name: 'greedy',

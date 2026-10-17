@@ -53,6 +53,17 @@ export const systemPrompt = (today: string) => `You are a shopping agent acting 
 - After request_purchase answers: if "approve", confirm in one sentence. If "ask", stop and say the person will be asked. If "block", you may try ONE different option that fixes the reason; otherwise stop and explain.
 - Today is ${today}. Assume GBP unless the listing says otherwise.`;
 
+/** The most model calls one task may take. Shared with the Gemini agent. */
+export const MAX_STEPS = 12;
+
+/** What the person sees when the agent stops without finishing, rather than a task that just ends. Shared with the Gemini agent. */
+export const STOP_NOTE = {
+  cap: `Stopped after ${MAX_STEPS} steps without finding a suitable option.`,
+  tooLong: 'The agent stopped: its answer ran over the length limit. Try the task again.',
+  unreadable: "The agent stopped: it sent a step the app couldn't read. Try the task again.",
+  other: (reason: string) => `The agent stopped early (${reason}). Try the task again.`,
+};
+
 export function createClaudeShopper(opts: { model?: string; client?: Anthropic; clock?: () => Date } = {}): Shopper {
   const model = opts.model ?? AGENT_MODEL;
   return {
@@ -88,7 +99,7 @@ export function createClaudeShopper(opts: { model?: string; client?: Anthropic; 
       const final = await (opts.client ?? claude()).beta.messages.toolRunner({
         model,
         max_tokens: 16000,
-        max_iterations: 12,
+        max_iterations: MAX_STEPS,
         betas: ['server-side-fallback-2026-07-01'],
         fallbacks: 'default',
         output_config: { effort: 'medium' },
@@ -97,6 +108,9 @@ export function createClaudeShopper(opts: { model?: string; client?: Anthropic; 
         messages: [{ role: 'user', content: task }],
       });
       if (final.stop_reason === 'refusal') throw new Error('The agent declined this task.');
+      // The runner hands back the last reply: still asking for a tool means it ran out of steps.
+      if (final.stop_reason === 'tool_use') return emit({ kind: 'status', text: STOP_NOTE.cap });
+      if (final.stop_reason === 'max_tokens') return emit({ kind: 'status', text: STOP_NOTE.tooLong });
       const text = final.content.flatMap((b) => (b.type === 'text' ? [b.text] : [])).join(' ').trim();
       if (text) emit({ kind: 'status', text });
     },
