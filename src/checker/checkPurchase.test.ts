@@ -30,6 +30,13 @@ describe('checkPurchase', () => {
     expect(d).toMatchObject({ outcome: 'approve', summary: 'Within all your rules.', checker: 'stub' });
   });
 
+  it('says a repeated reason once in the summary (two GBP limits, a price in euros)', async () => {
+    const taskCap: Rule = { id: 'task-cap', source: 'Up to £500 a task.', onBreach: 'ask', kind: 'amount_cap', max: { minor: 50000, currency: 'GBP' }, per: 'purchase' };
+    const d = await checkPurchase(makeRequest({ total: { minor: 42800, currency: 'EUR' } }), ctx([hotelCap, taskCap], allClear()));
+    expect(d.reasons).toHaveLength(2);
+    expect(d.summary).toBe("The price is in EUR but your limit is in GBP, so I can't compare them safely.");
+  });
+
   it('blocks everything when the agent is off, without calling the AI', async () => {
     const fuzzy = allClear();
     const d = await checkPurchase(makeRequest(), ctx([], fuzzy, { agentEnabled: false }));

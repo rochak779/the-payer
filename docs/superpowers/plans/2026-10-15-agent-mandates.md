@@ -4961,7 +4961,12 @@ git commit -m "feat(firecrawl): real web search behind SEARCH=firecrawl"
 > **Gemini port (16 Oct, Rochak's decision; no Anthropic key):** `src/integrations/gemini/shopper.ts` behind `SHOPPER=gemini`. Same instructions, tool names, descriptions and input schemas (exported from the Claude file), same 12-call cap, and tool errors go back to the model as errors, as Claude's tool runner does. Claude's SDK runs the tool loop itself; on Gemini it is written out, with the model's turn sent back unchanged (Gemini needs its thought signatures). One difference: when the cap is hit, the Gemini agent says "Stopped after 12 steps without finding a suitable option." Claude's runner ends silently there. Live runs on `gemini-3.5-flash-lite`:
 > - Fixture search, "Book a hotel in Lisbon, 7–9 Nov": one search, the two canned hotels, a request for Hotel Lisboa Plaza at £240, approved, paid with a (fake) one-time card. Matches Step 5.
 > - Fixture search with `CHECKER=gemini`, "Buy a birthday present for my nephew, about £60": the agent searched for LEGO sets 12 times and stopped without asking to buy. The fixture search matches the query's own words (gift, present, birthday, nephew), so every "LEGO Star Wars…" query got the fallback programming book, which the agent rightly didn't buy. This is a limit of the canned search, not of the agent.
-> - Firecrawl search with `CHECKER=gemini`, Lisbon: two real searches (Booking.com, Tripadvisor, IHG, Kayak; the first Booking.com hit was Lisbon, *United States*), then the agent narrowed to one IHG hotel. Then Google refused the next call: **the free Flash-Lite tier allows 500 requests a day**, and today's evals had used them. The Firecrawl Lisbon run and the nephew run wait for the daily reset.
+> - Firecrawl search with `CHECKER=gemini`, Lisbon: two real searches (Booking.com, Tripadvisor, IHG, Kayak; the first Booking.com hit was Lisbon, *United States*), then the agent narrowed to one IHG hotel. Then Google refused the next call: **the free Flash-Lite tier allows 500 requests a day**, and today's evals had used them.
+>
+> **After the daily reset (17 Oct), with `CHECKER=gemini SEARCH=firecrawl SHOPPER=gemini`:**
+> - Lisbon: four real searches, then a request for Corinthia Lisbon Hotel, 2 nights at €428, taken from a "nightly rates from €214" line on a third-party guide site, not a quote for those dates. The checker asked rather than approved: the price is in euros against pound limits, and the refund policy wasn't clear. So the checker caught a weak pick it couldn't verify; it can't tell a "from" price from a real one. The currency reason showed twice (two pound limits), now said once.
+> - Nephew: two John Lewis searches, then a request for LEGO Star Wars 75379 R2-D2 at £64.98. "Asking you" (the gift rule), as Step 5 expects.
+> - On the canned search, the nephew task now reaches the LEGO listing: the canned search also matches "lego" and "toy". With both AI parts on: Lisbon → Hotel Lisboa Plaza £240, approved, paid (fake card); nephew → LEGO Technic £60, "Asking you". These are the runs the video needs, in pounds and repeatable.
 
 **Files:**
 - Create: `src/integrations/claude/shopper.ts`
@@ -5118,7 +5123,7 @@ import { createClaudeShopper } from '@/integrations/claude/shopper';
     shopper: process.env.SHOPPER === 'claude' ? createClaudeShopper({ clock }) : createScriptedShopper(clock),
 ```
 
-- [ ] **Step 5: Run tests, then live** (tests pass; Gemini agent run live on fixture search; Firecrawl run cut short by the free Gemini daily cap; Claude pending a key)
+- [x] **Step 5: Run tests, then live** (on Gemini, per Rochak: both tasks run live on Firecrawl and on the canned search; the Claude run is pending a key)
 
 Run: `npm test && npm run typecheck`
 Expected: PASS.
