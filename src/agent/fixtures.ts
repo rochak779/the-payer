@@ -25,7 +25,7 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   {
-    match: /\b(gift|present|birthday|nephew)\b/i,
+    match: /\b(gift|present|birthday|nephew|lego|toys?)\b/i,
     query: 'LEGO Technic gift for 10 year old',
     results: [{ title: 'LEGO Technic race car – £60', url: 'https://example.com/lego-technic', snippet: 'Ages 9+. Free returns within 90 days.' }],
     pick: {

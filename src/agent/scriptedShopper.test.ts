@@ -32,6 +32,11 @@ describe('scripted shopper', () => {
     expect(requested[0].merchant).toBe(FALLBACK.pick.merchant);
   });
 
+  it("the canned search answers an AI agent's own wording for the nephew present", async () => {
+    const results = await fixtureSearch.search('LEGO Star Wars set around 60 GBP');
+    expect(results[0].url).toBe('https://example.com/lego-technic');
+  });
+
   it('every scenario is a valid purchase request', () => {
     for (const s of [...SCENARIOS, FALLBACK]) {
       expect(PurchaseRequest.safeParse({ ...s.pick, purchaseDate: '2026-11-10' }).success).toBe(true);

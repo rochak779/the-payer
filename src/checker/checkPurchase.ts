@@ -85,7 +85,7 @@ function decide(reasons: Reason[], checker: string): Decision {
   const summary =
     outcome === 'approve'
       ? 'Within all your rules.'
-      : reasons.filter((r) => r.outcome === outcome).map((r) => r.message).join(' ');
+      : [...new Set(reasons.filter((r) => r.outcome === outcome).map((r) => r.message))].join(' ');
   return { outcome, reasons, summary, checker };
 }
 
