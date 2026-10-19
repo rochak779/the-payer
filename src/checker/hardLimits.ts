@@ -60,8 +60,17 @@ function checkAmountCap(req: PurchaseRequest, rule: AmountCapRule): Reason | nul
     if (req.total.minor <= rule.max.minor) return null;
     return breach(rule, `${formatMoney(req.total)} in total is over your ${formatMoney(rule.max)} per ${rule.unitLabel} limit (the listing counts ${unitKey(req.unitLabel!)}s, not ${unitKey(rule.unitLabel!)}s).`);
   }
-  // No unit count: compare the whole total. Conservative, so a per-night breach can't slip through.
-  const units = rule.per === 'unit' ? (req.units ?? 1) : 1;
+  // No unit count: a total within the limit fits however many units it covers. Over it, it may or may not be
+  // a breach, so ask (whatever the rule's own ask/block) and say why, rather than call the total a unit price.
+  if (rule.per === 'unit' && !req.units) {
+    if (req.total.minor <= rule.max.minor) return null;
+    const units = `${unitKey(rule.unitLabel ?? 'unit')}s`;
+    return {
+      ruleId: rule.id, by: 'code', outcome: 'ask',
+      message: `${formatMoney(req.total)} in total, but I don't know how many ${units} that covers, so I can't check your ${formatMoney(rule.max)} per ${rule.unitLabel ?? 'unit'} limit.`,
+    };
+  }
+  const units = rule.per === 'unit' ? req.units! : 1;
   const price = Math.ceil(req.total.minor / units);
   if (price <= rule.max.minor) return null; // limits are inclusive
   const shown = formatMoney({ minor: price, currency: req.total.currency });

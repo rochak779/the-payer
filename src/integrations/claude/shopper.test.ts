@@ -1,7 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it, vi } from 'vitest';
 import type { ShopperEvent } from '@/agent/types';
-import { createClaudeShopper, toPurchaseRequest } from './shopper';
+import { PurchaseInput, createClaudeShopper, toPurchaseRequest } from './shopper';
 
 const input = {
   item: 'Hotel Lisboa Plaza, 2 nights', merchant: 'Hotel Lisboa Plaza', category: 'hotel' as const,
@@ -19,6 +19,18 @@ describe('toPurchaseRequest', () => {
 
   it('rejects a non-http link from the agent', () => {
     expect(() => toPurchaseRequest({ ...input, url: 'javascript:alert(1)' }, '2026-11-10')).toThrow();
+  });
+});
+
+describe('PurchaseInput', () => {
+  it('sends a hotel request without a night count back to the agent, saying what to add', () => {
+    const result = PurchaseInput.safeParse({ ...input, units: undefined, unit_label: undefined });
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]).toMatchObject({ path: ['units'], message: 'A hotel is priced per night: set units to the number of nights and unit_label to "night".' });
+  });
+
+  it('other purchases may leave the count out', () => {
+    expect(PurchaseInput.safeParse({ ...input, category: 'other', units: undefined, unit_label: undefined }).success).toBe(true);
   });
 });
 

@@ -5612,6 +5612,8 @@ git commit -m "feat(rules): export rules as an AP2 open mandate"
 >
 > *19 Oct, dev cache off:* after the merge the dev server kept serving the old stylesheet, even after a restart, because Turbopack reuses its saved dev build from `.next/dev`. The new screens showed up unstyled. Turned off `turbopackFileSystemCacheForDev` in `next.config.ts`; restarts now always rebuild the styles.
 
+> *19 Oct, two misreads from the video takes fixed (Rochak: "first fix, then record the video"):* (1) **Rule reader:** Gemini read "Ask me about gifts." as "only gift cards" in 2 of 7 takes. Reader prompt v2 says what block / allow_only each mean and maps "ask me about X"; parse cases p21–p22 added (22 cases). Gemini 21/22 and 20/22 (was 20/22 on v1), video rules 20/20 right in a repeat. (2) **Night count:** the agent left out `units` in 2 of 5 Lisbon runs, and the checker then called the £240 total "£240 per night". Now a hotel request without a night count goes back to the agent as a tool error (6/6 live runs then gave it), and a per-unit limit with no count asks with "£240 in total, but I don't know how many nights that covers…" whatever the rule's ask/block (it may or may not be a breach). 166 tests.
+
 **Files:**
 - Create: `README.md`
 - Modify: `evals/RESULTS.md`, `BRIEF.md`

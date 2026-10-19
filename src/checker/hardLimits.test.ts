@@ -36,8 +36,19 @@ describe('amount caps', () => {
     expect(reason.message).toBe('£155 per night is over your £150 limit.');
   });
 
-  it('compares the whole total when the unit count is missing (conservative)', () => {
-    expect(checkHardLimits(makeRequest({ total: gbp(24000), units: undefined }), [hotelCap])).toHaveLength(1);
+  it('asks, and says the night count is unknown, when a per-night limit has no count to divide by', () => {
+    const [reason] = checkHardLimits(makeRequest({ total: gbp(24000), units: undefined, unitLabel: undefined }), [hotelCap]);
+    expect(reason).toMatchObject({ ruleId: 'hotel-cap', outcome: 'ask' });
+    expect(reason.message).toBe("£240 in total, but I don't know how many nights that covers, so I can't check your £150 per night limit.");
+  });
+
+  it('asks, not blocks, on a missing count even under a "never" per-night limit: it may be a breach or not', () => {
+    const [reason] = checkHardLimits(makeRequest({ total: gbp(24000), units: undefined }), [{ ...hotelCap, onBreach: 'block' }]);
+    expect(reason.outcome).toBe('ask');
+  });
+
+  it('a total within a per-night limit needs no count: it fits however many nights it covers', () => {
+    expect(checkHardLimits(makeRequest({ total: gbp(15000), units: undefined }), [hotelCap])).toEqual([]);
   });
 
   it('compares the whole total when the request counts a different unit (e.g. guest-nights, not nights)', () => {

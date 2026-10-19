@@ -12,12 +12,16 @@ export const PurchaseInput = z.object({
   category: Category,
   total_amount: z.number().nonnegative().describe('Full amount the person pays, including taxes and fees you can see, in major units, e.g. 240.50'),
   currency: Currency,
-  units: z.number().int().positive().optional().describe('Number of nights / tickets / people if priced per unit'),
+  units: z.number().int().positive().optional().describe('Number of nights / tickets / people if priced per unit. Required for a hotel: the number of nights'),
   unit_label: z.string().optional().describe('e.g. "night"'),
   refund_policy: z.string().describe('Refund or cancellation policy copied from the listing; empty if not stated'),
   url: z.string().describe('Link to the listing'),
   why: z.string().describe("Why this fits the person's request, including who it is for"),
   listing_text: z.string().describe('Raw text from the listing: price breakdown, fees, policy, rating'),
+}).refine((i) => i.category !== 'hotel' || i.units !== undefined, {
+  // Without it, a per-night limit can't be checked and the person gets asked.
+  path: ['units'],
+  message: 'A hotel is priced per night: set units to the number of nights and unit_label to "night".',
 });
 
 export const SearchInput = z.object({ query: z.string().describe('What to search for') });
