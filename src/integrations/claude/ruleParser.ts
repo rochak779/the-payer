@@ -30,13 +30,14 @@ export const SYSTEM = `You turn a person's plain-English spending rules for thei
 
 Kinds:
 - amount_cap: a price limit. maxAmount in major units (150 for £150), currency, per "unit" for per-night/per-person/per-ticket limits, otherwise "purchase"; unitLabel (e.g. "night"); category if the limit only applies to one kind of purchase.
-- merchant: specific shops. mode "block" (never use them) or "allow_only" (only use them).
-- category: kinds of purchase. mode "block" or "allow_only". Allowed categories: ${Category.options.join(', ')}.
+- merchant: specific shops. mode "block" (using one of them breaches the rule) or "allow_only" (using any other shop breaches it).
+- category: kinds of purchase. mode "block" (buying one of these breaches the rule) or "allow_only" (buying anything else breaches it). Allowed categories: ${Category.options.join(', ')}.
 - date_window: only buy between two dates. from/to as YYYY-MM-DD.
 - judgement: anything that needs judgement or can't be expressed exactly by the kinds above. text = the rule in the person's words.
 
 Policy:
 - onBreach is "block" only when the person says never / no / nothing / don't / must not. Otherwise "ask".
+- mode "allow_only" only when the person says only / just / nothing but. "Ask me about X" or "check with me before X" means ask before buying X: mode "block" with onBreach "ask" if X is exactly one of the categories (gift cards → gift_card); otherwise (e.g. gifts, which can be any kind of purchase) a judgement rule.
 - Split a sentence that holds two rules into two rules; both keep the full sentence as source.
 - If a rule is only partly expressible as a hard limit (e.g. a shop rule that only applies to one category), make it a judgement rule. Never invent limits the person didn't state.
 - Set every field that doesn't apply to null.`;

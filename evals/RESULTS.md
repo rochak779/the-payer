@@ -62,12 +62,17 @@ The bigger free Gemini model, `gemini-3.8-flash`, can run with the same instruct
 - Hard-rule categories (conflict 6/6, against 7/9) are mostly right because plain code handles amounts, merchants, categories and dates.
 
 ## Rule-reading accuracy
-Does "here's what I understood" match what the person meant? 20 plain-English rules in `evals/parse-cases.json` (15 written for the plan, 5 in people's own words from `research/rules-test.md`). A case passes only if every rule's kind, limit, scope and ask/block match.
+Does "here's what I understood" match what the person meant? 22 plain-English rules in `evals/parse-cases.json` (15 written for the plan, 5 in people's own words from `research/rules-test.md`, 2 added 19 Oct after misreads while recording the demo video). A case passes only if every rule's kind, limit, scope and ask/block match.
 
 | Reader | Date | Correct | Notes |
 |---|---|---|---|
 | pattern (offline) | 2026-10-15 | 13/20 | Misses dates, € and $ limits, and two-part sentences. Two misreads are risky: "I only shop at Tesco for groceries" became "only ever use *tesco for groceries*" (would block everything else), and "No subscriptions that renew automatically" became a ban on all subscriptions. |
 | gemini-3.5-flash-lite (free), run 1 / 2 | 2026-10-16 | 19/20, 18/20 | Same instructions as the Claude reader. Gets the dates, € and $ limits and two-part sentences the pattern reader misses. Every miss turned an "only…" sentence into a "never": "I only shop at Tesco for groceries" (p12, both runs) and "Only hotels rated 8/10 or better" (p08, run 2) became rules that block instead of ask. That errs strict: a purchase outside them is blocked, not approved. `npm run eval:parse -- --parser gemini`. |
+| pattern (offline), 22 cases | 2026-10-19 | 14/22 | Gets p21 ("Ask me about gifts.", read as a judgement rule) and misses p22 ("Ask me about gift cards."). |
+| gemini-3.5-flash-lite, reader prompt v1, 22 cases | 2026-10-19 | 20/22 | Misses p08 again (block instead of ask), and p22: "Ask me about gift cards." became "only gift cards". |
+| **gemini-3.5-flash-lite, reader prompt v2 (current), run 1 / 2** | 2026-10-19 | 21/22, 20/22 | p21 right in both runs. p22 right once; the other run made it a judgement rule (asks about gift cards, as meant, just via the AI checker). p19, a vague "under $20 … I could maybe get used to it", became a $20 limit in both runs: noise, not the change (4/6 right with either prompt). |
 | claude-sonnet-5-5 | pending | – | Built behind `PARSER=claude` but not measured: no Anthropic key. `npm run eval:parse -- --parser claude`. |
+
+**Reader prompt v2 (19 Oct).** While recording the demo video, Gemini read "Ask me about gifts." as "only gift cards are allowed" in 2 of 7 readings (1 of 10 in a repeat), so it asked about every purchase. The new case p22 showed the same mix-up: the model read "ask me about X" as "only X". Prompt v2 says what each mode means ("block": buying one of these breaches the rule; "allow_only": buying anything else does), uses "allow_only" only for only / just / nothing but, and maps "ask me about X" to block-with-ask for a category, or a judgement rule otherwise (gifts can be any kind of purchase). Repeated on the video's rules: 20/20 right. The two old "only…" misses (p08, p12) were right in both runs too.
 
 UI check (16 Oct, `PARSER=gemini npm run dev`): "Keep train tickets under £100 and never buy first class." on /rules shows two rules, "Trains over £100 → I'll ask you first" (checked by code) and "never buy first class" (judged by AI, blocks). Saved runs: `evals/results/parse/`.

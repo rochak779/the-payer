@@ -4,7 +4,7 @@ Plain-English spending rules for a personal AI shopping agent, a checker that de
 
 Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
 
-**Status (17 Oct 2026):** everything runs end to end on offline stand-ins, with 161 automated tests. The AI parts (checker, rule reader and shopper agent) are **measured on Google's free `gemini-3.5-flash-lite`**, using the instructions written for Claude (`CHECKER=gemini`, `PARSER=gemini`, `SHOPPER=gemini`). The checker scores 14/17 on the held-out cases (9/17 for the keyword baseline) with 0–1 wrong approvals per run across all 67 cases (keyword: 17). The rule reader gets 19/20 and 18/20 (pattern reader: 13/20). See `evals/RESULTS.md`. The AI agent has run both demo tasks on the canned search and on live Firecrawl search. Firecrawl search has been smoke-tested live (5 real results). Stripe sandbox cards have been tested live: our webhook's answer is honoured, and a slow or missing answer is declined. **The Claude versions are built behind the same switches but unmeasured**, because there's no Anthropic key.
+**Status (19 Oct 2026):** everything runs end to end on offline stand-ins, with 166 automated tests. The AI parts (checker, rule reader and shopper agent) are **measured on Google's free `gemini-3.5-flash-lite`**, using the instructions written for Claude (`CHECKER=gemini`, `PARSER=gemini`, `SHOPPER=gemini`). The checker scores 14/17 on the held-out cases (9/17 for the keyword baseline) with 0–1 wrong approvals per run across all 67 cases (keyword: 17). The rule reader gets 21/22 and 20/22 (pattern reader: 14/22). See `evals/RESULTS.md`. The AI agent has run both demo tasks on the canned search and on live Firecrawl search. Firecrawl search has been smoke-tested live (5 real results). Stripe sandbox cards have been tested live: our webhook's answer is honoured, and a slow or missing answer is declined. **The Claude versions are built behind the same switches but unmeasured**, because there's no Anthropic key.
 
 ## Run it (offline, no keys)
 Needs Node 22.9 or later.
@@ -61,7 +61,7 @@ The agent never holds payment details. After approval the app creates a one-time
 
 The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
 
-**Rule reading** ("here's what I understood"): 20 plain-English rules. The offline pattern reader gets 13/20. Gemini Flash-Lite gets 19/20 and 18/20 over two runs; its misses read "only…" as "never" (block instead of ask). Claude is unmeasured (no key).
+**Rule reading** ("here's what I understood"): 22 plain-English rules. The offline pattern reader gets 14/22. Gemini Flash-Lite gets 21/22 and 20/22 over two runs with reader prompt v2, which fixed "Ask me about gifts." being read as "only gift cards". Claude is unmeasured (no key).
 
 Commands: `npm run eval -- --checker gemini --concurrency 1 --label v4` and `npm run eval:parse -- --parser gemini` (or `claude` once there's a key). Results are in `evals/RESULTS.md`, on the `/evals` page, and as saved runs in `evals/results/`.
 

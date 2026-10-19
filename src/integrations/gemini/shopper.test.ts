@@ -101,6 +101,15 @@ describe('Gemini shopper', () => {
     expect(events.at(-1)).toEqual({ kind: 'status', text: 'Stopped.' });
   });
 
+  it('a hotel request without a night count goes back to the agent as an error and is never checked', async () => {
+    const noCount = { ...purchase, units: undefined, unit_label: undefined };
+    const { generateContent, tools, run } = setup([reply([call('request_purchase', noCount)]), reply([{ text: 'Stopped.' }])]);
+    await run();
+    expect(tools.requestPurchase).not.toHaveBeenCalled();
+    const [part] = lastSent(generateContent, 1);
+    expect(part.functionResponse?.response).toEqual({ error: expect.stringContaining('set units to the number of nights') });
+  });
+
   it('an unknown tool goes back to the agent as an error', async () => {
     const { generateContent, run } = setup([reply([call('get_card_number', {})]), reply([{ text: 'OK.' }])]);
     await run();
