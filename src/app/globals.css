@@ -1,1 +1,192 @@
 @import "tailwindcss";
+
+/* The Product Kinship's palette and type (colours and type only; see PRODUCT.md). */
+@theme {
+  --color-forest: #173f35;
+  --color-forest-deep: #0f2e26;
+  --color-cream: #f7f2e8;
+  --color-paper: #fffdf8;
+  --color-line: #e4dccd;
+  --color-sage: #c6cbc1;
+  --color-gold: #e9a51a;
+  --color-orange: #d96a32;
+  --color-orange-ink: #b4511f;
+  --color-orange-soft: #ecb898;
+  --color-peach: #f8e1d2;
+  --color-slate: #24333b;
+  --color-ink-soft: #4a5a55;
+  --color-muted: #5c6a64;
+
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-sign: var(--font-ephesis), "Snell Roundhand", cursive;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    font-feature-settings: "ss01" on;
+    caret-color: var(--color-forest);
+  }
+  ::selection {
+    background: var(--color-peach);
+    color: var(--color-forest-deep);
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-forest);
+    outline-offset: 2px;
+  }
+  /* On the forest header the ring flips to cream so it stays visible. */
+  .on-forest :focus-visible {
+    outline-color: var(--color-cream);
+  }
+  a {
+    text-underline-offset: 3px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line) transparent;
+  }
+  input,
+  textarea {
+    caret-color: var(--color-forest);
+  }
+  textarea::placeholder {
+    color: var(--color-muted);
+  }
+}
+
+@layer components {
+  /* A receipt: warm paper with a perforated bottom edge. The shadow lives on a wrapper, since the mask clips it. */
+  .receipt-shadow {
+    filter: drop-shadow(0 1px 1px rgb(15 46 38 / 0.08)) drop-shadow(0 10px 18px rgb(15 46 38 / 0.09));
+  }
+  /* The torn edge is an irregular tear, drawn once and repeated every 120px. */
+  .receipt {
+    --tear: 10px;
+    background: var(--color-paper);
+    border-radius: 20px 20px 0 0;
+    padding-bottom: calc(var(--tear) + 14px);
+    mask:
+      linear-gradient(#000 0 0) top / 100% calc(100% - var(--tear)) no-repeat,
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M0 0H120V6L115 8.5L111 4.5L104 9.5L99 5L93 7.5L86 3.5L81 8L74 5.5L69 9.5L62 4L57 7L50 3L46 8.5L39 5L33 9L28 4.5L21 8L16 3.5L10 9L5 5L0 6Z'/%3E%3C/svg%3E") bottom / 120px var(--tear) repeat-x;
+  }
+  .rule-dashed {
+    border-top: 1.5px dashed var(--color-line);
+  }
+
+  /* The decision stamp: a rubber stamp's double border, set at a slight angle. */
+  .stamp {
+    --tilt: -4deg;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.375rem 0.75rem;
+    border: 2px solid currentColor;
+    border-radius: 10px;
+    outline: 1.5px solid currentColor;
+    outline-offset: 2.5px;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    line-height: 1;
+    transform: rotate(var(--tilt));
+  }
+  .stamp-land {
+    animation: stamp-land 220ms var(--ease-out) both;
+  }
+
+  .step-in {
+    animation: step-in 360ms var(--ease-out) both;
+  }
+  .pop {
+    animation: pop 320ms var(--ease-out) both;
+  }
+  .draw {
+    stroke-dasharray: 140;
+    animation: draw 700ms 120ms var(--ease-out) both;
+  }
+  .thinking span {
+    animation: thinking 1.2s ease-in-out infinite;
+  }
+  .thinking span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .thinking span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+  .leaving {
+    animation: leave 180ms var(--ease-out) forwards;
+  }
+}
+
+@keyframes stamp-land {
+  0% {
+    opacity: 0;
+    transform: rotate(calc(var(--tilt) - 8deg)) scale(1.7);
+    filter: blur(3px);
+  }
+  55% {
+    opacity: 1;
+    transform: rotate(var(--tilt)) scale(0.93);
+    filter: blur(0);
+  }
+  100% {
+    transform: rotate(var(--tilt)) scale(1);
+  }
+}
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+@keyframes pop {
+  0% {
+    transform: scale(0.4);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 140;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes thinking {
+  0%,
+  80%,
+  100% {
+    opacity: 0.25;
+    transform: translateY(0);
+  }
+  40% {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+}
+@keyframes leave {
+  to {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+}

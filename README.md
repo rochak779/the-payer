@@ -97,6 +97,7 @@ Notes:
 - **Live search (`SEARCH=firecrawl`) is less predictable.** Checked 17 Oct 2026: the nephew task found a real LEGO set at John Lewis for £64.98 and asked, which works well. The Lisbon task picked a hotel from a "from €214 a night" line on a guide site, and the checker asked because the price was in euros and the refund policy unclear. Approving that on the Stripe card is untested: Stripe may refuse a euro card, and then Activity shows "Couldn't create a card" and nothing is charged. If you want live search in the video, use it for the nephew step only.
 
 ## Tech notes
+- Look: The Product Kinship's colours and type (Manrope, with Ephesis for one word per screen), built with Impeccable. Product context is in `PRODUCT.md`, the design system in `DESIGN.md`.
 - Next.js 16.4, TypeScript (strict), Zod, Vitest. Cache Components is **off** in `next.config.ts`: every page reads the JSON file on each request, so `export const dynamic = 'force-dynamic'` is the simpler model.
 - Money is whole pence everywhere and only formatted for display.
 - Checks: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
