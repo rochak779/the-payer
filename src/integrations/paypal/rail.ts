@@ -70,7 +70,11 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
         log('paid', approvalId, `PayPal took ${formatMoney(amount)} (capture ${capture.id}).`);
         return { approved: true, reasons: [], providerRef: capture.id };
       } catch (err) {
-        const message = `PayPal didn't take the payment: ${reason(err)}. Nothing was charged.`;
+        // Only a 4xx is PayPal saying no. A timeout or 5xx may have gone through, so don't claim it didn't.
+        const refused = err instanceof PayPalError && err.status >= 400 && err.status < 500;
+        const message = refused
+          ? `PayPal didn't take the payment: ${reason(err)}. Nothing was charged.`
+          : `PayPal didn't confirm the payment: ${reason(err)}. Check your PayPal activity before buying it again.`;
         log('error', approvalId, message);
         return { approved: false, reasons: [message] };
       }

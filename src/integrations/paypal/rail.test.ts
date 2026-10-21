@@ -131,6 +131,16 @@ describe('PayPal rail: charge', () => {
     expect(store.read().log.at(-1)).toMatchObject({ type: 'error', approvalId: approval.id });
   });
 
+  it("a capture with no clear answer from PayPal doesn't claim nothing was charged", async () => {
+    for (const fail of [() => { throw new TypeError('fetch failed'); }, () => { throw new PayPalError('PayPal 503', 503, null, null); }]) {
+      const { store, rail, approval } = setup(fakePayPal({ capture: fail }));
+      const result = await fulfil({ store, rail }, approval.id, now);
+      expect(result.approved).toBe(false);
+      expect(result.reasons[0]).toMatch(/^PayPal didn't confirm the payment: .+\. Check your PayPal activity before buying it again\.$/);
+      expect(result.reasons[0]).not.toContain('Nothing was charged');
+    }
+  });
+
   it('a retry after a failed capture is refused, and capture is not called again', async () => {
     const paypal = fakePayPal({ capture: () => { throw new PayPalError('PayPal 500', 500, null, null); } });
     const { store, rail, approval } = setup(paypal);
