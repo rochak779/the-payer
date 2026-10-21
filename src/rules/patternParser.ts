@@ -1,9 +1,10 @@
 import { newId } from '@/domain/ids';
-import type { Category, OnBreach, Rule } from '@/domain/types';
+import type { Category, Currency, OnBreach, Rule } from '@/domain/types';
 import type { RuleParser } from './parser';
 
 const NEGATIVE = /\b(never|no|nothing|don't|do not|must not)\b/i;
-const AMOUNT = /\b(?:under|below|less than|up to|max(?:imum)?|no more than|not more than|at most|more than|over)\s*£\s?(\d+(?:\.\d{1,2})?)/i;
+const AMOUNT = /\b(?:under|below|less than|up to|max(?:imum)?|no more than|not more than|at most|more than|over)\s*([£$€])\s?(\d+(?:\.\d{1,2})?)/i;
+const CURRENCY_OF: Record<string, Currency> = { '£': 'GBP', $: 'USD', '€': 'EUR' };
 const PER_UNIT = /\b(?:per|a|an|each)\s+(night|person|ticket|item)\b|\/\s*(night|person|ticket|item)\b/i;
 const MERCHANT_BLOCK = /\b(?:never|don't|do not)\s+(?:use|book with|book on|book through|buy from|shop at)\s+(.+?)[.!]?$/i;
 const MERCHANT_ONLY = /\bonly\s+(?:use|book with|book on|book through|buy from|shop at)\s+(.+?)[.!]?$/i;
@@ -42,7 +43,7 @@ function parseSentence(source: string): Rule {
     const unit = source.match(PER_UNIT);
     return {
       ...base, kind: 'amount_cap',
-      max: { minor: Math.round(Number(amount[1]) * 100), currency: 'GBP' },
+      max: { minor: Math.round(Number(amount[2]) * 100), currency: CURRENCY_OF[amount[1]] },
       per: unit ? 'unit' : 'purchase',
       unitLabel: unit ? (unit[1] ?? unit[2]).toLowerCase() : undefined,
       category: findCategory(source),

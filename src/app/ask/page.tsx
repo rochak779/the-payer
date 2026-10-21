@@ -1,4 +1,5 @@
 import { ScreenTitle } from '@/components/ui';
+import { SUGGESTED_TASKS } from '@/demo/demoContent';
 import { AskAgent } from './AskAgent';
 
 export default function AskPage() {
@@ -7,7 +8,7 @@ export default function AskPage() {
       <ScreenTitle before="Ask the " script="agent">
         The agent finds an option and asks to buy it. It never sees how you pay.
       </ScreenTitle>
-      <AskAgent />
+      <AskAgent suggestions={SUGGESTED_TASKS} />
     </div>
   );
 }

@@ -49,7 +49,7 @@ export function RulesEditor({ initialText, saved }: { initialText: string; saved
           value={text}
           onChange={(e) => { setText(e.target.value); setPreview(null); setMessage(null); }}
           rows={5}
-          placeholder="e.g. Hotels up to £150 a night. Nothing non-refundable. Ask me about gifts."
+          placeholder="e.g. Up to $80 on any one item. Nothing used or refurbished. Ask me about gifts."
           className={FIELD}
         />
         <Button className="w-full" busy={reading} disabled={reading || saving || !text.trim()} onClick={read}>

@@ -23,6 +23,14 @@ describe('patternParser', () => {
     ]);
   });
 
+  it('reads dollar and euro limits in their own currency', async () => {
+    const rules = await patternParser.parse('Up to $80 on any one item.\nUp to €50 on restaurants.');
+    expect(rules).toMatchObject([
+      { kind: 'amount_cap', onBreach: 'ask', max: { minor: 8000, currency: 'USD' }, per: 'purchase' },
+      { kind: 'amount_cap', onBreach: 'ask', max: { minor: 5000, currency: 'EUR' }, category: 'restaurant' },
+    ]);
+  });
+
   it('handles curly apostrophes', async () => {
     const [rule] = await patternParser.parse('Don’t use Ryanair.');
     expect(rule).toMatchObject({ kind: 'merchant', onBreach: 'block', merchants: ['Ryanair'] });

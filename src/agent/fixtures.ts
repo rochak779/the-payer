@@ -25,23 +25,33 @@ export const SCENARIOS: Scenario[] = [
     },
   },
   {
-    match: /\b(gift|present|birthday|nephew|lego|toys?)\b/i,
-    query: 'LEGO Technic gift for 10 year old',
-    results: [{ title: 'LEGO Technic race car – £60', url: 'https://example.com/lego-technic', snippet: 'Ages 9+. Free returns within 90 days.' }],
+    match: /\b(mugs?|cups?)\b/i,
+    query: 'plain white ceramic mug',
+    results: [{ title: 'White stoneware mug, 350 ml – $12', url: 'https://example.com/white-stoneware-mug', snippet: 'Condition: new. Returns within 30 days.' }],
     pick: {
-      item: 'LEGO Technic race car', merchant: 'LEGO', category: 'other', total: { minor: 6000, currency: 'GBP' },
-      refundPolicy: 'Free returns within 90 days.', url: 'https://example.com/lego-technic',
-      agentNote: "Birthday gift for the user's nephew.", listingText: 'Ages 9+. Free returns within 90 days.',
+      item: 'White stoneware mug, 350 ml', merchant: 'Hearth & Kiln', category: 'home', total: { minor: 1200, currency: 'USD' },
+      refundPolicy: 'Returns within 30 days.', url: 'https://example.com/white-stoneware-mug',
+      agentNote: 'Plain white mug, well under budget.', listingText: 'Condition: new. Returns within 30 days.',
+    },
+  },
+  {
+    match: /\b(gift|present|birthday|nephew|lego|toys?)\b/i,
+    query: 'building blocks set gift for 10 year old',
+    results: [{ title: 'Building blocks race car set, ages 9+ – $38', url: 'https://example.com/building-blocks-race-car', snippet: 'Ages 9+. Free returns within 60 days.' }],
+    pick: {
+      item: 'Building blocks race car set, ages 9+', merchant: 'Brick & Bolt Toys', category: 'other', total: { minor: 3800, currency: 'USD' },
+      refundPolicy: 'Free returns within 60 days.', url: 'https://example.com/building-blocks-race-car',
+      agentNote: "Birthday gift for the user's nephew.", listingText: 'Ages 9+. Free returns within 60 days.',
     },
   },
   {
     match: /\b(headphones|earbuds)\b/i,
-    query: 'noise cancelling headphones deal UK',
-    results: [{ title: 'Bose QuietComfort (open box) – £179', url: 'https://example.com/bose-open-box', snippet: 'Open box. All sales final.' }],
+    query: 'wireless over-ear headphones under $80',
+    results: [{ title: 'Wireless over-ear headphones (refurbished) – $55', url: 'https://example.com/refurbished-headphones', snippet: 'Condition: refurbished. 90-day warranty.' }],
     pick: {
-      item: 'Bose QuietComfort headphones (open box)', merchant: 'AudioDeals UK', category: 'electronics',
-      total: { minor: 17900, currency: 'GBP' }, refundPolicy: 'All sales final.', url: 'https://example.com/bose-open-box',
-      agentNote: 'Cheapest well-reviewed option.', listingText: 'Open box. All sales final.',
+      item: 'Wireless over-ear headphones (refurbished)', merchant: 'Second Spin Audio', category: 'electronics',
+      total: { minor: 5500, currency: 'USD' }, refundPolicy: 'Returns within 30 days.', url: 'https://example.com/refurbished-headphones',
+      agentNote: 'Cheapest well-reviewed option under budget.', listingText: 'Condition: refurbished. 90-day warranty.',
     },
   },
 ];
@@ -51,7 +61,7 @@ export const FALLBACK: Scenario = {
   query: 'The Pragmatic Programmer paperback',
   results: [{ title: 'The Pragmatic Programmer – £35', url: 'https://example.com/pragmatic-programmer', snippet: 'Paperback. Returns within 30 days.' }],
   pick: {
-    item: 'The Pragmatic Programmer (paperback)', merchant: 'Waterstones', category: 'other',
+    item: 'The Pragmatic Programmer (paperback)', merchant: 'Paper Lane Books', category: 'other',
     total: { minor: 3500, currency: 'GBP' }, refundPolicy: 'Returns within 30 days.', url: 'https://example.com/pragmatic-programmer',
     agentNote: 'Matches the request.', listingText: 'Paperback. Returns within 30 days.',
   },

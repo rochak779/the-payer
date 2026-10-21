@@ -61,7 +61,7 @@ The agent never holds payment details. After approval the app creates a one-time
 
 The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
 
-**Rule reading** ("here's what I understood"): 22 plain-English rules. The offline pattern reader gets 14/22. Gemini Flash-Lite gets 21/22 and 20/22 over two runs with reader prompt v2, which fixed "Ask me about gifts." being read as "only gift cards". Claude is unmeasured (no key).
+**Rule reading** ("here's what I understood"): 22 plain-English rules. The offline pattern reader gets 15/22 (14/22 before it read `$` and `€`, 21 Oct). Gemini Flash-Lite gets 21/22 and 20/22 over two runs with reader prompt v2, which fixed "Ask me about gifts." being read as "only gift cards". Claude is unmeasured (no key).
 
 Commands: `npm run eval -- --checker gemini --concurrency 1 --label v4` and `npm run eval:parse -- --parser gemini` (or `claude` once there's a key). Results are in `evals/RESULTS.md`, on the `/evals` page, and as saved runs in `evals/results/`.
 

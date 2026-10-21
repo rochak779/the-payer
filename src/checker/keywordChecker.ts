@@ -31,7 +31,7 @@ export const keywordChecker: FuzzyChecker = {
       .map((rule) => {
         const hit = keywordsFor(rule.text).find((k) => text.includes(k));
         return hit
-          ? { ruleId: rule.id, verdict: 'breached' as const, explanation: `Mentions "${hit}".` }
+          ? { ruleId: rule.id, verdict: 'breached' as const, explanation: `Mentions "${hit}". Your rule: "${rule.text}"` }
           : { ruleId: rule.id, verdict: 'clear' as const, explanation: 'No matching words.' };
       });
     return {

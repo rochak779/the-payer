@@ -52,7 +52,7 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
             <input type="hidden" name="id" value={a.id} />
             <p className="mb-2 text-[0.75rem] font-semibold text-ink-soft">Demo: pretend a merchant tries to…</p>
             <div className="flex flex-wrap gap-1.5">
-              <SubmitButton name="kind" value="more">charge £20 more</SubmitButton>
+              <SubmitButton name="kind" value="more">charge {formatMoney({ ...a.request.total, minor: 2000 })} more</SubmitButton>
               <SubmitButton name="kind" value="other_merchant">charge from another shop</SubmitButton>
               <SubmitButton name="kind" value="repeat">charge again</SubmitButton>
             </div>
