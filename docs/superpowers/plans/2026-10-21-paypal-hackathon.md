@@ -50,7 +50,7 @@ Do these in order. Each one names the session that's blocked without it. Only yo
    1. Sign in at developer.paypal.com with your personal PayPal account, or create one with your personal email.
    2. Go to **Apps & Credentials**, make sure **Sandbox** is selected, and choose **Create App**. Pick the **Merchant** type, not Platform: a platform app was refused vaulting in forum thread 45483.
    3. In the app's settings, tick **Save payment methods** (sometimes labelled "Vault"). Leave everything else as it is.
-   4. Go to **Sandbox accounts**. Check that there is one **Business** account (the shop) and one **Personal** account (the buyer), both with country **United Kingdom (GB)**. If the defaults are US, create new UK ones. Give the buyer a balance of £2,000 or more.
+   4. Go to **Sandbox accounts**. You need one **Business** account in the **United States** (the shop; PayPal's default one works) and one **Personal** account (the buyer; ours is UK). Link the app to the US shop when you create it. UK sandbox shops can't save a buyer's PayPal (Session 1, 21 Oct).
    5. Add to `.env.local`: `PAYPAL_CLIENT_ID=…` and `PAYPAL_CLIENT_SECRET=…` (from the app page).
    6. Keep the sandbox buyer's email and password handy. You'll type them into PayPal's login page in Sessions 1 and 7. I never see them.
 5. **PayPal Discord** (optional, recommended). Join discord.gg/sJ2G6DyvSK. If Session 1 fails on vaulting, you post the question I draft there. PayPal and Channel3 staff answer in it.
@@ -66,7 +66,7 @@ Do these in order. Each one names the session that's blocked without it. Only yo
 
 ### Decisions I made (tell me if any is wrong)
 
-- **Hold, then capture.** Each approved purchase becomes a PayPal hold for exactly its total. The money moves only when the shop asks and our payment check agrees. This keeps the "shop tries to charge £20 more" scene and lets the off switch void holds. Capturing at once would be simpler but loses both.
+- **Hold, then capture.** Each approved purchase becomes a PayPal hold for exactly its total. The money moves only when the shop asks and our payment check agrees. This keeps the "shop tries to charge $20 more" scene and lets the off switch void holds. Capturing at once would be simpler but loses both.
 - **One sandbox shop receives every payment.** Paying several different shops needs PayPal partner status (Session 1 confirms this). The shop's name goes in the order description, and our code checks it as before.
 - **The AI agent gets no PayPal tools.** It can only ask to buy. Only the payment check's code path can move money, and the write-up says so as a deliberate design choice.
 - **PayPal through plain `fetch`, no SDK.** That's fewer moving parts, and each call matches PayPal's docs one to one.
@@ -77,14 +77,15 @@ Do these in order. Each one names the session that's blocked without it. Only yo
 - **Fixture products and shop names become generic and fictional,** because the hackathon bans third-party trademarks in the video. Today's fixtures name real brands.
 - **Stripe stays** as `PAYMENTS=stripe`, out of the demo and the README lead.
 - **`ISSUER` is renamed `PAYMENTS`.** The old name is still read, so your `.env.local` keeps working.
+- **The demo charges in US dollars** (Rochak, 21 Oct). UK sandbox shops can't save a buyer's PayPal, and the US shop leaves £ payments pending. UK spelling stays. See BRIEF.md, "PayPal: verified in sandbox".
 
 ### Risks flagged
 
-1. **PayPal refuses vaulting for our sandbox app.** This is Session 1's gate.
+1. **PayPal refuses vaulting for our sandbox app.** This is Session 1's gate. **Resolved 21 Oct: works with a US shop; UK shops are refused.**
    - If it fails: check the app type and the "Save payment methods" setting, then ask on Discord.
    - Fallback: one PayPal approval per task. The buyer approves a hold for the task's budget, and we capture exact amounts within it. Sessions 6–8 change; the rest don't.
-2. **The "PayPal lets shops take up to 15% more" line may not hold for UK accounts.** PayPal's docs say the extra may need the buyer's action in some regions. The video's wording waits for Session 1's answer.
-3. **Channel3's UK coverage is "still growing"** (their docs). Session 9's smoke test decides. If UK results are thin, switch the demo to `country: 'US'` with rules in dollars.
+2. **Resolved 21 Oct: the line holds** ($65 on a $60 hold, and £65 on £60, were taken with no buyer action). Was: **the "PayPal lets shops take up to 15% more" line may not hold for UK accounts.** PayPal's docs say the extra may need the buyer's action in some regions. The video's wording waits for Session 1's answer.
+3. **Moot since the demo moved to USD (21 Oct).** Was: **Channel3's UK coverage is "still growing"** (their docs). Session 9's smoke test decides. If UK results are thin, switch the demo to `country: 'US'` with rules in dollars.
 4. **Live search returns branded products.** The video must show generic results. Session 14 checks every frame and records the live search on a generic query.
 5. **Timeline.** It's 15 sessions in about 20 days. Keep to the cut order above.
 
@@ -136,7 +137,7 @@ These come from the official rules (paypalaihackathon.devpost.com/rules), read 2
   - `SHOPPER=scripted|claude|gemini`
   - `PAYMENTS=fake|stripe|paypal` (`ISSUER` is still read when `PAYMENTS` is unset)
   - `HOSTED=1` turns on per-visitor data and limits.
-- Copy uses plain English, UK spelling and £. The word "card" appears in the UI only on the Stripe rail.
+- Copy uses plain English and UK spelling. Demo money is US dollars (decided 21 Oct); `money()` still defaults to GBP for old fixtures and evals. The word "card" appears in the UI only on the Stripe rail.
 - Every session ends with `npm test` and `npm run typecheck` passing. Then commit on a branch, push, and open a PR. Rochak merges; never merge yourself.
 - After each session:
   - tick its steps in this file and add an "As built" note under its heading, as in the old plan;
@@ -192,15 +193,17 @@ src/
 
 Work through "What I need from you", items 1–8. Session 1 needs items 1 and 4. The others can wait until the session that needs them.
 
-- [ ] Eligible: confirmed
+- [x] Eligible: confirmed (21 Oct)
 - [ ] Product name decided
 - [ ] Devpost registered
-- [ ] PayPal sandbox app (Merchant type, Save payment methods ticked), UK buyer and shop accounts, keys in `.env.local`
+- [x] PayPal sandbox app (Merchant type, Save payment methods ticked) linked to a US shop, UK buyer, keys in `.env.local`
 - [ ] Channel3 key with promo code, in `.env.local`
 - [ ] Gemini: free or paid decided
 - [ ] Render account and credits claimed
 
 ### Session 1: PayPal sandbox spike (go/no-go gate)
+
+> **As built (21 Oct 2026): Go, in US dollars.** Answers are in BRIEF.md, "PayPal: verified in sandbox". Holds come back in the order response, so no `/authorize` call is needed. Overcharges above 115% are refused, a capture after a final capture or a void is refused, a second shop is refused and a repeated request id doesn't double-charge. PayPal itself allows +15% (so the Session 8 explainer uses its first version). Two UK sandbox shops were refused vaulting (`NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE`); the US default shop works, but leaves £ payments `PENDING` and its login is refused. **Ruling (Rochak): the demo charges in USD.** The spike script gained `SPIKE_CURRENCY=USD` and a read-only `get <path>` command; `payee` reads `THE_SECOND_SHOP` from `.env.local`. Step 4.11's screenshot comes from the buyer's activity page (Rochak, before Session 14).
 
 **Needs:** `PAYPAL_CLIENT_ID` and `PAYPAL_CLIENT_SECRET` in `.env.local`. Rochak at the keyboard for about 5 minutes to log in as the sandbox buyer.
 
@@ -210,7 +213,7 @@ No app code and no tests. One throwaway script answers the questions everything 
 - Create: `scripts/paypal-spike.ts`
 - Modify: `package.json` (script `"paypal:spike": "node --env-file-if-exists=.env.local --import tsx scripts/paypal-spike.ts"`), `.env.example` (names only: `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_VAULT_ID`, `# PAYMENTS=paypal`), `BRIEF.md`
 
-- [ ] **Step 1: Read the current docs.** The saved copies are in `/Users/rochakagarwal/orca/projects/Agent Mandates/.firecrawl/`:
+- [x] **Step 1: Read the current docs.** The saved copies are in `/Users/rochakagarwal/orca/projects/Agent Mandates/.firecrawl/`:
   - `pp-platforms-checkout-save-payment-methods-purchase-later-payment-tokens-api-paypal.md` (vault);
   - `pp-payment-methods-auth-honor.md` (hold lifetime and the 115% rule);
   - `pp-platforms-checkout-standard-customize-overcharge-handling.md`;
@@ -218,7 +221,7 @@ No app code and no tests. One throwaway script answers the questions everything 
 
   Also fetch (append `.md` to developer.paypal.com URLs) the Orders v2 API reference sections for create order and authorize order, and the Payments v2 reference for capture authorization, void authorization and refund capture. Write down the exact request body, the success status and the error `name`/`issue` for each, and the `usage_pattern` values that setup tokens accept.
 
-- [ ] **Step 2: Write `scripts/paypal-spike.ts`** with these subcommands. Each prints statuses, ids and error names, never the access token or the client secret. The base URL is the constant `https://api-m.sandbox.paypal.com`.
+- [x] **Step 2: Write `scripts/paypal-spike.ts`** with these subcommands. Each prints statuses, ids and error names, never the access token or the client secret. The base URL is the constant `https://api-m.sandbox.paypal.com`.
   - `token`: gets an OAuth token (`POST /v1/oauth2/token`, Basic auth, `grant_type=client_credentials`). Prints `ok, expires in <n>s`.
   - `vault-start`: `POST /v3/vault/setup-tokens` with `payment_source.paypal` = `{ description: 'The Payer: lets your agent pay for purchases you approve', usage_type: 'MERCHANT', customer_type: 'CONSUMER', permit_multiple_payment_tokens: false, usage_pattern: <the doc's pattern for merchant-initiated, unscheduled payments, falling back to 'IMMEDIATE' as in the doc sample>, experience_context: { return_url: 'http://localhost:3000/paypal/return', cancel_url: 'http://localhost:3000/paypal/cancel', brand_name: 'The Payer', shipping_preference: 'NO_SHIPPING' } }`. Prints the setup token id and the `rel: approve` link.
   - `vault-finish <setupTokenId>`: `POST /v3/vault/payment-tokens` with `payment_source.token = { id, type: 'SETUP_TOKEN' }`. It appends `PAYPAL_VAULT_ID=<id>` to `.env.local` itself and prints only `saved vault id ending <last 4>`.
@@ -228,10 +231,10 @@ No app code and no tests. One throwaway script answers the questions everything 
   - `payee <pounds> <secondShopEmail>`: like `hold`, but with `purchase_units[0].payee.email_address` set to a second sandbox business account.
   - `repeat <pounds>`: sends the same order twice with the same `PayPal-Request-Id` and prints both order ids.
 
-- [ ] **Step 3: Save the buyer's PayPal.** Run `npm run paypal:spike token` and expect `ok`. Run `vault-start`. Rochak opens the approve link, logs in as the sandbox buyer and approves. Rochak types the password; Claude never does. The browser then lands on a localhost page that doesn't exist yet, which is fine. Run `vault-finish <id>`.
+- [x] **Step 3: Save the buyer's PayPal.** Run `npm run paypal:spike token` and expect `ok`. Run `vault-start`. Rochak opens the approve link, logs in as the sandbox buyer and approves. Rochak types the password; Claude never does. The browser then lands on a localhost page that doesn't exist yet, which is fine. Run `vault-finish <id>`.
   Expected: `saved vault id ending ….` If you get `NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE` or a permission error, stop. Rochak checks the app type (Merchant) and "Save payment methods", then retry once. If it still fails, draft the Discord question for Rochak and go to Step 6's fallback.
 
-- [ ] **Step 4: Answer the questions**, one command each. Write each answer in BRIEF.md with the exact status or error name:
+- [x] **Step 4: Answer the questions**, one command each. Write each answer in BRIEF.md with the exact status or error name:
   1. Hold £60 with no buyer present: does it work? Is the authorisation returned at once, or does it need `/authorize`?
   2. Capture exactly £60: `COMPLETED`?
   3. On a new £60 hold, capture £80 (+33%): refused? With what error?
@@ -244,14 +247,14 @@ No app code and no tests. One throwaway script answers the questions everything 
   10. Partial captures: hold £100, capture £30 `--partial`, then £40 `--partial`, then try £40 more. Is the third refused? This is only needed for the fallback.
   11. Where these show up in the sandbox (buyer's and shop's activity pages at sandbox.paypal.com). Rochak takes one screenshot for the video.
 
-- [ ] **Step 5: Run `npm test` and `npm run typecheck`.** Expected: all pass (no app code changed).
+- [x] **Step 5: Run `npm test` and `npm run typecheck`.** Expected: all pass (no app code changed).
 
-- [ ] **Step 6: Decide, and record the decision in BRIEF.md.**
+- [x] **Step 6: Decide, and record the decision in BRIEF.md.**
   - **Go**, if Questions 1–3 behave as expected: continue with Session 2 as written.
   - **Fallback**, if vaulting is refused: rewrite Sessions 6–8 here before continuing. The buyer approves one hold per task (an approve link opened from the Ask screen) for the task's budget, and approved purchases are partial captures within it (Question 10). Session 7 becomes "approve this task's budget in PayPal".
   - **Stop and talk to Rochak**, if neither works.
 
-- [ ] **Step 7: Commit, push, open a PR.**
+- [x] **Step 7: Commit, push, open a PR.**
 
 ```bash
 git add scripts/paypal-spike.ts package.json .env.example BRIEF.md docs/superpowers/plans/2026-10-21-paypal-hackathon.md
@@ -322,7 +325,7 @@ export type PaymentRef = PaymentHandle & { provider: RailName };   // replaces C
 - [ ] **Step 3: Do the renames and copy changes** in the files listed. `getDeps()` reads `process.env.PAYMENTS ?? process.env.ISSUER`. The Stripe rail keeps its file and its behaviour; only its method names, `label` and type change. The Stripe webhook looks the approval up by `a.payment?.id`.
 - [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass, same count as before plus nothing removed (166 at the start of this plan).
 - [ ] **Step 5: Check for stray "card" wording.** Run `git grep -n -i -E "card" -- src/app src/flow src/payments`. Expected: hits only in `CardIcon`, gift-card rules or category names, and the Stripe label. No user-facing sentence says "card" for the fake or PayPal rail.
-- [ ] **Step 6: Run the app.** Run `npm run seed && npm run dev`, then do one task from the Ask screen. Expected: the receipt and the activity entry say "Offline test payment" and "Paid £…, once, for this purchase only."
+- [ ] **Step 6: Run the app.** Run `npm run seed && npm run dev`, then do one task from the Ask screen. Expected: the receipt and the activity entry say "Offline test payment" and "Paid $…, once, for this purchase only." (or £ for an old fixture)
 - [ ] **Step 7: Commit, push, open a PR.** Message: `refactor: card issuer becomes a payment rail, ready for PayPal`.
 
 ### Session 3: Retail demo on fakes (rules, products, suggested tasks)
@@ -350,22 +353,24 @@ export async function seedDemo(db: Db): Promise<void>; // replaces rules with DE
 
 ```
 DEMO_RULES =
-Up to £80 on any one item.
+Up to $80 on any one item.
 Only new items: nothing used or refurbished.
 Ask me before buying anything that's a gift or for someone else.
 No gift cards.
 
 SUGGESTED_TASKS =
-1. Buy a plain white ceramic mug, under £15
-2. Buy a birthday present for my nephew, about £40
-3. Buy wireless headphones under £80
+1. Buy a plain white ceramic mug, under $15
+2. Buy a birthday present for my nephew, about $40
+3. Buy wireless headphones under $80
 ```
 
 | Task | Fixture pick (fictional shop, generic product) | Expected outcome |
 |---|---|---|
-| Mug | "White stoneware mug, 350 ml", shop **Hearth & Kiln**, £12.00, category `home`, condition new, "Returns within 30 days." | Approve → paid £12 |
-| Nephew | "Building blocks race car set, ages 9+", shop **Brick & Bolt Toys**, £38.00, category `other`, "Free returns within 60 days." | Ask (gift rule) |
-| Headphones | "Wireless over-ear headphones (refurbished)", shop **Second Spin Audio**, £55.00, category `electronics`, listing text "Condition: refurbished. 90-day warranty." | Block (new-only rule) |
+| Mug | "White stoneware mug, 350 ml", shop **Hearth & Kiln**, $12.00, category `home`, condition new, "Returns within 30 days." | Approve → paid $12 |
+| Nephew | "Building blocks race car set, ages 9+", shop **Brick & Bolt Toys**, $38.00, category `other`, "Free returns within 60 days." | Ask (gift rule) |
+| Headphones | "Wireless over-ear headphones (refurbished)", shop **Second Spin Audio**, $55.00, category `electronics`, listing text "Condition: refurbished. 90-day warranty." | Block (new-only rule) |
+
+The three new retail scenarios are priced in USD (`money(12, 'USD')`); the older scenarios keep their currency. The offline rule reader (`src/rules/patternParser.ts`) only reads `£` today and hard-codes GBP, so "Up to $80" would become a judgement rule: teach it `$` → USD and `€` → EUR (test first: "Up to $80 on any one item." gives `amount_cap` with `{ minor: 8000, currency: 'USD' }`; the `£` cases stay as they are). Also change the old `£` strings in `src/app/activity/page.tsx` ("charge £20 more") and `AskAgent.tsx` to dollars.
 
 In the existing scenarios, replace "LEGO" with the building-blocks set and "Bose" with generic headphones. Replace the "Waterstones" fallback with **Paper Lane Books**. The existing `match` regexes keep matching "lego" and "toy" so old habits still work.
 
@@ -536,6 +541,7 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
   - Find the approval by `payment.id === handle.id`, then run `checkCharge(store, …)`.
   - If the check declines, return its result without calling PayPal.
   - If it approves, `POST /v2/payments/authorizations/{handle.id}/capture` with `requestId: <approvalId>-capture` and body `{ amount: toPayPalAmount(amount), final_capture: true, invoice_id: approvalId }`.
+  - Only a `COMPLETED` capture counts as paid. A `PENDING` capture (seen with £ on a US shop) logs `error` with "PayPal is holding the payment for the shop to accept." and returns `approved: false`; with USD it doesn't happen.
   - On success, log `paid`: `` `PayPal took ${formatMoney(amount)} (capture ${id}).` `` Return `{ approved: true, reasons: [], providerRef: id }`.
   - On failure, log `error`: `` `PayPal didn't take the payment: ${issue ?? message}. Nothing was charged.` `` Return `{ approved: false, reasons: [that text] }`. The approval stays `used`, so it can never be retried into a double payment.
 - **`cancel(holdId)`:** `POST /v2/payments/authorizations/{holdId}/void` with `requestId: <holdId>-void`. Errors are caught and logged as `error`, never thrown.
@@ -548,10 +554,10 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
   - An error body `{ name: 'UNPROCESSABLE_ENTITY', details: [{ issue: 'AUTHORIZATION_ALREADY_CAPTURED' }], debug_id: 'abc' }` with status 422 throws a `PayPalError` with `issue: 'AUTHORIZATION_ALREADY_CAPTURED'` and `status: 422`.
   - The client secret never appears in any thrown message.
 - [ ] **Step 2: Write the failing rail tests.**
-  - `open` sends `intent: 'AUTHORIZE'`, the exact `toPayPalAmount(total)`, the `vault_id` and `requestId` `<id>-open`, and returns the label "PayPal, held £12".
+  - `open` sends `intent: 'AUTHORIZE'`, the exact `toPayPalAmount(total)`, the `vault_id` and `requestId` `<id>-open`, and returns the label "PayPal, held $12".
   - `open` with no vault id throws "PayPal is not connected yet.", and `fulfil` logs "Couldn't set up the payment".
   - `charge` for the exact amount calls capture once with `final_capture: true` and `requestId` `<id>-capture`. The approval is `used`, and the log ends with `charge_approved` then `paid`.
-  - `charge` for £20 more makes no capture call and is declined with the "more than the approved" reason.
+  - `charge` for $20 more makes no capture call and is declined with the "more than the approved" reason.
   - `charge` from another shop makes no capture call.
   - `charge` a second time makes no capture call ("already been used").
   - **Capture fails after the check approved:** capture throws a `PayPalError`. The result is `approved: false` with the reason "PayPal didn't take the payment", the status stays `used`, and the log has an `error` entry.
@@ -565,7 +571,7 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
 
 ### Session 7: "Connect PayPal" (save the buyer's PayPal once)
 
-**Needs:** PayPal keys. Rochak logs in as the sandbox buyer once (he types the password).
+**Needs:** PayPal keys. Rochak logs in as the sandbox buyer once (Rochak types the password).
 
 **Files:**
 - Create: `src/integrations/paypal/vault.ts`, `vault.test.ts`, `src/app/paypal/return/route.ts`, `src/app/paypal/return/route.test.ts` (or test the handler as a plain function)
@@ -622,16 +628,16 @@ The setup-token body is the one from Session 1's `vault-start`, with URLs from `
 - Test: `src/app/actions.test.ts` only if `demoCharge` logic changes (labels alone need none).
 
 **Demo buttons (exact labels):**
-- "Shop asks for £20 more"
+- "Shop asks for $20 more"
 - "Another shop asks"
 - "Shop asks again"
 
-**Explainer line** (use the first version if Session 1, Question 4 showed a £65 capture on a £60 hold being allowed; otherwise the second):
+**Explainer line** (use the first version if Session 1, Question 4 showed a $65 capture on a $60 hold being allowed; otherwise the second). Session 1 showed it allowed, so use the first:
 1. "On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). Your mandate holds it to the penny."
 2. "Your mandate holds every payment to the penny: a shop gets exactly what you approved, once."
 
 - [ ] **Step 1: Run `npm run seed`, then `PAYMENTS=paypal npm run dev`,** with the offline agent and checker. Do the three suggested tasks and approve the nephew present on the Approvals screen.
-  Expected: two `paid` entries (£12 and £38) with capture ids. The sandbox shop shows two captures of exactly £12.00 and £38.00.
+  Expected: two `paid` entries ($12 and $38) with capture ids, each `COMPLETED`. The sandbox buyer's activity shows two payments of exactly $12.00 and $38.00 (the shop's page can't be opened; see BRIEF.md).
 - [ ] **Step 2: Press each demo button** on the mug purchase.
   Expected: all three are declined by the payment check, with the reason shown, and no new capture appears in the sandbox.
 - [ ] **Step 3: Check the off switch.** Send the nephew task again and leave it waiting on Approvals. Turn the agent off.
@@ -644,7 +650,7 @@ The setup-token body is the one from Session 1's `vault-start`, with URLs from `
 
 #### Session 8b (optional, cut first): Undo with a PayPal refund
 
-A "Refund" button on a paid purchase in Activity, shown for 30 minutes after payment. It calls `POST /v2/payments/captures/{id}/refund` with `requestId: <captureId>-refund`, logs `refunded` and shows "Refunded £12 to your PayPal." Tests:
+A "Refund" button on a paid purchase in Activity, shown for 30 minutes after payment. It calls `POST /v2/payments/captures/{id}/refund` with `requestId: <captureId>-refund`, logs `refunded` and shows "Refunded $12 to your PayPal." Tests:
 - the refund is called once;
 - a second press makes no call ("already refunded");
 - after 30 minutes the button is gone and the action refuses.
@@ -673,7 +679,7 @@ export function createChannel3Search(opts?: { apiKey?: string; client?: { produc
 ```
 
 **Behaviour:**
-- Request: `{ query, country: 'GB', language: 'en', currency: 'GBP', limit: 5 }`. Return at most 8 results.
+- Request: `{ query, country: 'US', language: 'en', currency: 'USD', limit: 5 }`. Return at most 8 results.
 - Each offer becomes one result:
   - `title`: the product title;
   - `url`: the offer's url;
@@ -695,11 +701,11 @@ export function createChannel3Search(opts?: { apiKey?: string; client?: { produc
 Before writing the code, check the SDK's real method and type names in `node_modules/@channel3/sdk`. The docs show `new Channel3({ apiKey })` and `client.products.search({ query, country, currency })`. If the installed version differs, follow the installed one.
 
 - [ ] **Step 1: Write the failing tests.** Use a fake client.
-  - A product with offers at `{amount: 19.99}`, `{amount: 0.3}` and `{amount: 395}`, all GBP, gives prices 1999, 30 and 39500.
+  - A product with offers at `{amount: 19.99}`, `{amount: 0.3}` and `{amount: 395}`, all USD, gives prices 1999, 30 and 39500.
   - A SEK offer is skipped.
   - An `OutOfStock` offer is skipped.
   - The condition `refurbished` appears in both `offer` and `snippet`.
-  - The request sent has `country: 'GB'`, `currency: 'GBP'` and the query.
+  - The request sent has `country: 'US'`, `currency: 'USD'` and the query.
   - There are at most 8 results.
   - With no key, it throws "CHANNEL3_API_KEY is not set".
   - An SDK error with `status: 429` passes through so that `serviceProblem` gives "is over its usage limit".
@@ -708,7 +714,7 @@ Before writing the code, check the SDK's real method and type names in `node_mod
 - [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
 - [ ] **Step 5: Write `scripts/channel3-smoke.ts`.** It takes the query from `argv` and prints title, shop, price and condition for each result.
 - [ ] **Step 6: Run the smoke test live** (3 searches, about 3 credits): `npm run channel3:smoke "white ceramic mug"`, `"building blocks set for kids"`, `"wireless headphones"`.
-  Expected: GBP results from UK shops. If fewer than 3 usable results come back for two of the queries, record that and switch the plan to `country: 'US'` with rules in dollars (Risk 3), with Rochak's OK.
+  Expected: USD results from US shops. If fewer than 3 usable results come back for two of the queries, record that and tell Rochak before going on.
 - [ ] **Step 7: Commit, push, open a PR.** Message: `feat: Channel3 product search with shop, price and condition`.
 
 ### Session 10: Live retail run (Gemini + Channel3 + PayPal)
@@ -801,7 +807,7 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 - [ ] **Step 1: Rochak creates a second UK sandbox buyer for judges.** I add its email and password to the README's "Try it" section. These are sandbox-only logins, which the rules ask for.
 - [ ] **Step 2: Write the LICENSE, the README and the other edits above.**
 - [ ] **Step 3: Scan for secrets across all history.** Run `git log -p --all | grep -c -E "sk_live_|sk_test_[A-Za-z0-9]{20}|whsec_[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{30}|fc-[0-9a-f]{20}|EC[A-Za-z0-9_-]{60}"`. Expected: `0`.
-- [ ] **Step 4: Confidentiality scan.** Give Rochak this command to run himself with the names that must never appear (he types them, so I never see them): `git log -p --all | grep -i -c -E "name1|name2"`. Expected: `0`.
+- [ ] **Step 4: Confidentiality scan.** Give Rochak this command to run with the names that must never appear (Rochak types them, so I never see them): `git log -p --all | grep -i -c -E "name1|name2"`. Expected: `0`.
 - [ ] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
 - [ ] **Step 6: Commit, push, open a PR.** Rochak merges, then reads the repo, including BRIEF.md, `docs/` and commit messages, and runs `gh repo edit rochak779/the-payer --visibility public --accept-visibility-change-consequences`.
   Expected: the repo page's About section shows "MIT license".
@@ -828,10 +834,10 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 1. Hook: "AI agents can shop for you. Would you let one pay without asking first? 3% would" (Ping Identity survey of 11,000 consumers, Oct 2026). Impact.
 2. Connect PayPal once (the sandbox login shown for 2 seconds). Technology.
 3. Rules in plain English, read back. Design.
-4. Mug: approved, paid exactly £12, then cut to the PayPal sandbox showing the £12.00 capture. Technology.
+4. Mug: approved, paid exactly $12, then cut to the PayPal sandbox (buyer's activity) showing the $12.00 payment. Technology.
 5. Nephew present: it asks; approve with one tap. Design.
 6. Refurbished headphones: blocked. Innovation.
-7. "Shop asks for £20 more": refused, with the Session 8 explainer line. Innovation.
+7. "Shop asks for $20 more": refused, with the Session 8 explainer line. Innovation.
 8. Off switch: everything stops, and the waiting purchase is cancelled. Impact.
 9. Evals: 0 wrong approvals against 5 for keyword rules. Innovation.
 10. Outro: built on PayPal Orders and Vault in the sandbox, Gemini, Channel3 and Render; the GitHub URL.
@@ -861,6 +867,6 @@ The positioning line: "PayPal made shops agent-ready. The Payer makes buyers age
 - [ ] **Step 1: Draft `docs/devpost.md`.** Every claim must match what the video and the hosted app show.
 - [ ] **Step 2: Rochak pastes it into Devpost** and adds the video link, repo link and hosted URL.
   - Partner tools: Channel3 and Render.
-  - He submits by 10 Nov. The hard deadline is 12 Nov, 20:00 UK.
+  - Rochak submits by 10 Nov. The hard deadline is 12 Nov, 20:00 UK.
 - [ ] **Step 3: Freeze the demo.** After submitting, no changes to `main` that could break the hosted demo until 15 Dec, except fixes. Keep Render running until winners are announced (about 21 Dec).
 - [ ] **Step 4: Commit `docs/devpost.md`, push, open a PR.**
