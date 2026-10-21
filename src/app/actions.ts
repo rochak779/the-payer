@@ -7,15 +7,24 @@ import { userDecides } from '@/approvals/approvals';
 import { getDeps } from '@/deps';
 import { Rule } from '@/domain/types';
 import { executeRun, startRun } from '@/flow/runs';
+import { limitsFromEnv, OFFLINE_NOTICE, takeAllowance, usageFile } from '@/hosted/usage';
 import { appendLog } from '@/log/log';
 import { setAgentEnabled } from '@/payments/agentSwitch';
 import { fulfil } from '@/payments/fulfil';
 import { checkedBy, explainRule } from '@/rules/explain';
+import { currentVisitorId } from '@/store/visitor';
 
 export type PreviewItem = { rule: Rule; explanation: string; checkedBy: string };
 
+/** Hosted: false once today's limit for this kind of use is reached. Locally: always true. */
+async function liveAllowed(kind: 'task' | 'preview'): Promise<boolean> {
+  if (process.env.HOSTED !== '1') return true;
+  return takeAllowance(usageFile(), kind, (await currentVisitorId()) ?? 'unknown', new Date(), limitsFromEnv());
+}
+
 export async function previewRules(text: string): Promise<PreviewItem[]> {
-  const rules = await (await getDeps()).parser.parse(text);
+  // Past the limit this is the pattern reader, which is offline anyway, so nothing is shown.
+  const rules = await (await getDeps({ live: await liveAllowed('preview') })).parser.parse(text);
   return rules.map((rule) => ({ rule, explanation: explainRule(rule), checkedBy: checkedBy(rule) }));
 }
 
@@ -32,8 +41,9 @@ export async function saveRules(rules: Rule[]): Promise<void> {
 export async function startTask(task: string): Promise<string> {
   const trimmed = task.trim();
   if (!trimmed) throw new Error('Tell the agent what you want.');
-  const deps = await getDeps();
-  const run = startRun(deps.store, trimmed, deps.clock());
+  const live = await liveAllowed('task');
+  const deps = await getDeps({ live });
+  const run = startRun(deps.store, trimmed, deps.clock(), live ? undefined : OFFLINE_NOTICE);
   after(() => executeRun(deps, run.id)); // keeps running after the response; the page polls for progress
   return run.id;
 }

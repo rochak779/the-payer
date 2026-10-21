@@ -20,6 +20,15 @@ async function runTask(d: FlowDeps, task: string) {
   return viewRun(d.store.read(), run.id)!;
 }
 
+describe('startRun', () => {
+  it('can open the run with a notice as its first event', () => {
+    const d = deps();
+    const run = startRun(d.store, 'buy a mug', d.clock(), 'Using the offline agent today.');
+    expect(run.events).toEqual([{ at: d.clock().toISOString(), kind: 'status', text: 'Using the offline agent today.' }]);
+    expect(viewRun(d.store.read(), run.id)?.events).toHaveLength(1);
+  });
+});
+
 describe('executeRun', () => {
   it('auto-approved task: sets up a payment, charges it, and finishes', async () => {
     const view = await runTask(deps(), 'Book a hotel in Lisbon');

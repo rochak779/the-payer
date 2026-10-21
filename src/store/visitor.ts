@@ -50,12 +50,17 @@ export function pruneVisitors(dataDir: string, keep: number): void {
 
 const visitorsDir = () => path.join(process.cwd(), 'data', 'visitors');
 
+/** This request's visitor id from the cookie, or null if it's missing or invalid. Hosted mode only. */
+export async function currentVisitorId(): Promise<string | null> {
+  const fromCookie = (await cookies()).get(VISITOR_COOKIE)?.value;
+  return isValidVisitorId(fromCookie) ? fromCookie : null;
+}
+
 /** Locally: the one shared file. Hosted: this visitor's own file (the proxy sets the cookie before any page runs). */
 export async function currentStore(): Promise<Store> {
   if (process.env.HOSTED !== '1') return defaultStore();
-  const fromCookie = (await cookies()).get(VISITOR_COOKIE)?.value;
-  // Shouldn't happen after the proxy; a fresh id for this request only, never a shared file. Pruning removes it later.
-  const id = isValidVisitorId(fromCookie) ? fromCookie : newVisitorId();
+  // A missing id shouldn't happen after the proxy; a fresh id for this request only, never a shared file. Pruning removes it later.
+  const id = (await currentVisitorId()) ?? newVisitorId();
   const dir = visitorsDir();
   const isNew = !fs.existsSync(visitorStorePath(dir, id));
   const store = await openVisitorStore(dir, id);

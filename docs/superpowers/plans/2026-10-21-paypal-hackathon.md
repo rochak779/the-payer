@@ -460,6 +460,8 @@ The visitor data folder is `path.join(process.cwd(), 'data', 'visitors')`. `curr
 
 ### Session 5: Hosted mode 2, daily usage limits with offline fallback
 
+> **As built (21 Oct 2026):** done, 188 tests. Also added: `currentVisitorId()` in `src/store/visitor.ts` (the usage count needs the visitor id) and an optional `notice` on `startRun`, which makes the offline notice the run's first event. `limitsFromEnv` takes any string map, because Next's `ProcessEnv` type requires `NODE_ENV`. `AskAgent.tsx` needed no change: it already shows every status event. Step 5 was checked by calling the real `startTask` server action twice as one visitor with `LIMIT_TASKS_PER_VISITOR=1`: the second run opened with the notice, completed and paid, and wasn't counted. Not covered: a live AI quota error *during* a run still ends that run with "a service it uses is over its usage limit" (no crash, no approval) instead of retrying offline.
+
 The Gemini free tier allows 500 calls a day, and one live task uses up to 12. Channel3 credits are finite. Judges may come on any day from 1 to 15 Dec. When a limit is reached, the demo must keep working on the offline agent and say so plainly.
 
 **Files:**
@@ -482,7 +484,7 @@ export async function getDeps(opts?: { live?: boolean }): Promise<Deps>; // live
 
 `startTask` (when hosted): if `takeAllowance(…, 'task', …)` is false, the run uses `getDeps({ live: false })` and its first event is `{ kind: 'status', text: OFFLINE_NOTICE }`. `previewRules` (when hosted): if a preview isn't allowed, it uses the pattern parser. The pattern parser is offline already, so nothing is shown.
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
   - a visitor's 8 tasks are allowed and the 9th is refused, while another visitor is still allowed;
   - the 31st task of the day across visitors is refused;
   - counts reset on the next UTC day;
@@ -490,11 +492,11 @@ export async function getDeps(opts?: { live?: boolean }): Promise<Deps>; // live
   - a file containing `not json` counts as zero and is rewritten, with no throw;
   - `limitsFromEnv({ LIMIT_TASKS_PER_DAY: '2' })` gives `tasksPerDay: 2`, and a non-number value falls back to the default;
   - `getDeps({ live: false })` with `SHOPPER=gemini` set still returns the scripted shopper.
-- [ ] **Step 2: Run `npx vitest run src/hosted`.** Expected: FAIL.
-- [ ] **Step 3: Implement**, writing the file the same way `store.ts` does (write a temp file, then rename).
-- [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 5: Manual check.** Run `HOSTED=1 LIMIT_TASKS_PER_VISITOR=1 npm run dev`. The second task shows the offline notice and still completes.
-- [ ] **Step 6: Commit, push, open a PR.** Message: `feat: daily usage limits fall back to the offline agent`.
+- [x] **Step 2: Run `npx vitest run src/hosted`.** Expected: FAIL.
+- [x] **Step 3: Implement**, writing the file the same way `store.ts` does (write a temp file, then rename).
+- [x] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 5: Manual check.** Run `HOSTED=1 LIMIT_TASKS_PER_VISITOR=1 npm run dev`. The second task shows the offline notice and still completes.
+- [x] **Step 6: Commit, push, open a PR.** Message: `feat: daily usage limits fall back to the offline agent`.
 
 ---
 
