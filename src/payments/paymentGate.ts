@@ -8,7 +8,7 @@ export type ChargeAttempt = { approvalId: string | null; amount: Money; merchant
 export type GateResult = { approved: boolean; reasons: string[] };
 
 /**
- * Payment-time check. Code only: no AI, no network, so it answers inside Stripe's real-time window.
+ * Payment-time check. Code only: no AI, no network, so it answers inside a provider's real-time window.
  * Collects every failed check so the log explains the whole decline. Approving marks the purchase used (single use).
  */
 export function checkCharge(store: Store, attempt: ChargeAttempt, now: Date): GateResult {
@@ -17,9 +17,9 @@ export function checkCharge(store: Store, attempt: ChargeAttempt, now: Date): Ga
     const a = attempt.approvalId ? db.approvals.find((x) => x.id === attempt.approvalId) : undefined;
     if (!db.settings.agentEnabled) reasons.push('The agent is turned off.');
     if (!a) {
-      reasons.push('No approved purchase matches this card.');
+      reasons.push('No approved purchase matches this payment.');
     } else {
-      if (a.status === 'used') reasons.push('This one-time card has already been used.');
+      if (a.status === 'used') reasons.push('This one-time payment has already been used.');
       else if (a.status !== 'approved') reasons.push(`This purchase is ${a.status}, not approved.`);
       if (a.expiresAt && now > new Date(a.expiresAt)) reasons.push('The approval has expired.');
       if (attempt.amount.currency !== a.request.total.currency) {

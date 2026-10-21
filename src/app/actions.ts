@@ -57,10 +57,10 @@ export async function toggleAgent(formData: FormData): Promise<void> {
 export async function demoCharge(formData: FormData): Promise<void> {
   const deps = getDeps();
   const approval = deps.store.read().approvals.find((a) => a.id === String(formData.get('id')));
-  if (!approval?.card) throw new Error('This purchase has no card.');
+  if (!approval?.payment) throw new Error('This purchase has no payment set up.');
   const kind = String(formData.get('kind'));
   const amount = kind === 'more' ? { ...approval.request.total, minor: approval.request.total.minor + 2000 } : approval.request.total;
   const merchant = kind === 'other_merchant' ? 'Totally Legit Electronics Ltd' : approval.request.merchant;
-  await deps.issuer.simulateCharge({ card: approval.card, amount, merchant });
+  await deps.rail.charge({ handle: approval.payment, amount, merchant });
   revalidatePath('/activity');
 }

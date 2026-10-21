@@ -21,7 +21,7 @@ export function recordDecision(store: Store, req: PurchaseRequest, decision: Dec
     createdAt: now.toISOString(),
     decidedAt: decision.outcome === 'ask' ? null : now.toISOString(),
     expiresAt: approved ? addMinutes(now, APPROVAL_TTL_MINUTES).toISOString() : null,
-    card: null,
+    payment: null,
   };
   store.update((db) => {
     db.approvals.push(approval);

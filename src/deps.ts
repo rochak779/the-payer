@@ -7,7 +7,7 @@ import { createClaudeShopper } from '@/integrations/claude/shopper';
 import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
 import { createGeminiShopper } from '@/integrations/gemini/shopper';
 import { createStripeIssuer } from '@/integrations/stripe/issuer';
-import { createFakeIssuer } from '@/payments/fakeIssuer';
+import { createFakeRail } from '@/payments/fakeRail';
 import type { RuleParser } from '@/rules/parser';
 import { getRuleParser } from '@/rules/registry';
 import { defaultStore } from '@/store/store';
@@ -25,7 +25,7 @@ export function getDeps(): Deps {
     parser: getRuleParser(process.env.PARSER ?? 'pattern'),
     search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
     shopper: getShopper(process.env.SHOPPER, clock),
-    issuer: process.env.ISSUER === 'stripe' ? createStripeIssuer(store, clock) : createFakeIssuer(store, clock),
+    rail: (process.env.PAYMENTS ?? process.env.ISSUER) === 'stripe' ? createStripeIssuer(store, clock) : createFakeRail(store, clock),
   };
 }
 

@@ -104,7 +104,9 @@ export type Decision = {
 };
 
 export type ApprovalStatus = 'pending' | 'approved' | 'declined' | 'blocked' | 'used' | 'revoked';
-export type CardRef = { id: string; last4: string; provider: 'fake' | 'stripe' };
+export type RailName = 'fake' | 'stripe' | 'paypal';
+/** How an approved purchase is paid: a one-time payment the agent never sees. */
+export type PaymentRef = { id: string; label: string; provider: RailName };
 
 export type Approval = {
   id: string;
@@ -115,12 +117,12 @@ export type Approval = {
   createdAt: string;
   decidedAt: string | null;
   expiresAt: string | null; // set when approved
-  card: CardRef | null;
+  payment: PaymentRef | null;
 };
 
 export type LogType =
-  | 'decision' | 'user_approved' | 'user_declined' | 'card_issued'
-  | 'charge_approved' | 'charge_declined' | 'agent_off' | 'agent_on'
+  | 'decision' | 'user_approved' | 'user_declined' | 'payment_opened'
+  | 'charge_approved' | 'charge_declined' | 'paid' | 'refunded' | 'agent_off' | 'agent_on'
   | 'rules_saved' | 'error';
 
 export type LogEntry = { id: string; at: string; type: LogType; approvalId: string | null; message: string };

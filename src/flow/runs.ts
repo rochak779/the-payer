@@ -8,8 +8,8 @@ import { OUTCOME_LABEL, STATUS_LABEL } from '@/domain/labels';
 import { formatMoney } from '@/domain/money';
 import { serviceProblem } from '@/domain/serviceError';
 import type { Approval, ApprovalStatus, Decision, Outcome, PurchaseRequest, Run } from '@/domain/types';
-import type { CardIssuer } from '@/payments/cardIssuer';
 import { fulfil } from '@/payments/fulfil';
+import type { PaymentRail } from '@/payments/rail';
 import type { Db, Store } from '@/store/store';
 
 export const MAX_REQUESTS_PER_RUN = 2;
@@ -34,10 +34,10 @@ function earlierSame(db: Db, run: Run, req: PurchaseRequest): Approval | undefin
   );
 }
 
-export type FlowDeps = { store: Store; fuzzy: FuzzyChecker; search: WebSearch; shopper: Shopper; issuer: CardIssuer; clock: () => Date };
+export type FlowDeps = { store: Store; fuzzy: FuzzyChecker; search: WebSearch; shopper: Shopper; rail: PaymentRail; clock: () => Date };
 /** A purchase as the Ask screen prints it: enough for its receipt, without the listing's raw text. */
 export type RunPurchase = Pick<PurchaseRequest, 'item' | 'merchant' | 'total'> & Pick<Decision, 'summary' | 'reasons'> & {
-  id: string; status: ApprovalStatus; outcome: Outcome; last4: string | null;
+  id: string; status: ApprovalStatus; outcome: Outcome; paymentLabel: string | null;
 };
 export type RunView = Run & { approvals: RunPurchase[] };
 
@@ -53,7 +53,7 @@ function findRun(db: Db, id: string): Run {
   return run;
 }
 
-/** One task: agent searches → asks to buy → checker decides → (if approved) card + charge. Progress is stored as events. */
+/** One task: agent searches → asks to buy → checker decides → (if approved) payment + charge. Progress is stored as events. */
 export async function executeRun(deps: FlowDeps, runId: string): Promise<void> {
   const task = findRun(deps.store.read(), runId).task;
   const emit = (e: ShopperEvent) =>
@@ -80,7 +80,7 @@ export async function executeRun(deps: FlowDeps, runId: string): Promise<void> {
       emit({ kind: 'decision', text: `${OUTCOME_LABEL[decision.outcome]}: ${decision.summary}` });
       if (decision.outcome === 'approve') {
         const charge = await fulfil(deps, approval.id, deps.clock());
-        emit({ kind: 'status', text: charge.approved ? 'Paid with a one-time card.' : `Payment declined: ${charge.reasons.join(' ')}` });
+        emit({ kind: 'status', text: charge.approved ? `Paid ${formatMoney(req.total)}, once, for this purchase only.` : `Payment declined: ${charge.reasons.join(' ')}` });
       }
       return decision;
     },
@@ -106,7 +106,7 @@ export function viewRun(db: Db, runId: string): RunView | null {
     .map((a) => ({
       id: a.id, status: a.status, outcome: a.decision.outcome,
       item: a.request.item, merchant: a.request.merchant, total: a.request.total,
-      summary: a.decision.summary, reasons: a.decision.reasons, last4: a.card?.last4 ?? null,
+      summary: a.decision.summary, reasons: a.decision.reasons, paymentLabel: a.payment?.label ?? null,
     }));
   return { ...run, approvals };
 }

@@ -47,10 +47,10 @@ function RunReceipt({ p }: { p: RunPurchase }) {
         <Stamp outcome={stampFor(p.status, p.outcome)} land />
         <ReasonLines reasons={shown} fallback={p.summary} />
       </ReceiptSection>
-      {p.last4 && (
+      {p.paymentLabel && (
         <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
           <CardIcon width={18} height={18} />
-          One-time card <span className="font-bold tracking-[0.12em] text-forest tabular-nums">•••• {p.last4}</span>
+          {p.paymentLabel}
         </ReceiptSection>
       )}
     </Receipt>

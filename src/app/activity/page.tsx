@@ -35,11 +35,10 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
         <Stamp outcome={stampFor(a.status, a.decision.outcome)} />
         <ReasonLines reasons={shown} fallback={a.decision.summary} />
       </ReceiptSection>
-      {a.card && (
+      {a.payment && (
         <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
           <CardIcon width={18} height={18} />
-          One-time card <span className="font-bold tracking-[0.12em] text-forest tabular-nums">•••• {a.card.last4}</span>
-          <span className="text-muted">({a.card.provider})</span>
+          {a.payment.label}
         </ReceiptSection>
       )}
       {log.length > 0 && (
@@ -47,7 +46,7 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
           <LogLines log={log} />
         </ReceiptSection>
       )}
-      {a.card && (
+      {a.payment && (
         <ReceiptSection>
           <form action={demoCharge}>
             <input type="hidden" name="id" value={a.id} />
@@ -75,7 +74,7 @@ export default function ActivityPage() {
       <Panel className="flex items-center justify-between gap-4 p-4">
         <div>
           <p className="text-[0.9375rem] font-bold text-forest">Agent is {on ? 'on' : 'off'}</p>
-          <p className="text-[0.8125rem] leading-snug text-muted">Turning it off cancels every open approval and card.</p>
+          <p className="text-[0.8125rem] leading-snug text-muted">Turning it off cancels every open approval and payment.</p>
         </div>
         <AgentSwitch on={on} />
       </Panel>

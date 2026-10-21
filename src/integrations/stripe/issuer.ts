@@ -1,6 +1,6 @@
 import { formatMoney } from '@/domain/money';
 import { appendLog } from '@/log/log';
-import type { CardIssuer } from '@/payments/cardIssuer';
+import type { PaymentRail } from '@/payments/rail';
 import type { Store } from '@/store/store';
 import { requireEnv, stripeClient } from './client';
 
@@ -25,10 +25,10 @@ export function describeStripeDecline(reason: string | undefined): string {
 }
 
 /** Real sandbox virtual cards: one per approved purchase, capped at its amount, tagged with the approval id. */
-export function createStripeIssuer(store: Store, clock: () => Date = () => new Date()): CardIssuer {
+export function createStripeIssuer(store: Store, clock: () => Date = () => new Date()): PaymentRail {
   return {
     name: 'stripe',
-    async issueCard(approval) {
+    async open(approval) {
       const card = await stripeClient().issuing.cards.create({
         cardholder: requireEnv('STRIPE_CARDHOLDER_ID'),
         type: 'virtual',
@@ -37,11 +37,12 @@ export function createStripeIssuer(store: Store, clock: () => Date = () => new D
         spending_controls: { spending_limits: [{ amount: approval.request.total.minor, interval: 'all_time' }] },
         metadata: { approval_id: approval.id },
       });
-      return { id: card.id, last4: card.last4 };
+      return { id: card.id, label: `One-time card •••• ${card.last4}` };
     },
-    async simulateCharge({ card, amount, merchant }) {
+    async charge({ handle, amount, merchant }) {
+      // The simulated step: Stripe's test helper acts as the shop charging the card.
       const auth = await stripeClient().testHelpers.issuing.authorizations.create({
-        card: card.id,
+        card: handle.id,
         amount: amount.minor,
         currency: amount.currency.toLowerCase(),
         merchant_data: { name: merchant },
@@ -51,12 +52,12 @@ export function createStripeIssuer(store: Store, clock: () => Date = () => new D
       const message = describeStripeDecline(reason);
       // Our webhook logs its own declines; log the ones Stripe made before asking us.
       if (reason !== 'webhook_declined') {
-        const approvalId = store.read().approvals.find((a) => a.card?.id === card.id)?.id ?? null;
+        const approvalId = store.read().approvals.find((a) => a.payment?.id === handle.id)?.id ?? null;
         store.update((db) => { appendLog(db, clock(), 'charge_declined', approvalId, `Charge of ${formatMoney(amount)} at ${merchant} declined. ${message}`); });
       }
       return { approved: false, reasons: [message] };
     },
-    async cancelCard(cardId) {
+    async cancel(cardId) {
       await stripeClient().issuing.cards.update(cardId, { status: 'canceled' });
     },
   };
