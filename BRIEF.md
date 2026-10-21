@@ -213,6 +213,40 @@ Run it locally; deploy to Vercel only when I need a shareable link. AI: measured
   **Update 16 Oct 2026:** all done. The sandbox key, cardholder and CLI signing secret are in `.env.local`. The CLI is installed and runs with the sandbox key (`STRIPE_API_KEY`), so no `stripe login` is needed. Firecrawl's key is in `.env.local` too. Gemini (free) stands in for Claude in the checker and rule reader; there's still no Anthropic key.
 - None of this blocks Phases 1–7, which run on offline fakes.
 
+## PayPal: verified in sandbox (21 Oct 2026, hackathon Session 1)
+
+Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypal.com`. **Result: Go, in US dollars.**
+
+**The setup that works, and why it's in dollars:**
+- A **Merchant** app linked to a **US** sandbox business account (PayPal's default one for the developer account). The buyer is a UK personal sandbox account.
+- **UK sandbox shops can't save a buyer's PayPal.** Two different UK business accounts were refused at the first step, `POST /v3/vault/setup-tokens`: 403 `NOT_AUTHORIZED`, issue `NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE` (debug ids `ca4dedde33a00`, `f4880596e4b47`). "Save payment methods" was on and the token had the `vault/payment-tokens/readwrite` scope. The US shop worked first time.
+- **The US shop leaves £ payments `PENDING`** (`status_details.reason: RECEIVING_PREFERENCE_MANDATES_MANUAL_ACTION`) until the shop accepts them by hand. Fixing that needs a login to the shop at sandbox.paypal.com, and that login was refused ("some of your info isn't correct") even after a password reset. **US dollar payments complete at once. Decision (Rochak, 21 Oct): the demo charges in US dollars.** UK spelling stays.
+- **A saved PayPal belongs to the shop, not the app.** After the app was deleted and remade for the same shop, the vault id saved earlier still worked.
+- **PayPal hands back the same OAuth token for up to 9 hours,** so a permission change in the dashboard doesn't show until that token is revoked: `POST /v1/oauth2/token/terminate`, Basic auth, body `token=<access token>&token_type_hint=ACCESS_TOKEN`. Only matters when changing app settings.
+
+**Request shapes that worked:**
+- **Save PayPal, step 1:** `POST /v3/vault/setup-tokens` with `payment_source.paypal = { description, usage_type: 'MERCHANT', customer_type: 'CONSUMER', permit_multiple_payment_tokens: false, usage_pattern: 'IMMEDIATE', experience_context: { return_url, cancel_url, brand_name, shipping_preference: 'NO_SHIPPING' } }` → 201, status `PAYER_ACTION_REQUIRED`, `rel: 'approve'` link `https://www.sandbox.paypal.com/agreements/approve?approval_session_id=<setup token id>`. `IMMEDIATE` is the schema's "on-demand, variable amount, variable frequency" pattern.
+- **Save PayPal, step 2:** after the buyer approves, `POST /v3/vault/payment-tokens` with `{ payment_source: { token: { id, type: 'SETUP_TOKEN' } } }` → 201 with the vault id. Before approval it's 422 `PAYER_ACTION_REQUIRED`. Not checked: the query parameter names on the return URL (the page didn't exist yet). Session 7 logs them.
+- **Hold:** `POST /v2/checkout/orders`, `intent: 'AUTHORIZE'`, `payment_source.paypal.vault_id` → 201, order `COMPLETED`, and the hold is already in `purchase_units[0].payments.authorizations[0]` (status `CREATED`). **No `/authorize` call is needed.** The hold expires after 29 days.
+- **Capture:** `POST /v2/payments/authorizations/{id}/capture` with `{ amount, final_capture }` → 201 `COMPLETED`.
+- **Void:** `POST /v2/payments/authorizations/{id}/void` with `Prefer: return=representation` → 200 `VOIDED`.
+- **Refund:** `POST /v2/payments/captures/{id}/refund` with `{}` → 201 `COMPLETED`.
+
+**The eleven questions:**
+1. **Hold with the buyer absent:** works, and the hold comes back in the order response.
+2. **Capture the exact amount:** USD `COMPLETED`; GBP `PENDING` (above).
+3. **$80 on a $60 hold:** 422 `MAX_CAPTURE_AMOUNT_EXCEEDED` ("The default overage limit is 115%, which allows the sum of all captures to be up to 115% of the order amount").
+4. **$65 on a $60 hold (+8%):** allowed, `COMPLETED`, no buyer action (£65 on £60 too). **So on its own, PayPal lets a shop take up to 15% more than was held; our payment check is what holds it to the penny.** The video can say so.
+5. **A second capture after a final one:** 422 `AUTHORIZATION_ALREADY_CAPTURED`.
+6. **Capture after a void:** 422 `AUTHORIZATION_VOIDED`.
+7. **Refund:** `COMPLETED`.
+8. **Paying a second shop** (`purchase_units[0].payee.email_address`): 422 `BILLING_AGREEMENT_NOT_FOUND`. A saved PayPal works only with the shop it was saved for, so one shop receives every payment, as planned.
+9. **The same `PayPal-Request-Id` twice:** the same order and hold (201, then 200). Retries can't double-charge.
+10. **Partial captures** work with no account setting: £30, £40 and £40 on a £100 hold were all taken (110%, inside the 115% limit); a further £10 was refused (`AUTHORIZATION_ALREADY_CAPTURED`). Only needed for the fallback, which we don't need.
+11. **Where it shows:** the buyer's activity at sandbox.paypal.com. The shop's page can't be opened (login refused), so the video screenshot comes from the buyer's side.
+
+**For the build:** treat only a `COMPLETED` capture as paid. `invoice_id` must be unique per capture (`DUPLICATE_INVOICE_ID`), and the approval id is.
+
 ## Earlier research (raw files)
 Saved pages and search results from the research session that produced this brief:
 `/Users/rochakagarwal/orca/projects/Learning/.firecrawl/agent-mandates/`

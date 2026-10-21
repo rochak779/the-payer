@@ -15,7 +15,8 @@
     "claude:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/claude-smoke.ts",
     "eval:parse": "node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts",
     "firecrawl:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/firecrawl-smoke.ts",
-    "gemini:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/gemini-smoke.ts"
+    "gemini:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/gemini-smoke.ts",
+    "paypal:spike": "node --env-file-if-exists=.env.local --import tsx scripts/paypal-spike.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
