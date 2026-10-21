@@ -332,6 +332,8 @@ export type PaymentRef = PaymentHandle & { provider: RailName };   // replaces C
 
 ### Session 3: Retail demo on fakes (rules, products, suggested tasks)
 
+> **As built (21 Oct 2026):** done, 173 tests. The gift and headphones scenarios were replaced by the new retail ones rather than added beside them (their `match` patterns overlap and the first match wins); the mug is a new scenario. The offline rule reader now reads `$` and `€`. The offline checker's reason now names the rule it matched ("Mentions \"refurbished\". Your rule: \"Only new items: nothing used or refurbished.\""), because the old "Mentions \"refurbished\"." never said which rule; decisions are unchanged. The suggested tasks reach the Ask screen as a prop from `ask/page.tsx`, since the demo module uses Node's crypto and can't load in the browser. "charge $20 more" uses the purchase's own currency, and the Rules placeholder is in dollars. Step 6 was checked without a browser (extension not connected): `demo:flow` for the three tasks, then the rendered Ask, Activity and Approvals pages.
+
 Channel3 is retail only, so the demo story moves from a hotel to shopping. Offline mode must tell the same story with no keys. It's the video backup and the fallback when the daily limit is reached. Today's fixtures name real brands, which the video rules forbid.
 
 **Files:**
@@ -376,7 +378,7 @@ The three new retail scenarios are priced in USD (`money(12, 'USD')`); the older
 
 In the existing scenarios, replace "LEGO" with the building-blocks set and "Bose" with generic headphones. Replace the "Waterstones" fallback with **Paper Lane Books**. The existing `match` regexes keep matching "lego" and "toy" so old habits still work.
 
-- [ ] **Step 1: Write the failing tests** in `src/demo/demoContent.test.ts`:
+- [x] **Step 1: Write the failing tests** in `src/demo/demoContent.test.ts`:
 
 ```ts
 it('parses the demo rules into the four expected rules', async () => {
@@ -396,12 +398,12 @@ it('no fixture names a real brand', () => {
 ```
 
   And a flow test, using the scripted shopper, the keyword checker, the fake rail and `seedDemo`: the mug task ends `used` with log types including `payment_opened` and `charge_approved`; the nephew task ends `pending`; the headphones task ends `blocked` with a reason quoting "nothing used or refurbished".
-- [ ] **Step 2: Run `npx vitest run src/demo`.** Expected: FAIL (module not found).
-- [ ] **Step 3: Implement** `demoContent.ts` and the fixture changes. If the keyword checker doesn't block the headphones (the listing contains "refurbished", and the judgement rule names it), change the fixture's listing text first. Change the checker only if no plain wording works, and add a keyword-checker test if you do.
-- [ ] **Step 4: Add the suggested tasks to `AskAgent.tsx`.** Show three small buttons under the task box that fill it in, without sending. Follow the existing button styles in `src/components/ui.tsx`.
-- [ ] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 6: Run `npm run seed && npm run demo:flow`, then do the three tasks in the browser.** Expected: approve and paid, ask, block, in that order.
-- [ ] **Step 7: Commit, push, open a PR.** Message: `feat: retail demo with generic products and suggested tasks`.
+- [x] **Step 2: Run `npx vitest run src/demo`.** Expected: FAIL (module not found).
+- [x] **Step 3: Implement** `demoContent.ts` and the fixture changes. If the keyword checker doesn't block the headphones (the listing contains "refurbished", and the judgement rule names it), change the fixture's listing text first. Change the checker only if no plain wording works, and add a keyword-checker test if you do.
+- [x] **Step 4: Add the suggested tasks to `AskAgent.tsx`.** Show three small buttons under the task box that fill it in, without sending. Follow the existing button styles in `src/components/ui.tsx`.
+- [x] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 6: Run `npm run seed && npm run demo:flow`, then do the three tasks in the browser.** Expected: approve and paid, ask, block, in that order.
+- [x] **Step 7: Commit, push, open a PR.** Message: `feat: retail demo with generic products and suggested tasks`.
 
 ### Session 4: Hosted mode 1, one data file per visitor
 

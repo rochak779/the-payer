@@ -19,7 +19,7 @@ describe('scripted shopper', () => {
       (e) => events.push(e),
     );
     expect(requested).toHaveLength(1);
-    expect(requested[0]).toMatchObject({ merchant: 'LEGO', purchaseDate: '2026-11-10' });
+    expect(requested[0]).toMatchObject({ merchant: 'Brick & Bolt Toys', purchaseDate: '2026-11-10' });
     expect(events.map((e) => e.kind)).toEqual(['status', 'search', 'found', 'request', 'status']);
   });
 
@@ -34,7 +34,7 @@ describe('scripted shopper', () => {
 
   it("the canned search answers an AI agent's own wording for the nephew present", async () => {
     const results = await fixtureSearch.search('LEGO Star Wars set around 60 GBP');
-    expect(results[0].url).toBe('https://example.com/lego-technic');
+    expect(results[0].url).toBe('https://example.com/building-blocks-race-car');
   });
 
   it('every scenario is a valid purchase request', () => {

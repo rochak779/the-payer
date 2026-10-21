@@ -17,7 +17,7 @@ describe('keywordsFor', () => {
 describe('keywordChecker', () => {
   it('marks a rule breached when one of its words appears anywhere', async () => {
     const r = await keywordChecker.check(makeRequest({ refundPolicy: 'Non-refundable rate.' }), [refundRule]);
-    expect(r.verdicts).toEqual([{ ruleId: 'refundable', verdict: 'breached', explanation: 'Mentions "non-refundable".' }]);
+    expect(r.verdicts).toEqual([{ ruleId: 'refundable', verdict: 'breached', explanation: 'Mentions "non-refundable". Your rule: "Nothing non-refundable."' }]);
   });
 
   it('misses paraphrases (that is the point of a baseline)', async () => {

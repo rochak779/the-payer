@@ -10,12 +10,6 @@ import { formatMoney } from '@/domain/money';
 import type { RunEvent } from '@/domain/types';
 import type { RunPurchase, RunView } from '@/flow/runs';
 
-const EXAMPLES = [
-  'Book a hotel in Lisbon, 7–9 Nov',
-  'Buy a birthday present for my nephew, about £60',
-  'Get me some noise-cancelling headphones',
-];
-
 /** The icon says what kind of step it is; a few kinds also lead with a word, inline. */
 const KIND: Record<string, { lead?: string; Icon: ComponentType<SVGProps<SVGSVGElement>> }> = {
   status: { Icon: AgentIcon },
@@ -81,7 +75,8 @@ function Step({ e }: { e: RunEvent }) {
   );
 }
 
-export function AskAgent() {
+/** `suggestions` come from the server: the demo module uses Node's crypto, so the browser can't import it. */
+export function AskAgent({ suggestions }: { suggestions: readonly string[] }) {
   const [task, setTask] = useState('');
   const [runId, setRunId] = useState<string | null>(null);
   const [run, setRun] = useState<RunView | null>(null);
@@ -132,7 +127,7 @@ export function AskAgent() {
           className={FIELD}
         />
         <div className="flex flex-wrap gap-2">
-          {EXAMPLES.map((ex) => (
+          {suggestions.map((ex) => (
             <button key={ex} type="button" onClick={() => setTask(ex)} aria-pressed={task === ex} className={`${CHIP} ${task === ex ? 'bg-peach ring-orange-soft' : ''}`}>
               {ex}
             </button>
