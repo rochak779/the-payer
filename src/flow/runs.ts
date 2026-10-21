@@ -41,8 +41,10 @@ export type RunPurchase = Pick<PurchaseRequest, 'item' | 'merchant' | 'total'> &
 };
 export type RunView = Run & { approvals: RunPurchase[] };
 
-export function startRun(store: Store, task: string, now: Date): Run {
-  const run: Run = { id: newId('run'), task, status: 'running', createdAt: now.toISOString(), events: [], approvalIds: [] };
+/** `notice`, if given, is the run's first status line (e.g. that it uses the offline agent today). */
+export function startRun(store: Store, task: string, now: Date, notice?: string): Run {
+  const events: Run['events'] = notice ? [{ at: now.toISOString(), kind: 'status', text: notice }] : [];
+  const run: Run = { id: newId('run'), task, status: 'running', createdAt: now.toISOString(), events, approvalIds: [] };
   store.update((db) => { db.runs.push(run); });
   return run;
 }
