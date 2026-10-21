@@ -258,6 +258,18 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 ## Channel3: verified live (21 Oct 2026, hackathon Session 9)
 `SEARCH=channel3` searches Channel3 for US shops in dollars (`@channel3/sdk` 4.1.0, pinned). The 3 smoke searches (mug, building blocks, wireless headphones) gave 5 USD results each from US shops, all `new`. Results name real brands and shops, so the video must use a generic query. Credits: 20,000 with code `PAYPAL-HACKATHON-2026`; Channel3 tops up on request in its Discord channel.
 
+**Live retail run (Session 10, 21 Oct):** Gemini agent and checker, Channel3 search, PayPal sandbox, the demo rules.
+- **The listing's data wins over the agent's words.** When the agent picks a Channel3 result, the purchase uses that listing's price (times the number of items) and shop, and the checker reads the listing's own text, Condition line included. All 25 requests in 24 runs matched a listing.
+- **Every outcome matched the rules.** All 17 approved purchases were paid once at the listing's price: each PayPal order shows one hold and one `COMPLETED` capture.
+- **No live listing is used or refurbished,** even when searching "refurbished wireless headphones". So the video's "blocked" scene uses the offline listings (refurbished headphones).
+- **Two misreads, fixed:** the agent filed a wooden blocks set for a nephew as a gift card, so "No gift cards" blocked it, and it added brand and shop names to its searches. The agent is now told that `gift_card` means a gift card or voucher, and to search in the person's own words.
+
+**Video wordings (live, chosen 21 Oct):**
+- **Approved and paid:** "Buy a plain white ceramic coffee mug, under $15". 6 of 6 approved and paid ($5.95 to $8.72). After the fix, 3 of 3 picked a "Ceramic Coffee Mug" at $8.72; twice the agent added the shop's own house brand to the item name.
+- **Asks first:** "Buy a wooden building blocks set for my nephew's birthday, about $40". After the fix, 3 of 3 asked, with plain product names ("Big Rig Building Set", "Colored Wooden Building Blocks", "Block Playset"), $35.99 to $49.99.
+- **Blocked:** the offline listings (refurbished headphones). Session 14 allows this.
+- **Still open:** the shop is always a real US retailer's web address, and the search list can show brand names. Session 14's frame check decides what to show.
+
 ## Earlier research (raw files)
 Saved pages and search results from the research session that produced this brief:
 `/Users/rochakagarwal/orca/projects/Learning/.firecrawl/agent-mandates/`

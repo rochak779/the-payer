@@ -1,6 +1,6 @@
 import type { Content, FunctionCall, GoogleGenAI, Part } from '@google/genai';
 import { z } from 'zod';
-import type { Shopper } from '@/agent/types';
+import type { SearchResult, Shopper } from '@/agent/types';
 import { formatMoney } from '@/domain/money';
 import { MAX_STEPS, PurchaseInput, STOP_NOTE, SearchInput, TOOL_DESCRIPTIONS, systemPrompt, toPurchaseRequest } from '@/integrations/claude/shopper';
 import { CALL_DEADLINE_MS, GEMINI_MODEL, RETRY, gemini, geminiJsonSchema } from './client';
@@ -27,17 +27,19 @@ export function createGeminiShopper(opts: { model?: string; client?: GoogleGenAI
     name: `gemini:${model}`,
     async run(task, tools, emit) {
       const today = (opts.clock?.() ?? new Date()).toISOString().slice(0, 10);
+      const seen: SearchResult[] = [];
 
       const handlers = new Map<string, Handler>([
         ['search_web', async (args) => {
           const { query } = SearchInput.parse(args);
           emit({ kind: 'search', text: query });
           const results = await tools.searchWeb(query);
+          seen.push(...results);
           for (const r of results) emit({ kind: 'found', text: `${r.title} (${r.url})` });
           return results;
         }],
         ['request_purchase', async (args) => {
-          const req = toPurchaseRequest(PurchaseInput.parse(args), today);
+          const req = toPurchaseRequest(PurchaseInput.parse(args), today, seen);
           emit({ kind: 'request', text: `Asking to buy ${req.item} at ${req.merchant} for ${formatMoney(req.total)}` });
           const decision = await tools.requestPurchase(req);
           return { outcome: decision.outcome, reason: decision.summary };
