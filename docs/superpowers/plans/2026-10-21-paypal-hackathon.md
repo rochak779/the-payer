@@ -735,6 +735,20 @@ Before writing the code, check the SDK's real method and type names in `node_mod
 
 ### Session 10: Live retail run (Gemini + Channel3 + PayPal)
 
+> **As built (21 Oct 2026):** done, 245 tests. Each AI shopper remembers the search results it showed the agent in this task. If the agent's link matches a result with a Channel3 offer, `toPurchaseRequest` takes that offer's price (times the number of items) and shop, and the checker gets the listing's own text with its Condition line; otherwise the agent's words stand. The prompt now says US dollars, pick only in-stock offers, and copy price and shop exactly. All 25 requests in 24 live runs matched a listing. Step 5 (9 runs, before the misread fix) gave the right outcome every time; each paid purchase is one PayPal order with one hold and one `COMPLETED` capture at the listing's price. The "ask" purchases were approved the way the Approve button does it. The headphones were all new, so the live run approves them; the "blocked" scene stays on the offline listings. Step 6 found two misreads, each fixed test-first: a wooden blocks set for a nephew was filed as a gift card and blocked by "No gift cards" (the `category` field now says `gift_card` means a gift card or voucher), and the agent added brand and shop names to its searches ("Melissa and Doug", "site:walmart.com"); it is now told to search in the person's own words. Review then found that two of a listed item would have been priced as one; fixed. Video wordings are in BRIEF.md. Results name real products and shops (below), so Session 14's frame check still applies.
+>
+> | Task | Run | Product | Shop | Price | Outcome | Paid |
+> |---|---|---|---|---|---|---|
+> | Buy a plain white ceramic mug, under $15 | 1 | Ceramic Mug Blank, White 15 oz | cricut.com | $7.99 | approve | yes, capture 82309798NU756113S |
+> | | 2 | Ceramic Mug Blank (White, 15 oz) | cricut.com | $7.99 | approve | yes, 9TP29415RH723181H |
+> | | 3 | Ceramic Mug Blank (15 oz) | cricut.com | $7.99 | approve | yes, 6KC45393C7764202H |
+> | Buy a birthday present for my nephew, about $40 | 1 | LEGO Star Wars AT-RT Attack set | gamestop.com | $42.74 | ask, then approved | yes, 11T166748B463154Y |
+> | | 2 | LEGO Star Wars X-Wing Starfighter | lego.com | $29.99 | ask, then approved | yes, 9G4338422D107430A |
+> | | 3 | LEGO Star Wars Battle Pack | toysrus.com | $29.99 | ask, then approved | yes, 5GC28858CV538322M |
+> | Buy wireless headphones under $80 | 1 | Philips A4216 Wireless Headphones | macys.com | $49.49 | approve (new) | yes, 86J21535F5651405G |
+> | | 2 | Philips Wireless Headphones | macys.com | $76.99 | approve (new) | yes, 2PH72189DC365152V |
+> | | 3 | Philips A4216 Wireless Headphones | macys.com | $49.49 | approve (new) | yes, 14475863766147148 |
+
 **Needs:** `GEMINI_API_KEY`, `CHANNEL3_API_KEY`, PayPal keys and a connected buyer.
 
 The agent's prompt was written for web pages and hotels. Make it use Channel3's exact price and shop, then measure.
@@ -742,16 +756,16 @@ The agent's prompt was written for web pages and hotels. Make it use Channel3's 
 **Files:**
 - Modify: `src/integrations/claude/shopper.ts` (`systemPrompt` and `toPurchaseRequest`, shared with Gemini), its tests, `BRIEF.md`
 
-- [ ] **Step 1: Write the failing tests** in `shopper.test.ts`:
+- [x] **Step 1: Write the failing tests** in `shopper.test.ts`:
   - when a search result has an `offer`, `toPurchaseRequest` uses `offer.price` as `total` and `offer.shop` as `merchant`, even if the agent wrote a different price or shop. The listing's own data wins over the agent's words;
   - the `listingText` contains the "Condition:" line;
   - the system prompt tells the agent to pick only in-stock offers and to copy price and shop from the listing.
-- [ ] **Step 2: Run them.** Expected: FAIL.
-- [ ] **Step 3: Implement the minimal change.**
-- [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 5: Live run.** Use `CHECKER=gemini PARSER=gemini SEARCH=channel3 SHOPPER=gemini PAYMENTS=paypal`. Run each suggested task 3 times and record a table in the as-built note: task, product, shop, price, outcome, paid. A misread that gives a wrong outcome is fixed only with a failing test first, as in the earlier "fix misreads" PR.
-- [ ] **Step 6: Pick the video's queries.** Choose the wordings that give stable outcomes and generic, unbranded products, and record them in BRIEF.md.
-- [ ] **Step 7: Commit, push, open a PR.** Message: `feat: agent copies price and shop from Channel3 offers`.
+- [x] **Step 2: Run them.** Expected: FAIL.
+- [x] **Step 3: Implement the minimal change.**
+- [x] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 5: Live run.** Use `CHECKER=gemini PARSER=gemini SEARCH=channel3 SHOPPER=gemini PAYMENTS=paypal`. Run each suggested task 3 times and record a table in the as-built note: task, product, shop, price, outcome, paid. A misread that gives a wrong outcome is fixed only with a failing test first, as in the earlier "fix misreads" PR.
+- [x] **Step 6: Pick the video's queries.** Choose the wordings that give stable outcomes and generic, unbranded products, and record them in BRIEF.md.
+- [x] **Step 7: Commit, push, open a PR.** Message: `feat: agent copies price and shop from Channel3 offers`.
 
 #### Session 10b (optional, cut first): Retail eval cases
 
