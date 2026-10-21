@@ -1,151 +1,147 @@
-# Agent Mandates
+# The Payer
 
-Plain-English spending rules for a personal AI shopping agent, a checker that decides **approve / ask / block** with a reason, and one-time cards that only work for what was approved.
+**Let an AI shopping agent pay with PayPal, but only for what your plain-English rules allow, and never a cent more than you approved.**
 
-Shopping agents can now spend money for people. Today's options are "approve every purchase" or simple spending caps. This is the layer in between: it decides when it's safe to skip asking, and it measures how often that decision is right. It's designed as a feature for whoever issues the agent's payment credential (a wallet or a bank), not as a standalone app.
+PayPal made shops agent-ready. The Payer makes buyers agent-safe. You write spending rules the way you'd tell a person. When the agent wants to buy something, a checker decides **approve**, **ask you** or **block**, with a reason. An approved purchase becomes a PayPal hold for exactly its price, and code alone decides whether the shop gets paid.
 
-**Status (19 Oct 2026):** everything runs end to end on offline stand-ins, with 166 automated tests. The AI parts (checker, rule reader and shopper agent) are **measured on Google's free `gemini-3.5-flash-lite`**, using the instructions written for Claude (`CHECKER=gemini`, `PARSER=gemini`, `SHOPPER=gemini`). The checker scores 14/17 on the held-out cases (9/17 for the keyword baseline) with 0–1 wrong approvals per run across all 67 cases (keyword: 17). The rule reader gets 21/22 and 20/22 (pattern reader: 14/22). See `evals/RESULTS.md`. The AI agent has run both demo tasks on the canned search and on live Firecrawl search. Firecrawl search has been smoke-tested live (5 real results). Stripe sandbox cards have been tested live: our webhook's answer is honoured, and a slow or missing answer is declined. **The Claude versions are built behind the same switches but unmeasured**, because there's no Anthropic key.
+Built for the PayPal AI Hackathon (October to November 2026), entirely on PayPal's developer sandbox.
 
-## Run it (offline, no keys)
-Needs Node 22.9 or later.
+## Try it
 
-```bash
-npm install
-npm run seed      # clean data and five demo rules
-npm run dev       # http://localhost:3000
-```
+**HOSTED_URL_TBD**
 
-Offline, the agent picks from canned listings (a hotel in Lisbon, a present for a nephew, headphones, a book), the checker is a simple keyword baseline, and cards are fake. From the terminal: `npm run demo:flow -- "Book a hotel in Lisbon, 7–9 Nov"`.
+- **Nothing to install, no login.** Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)").
+- **Optional: use your own PayPal sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**; the app checks with PayPal before saving.
+- **Please type nothing personal.** The demo uses Gemini's free tier, and Google may use free-tier prompts to improve its products.
+- It's sandbox money in US dollars. Nothing real is bought or paid.
 
-## Run it for real
-Copy `.env.example` to `.env.local`, then set:
+## A 3-minute tour
 
-```
-CHECKER=gemini  PARSER=gemini  SEARCH=firecrawl  SHOPPER=gemini  PAYMENTS=stripe
-GEMINI_API_KEY, FIRECRAWL_API_KEY, STRIPE_SECRET_KEY, STRIPE_CARDHOLDER_ID, STRIPE_WEBHOOK_SECRET
-```
+1. **Rules.** The demo starts with four rules:
+   - Up to $80 on any one item.
+   - Only new items: nothing used or refurbished.
+   - Ask me before buying anything that's a gift or for someone else.
+   - No gift cards.
 
-Each switch is separate, so you can turn on one service at a time. For Claude instead, set `CHECKER=claude PARSER=claude SHOPPER=claude` and `ANTHROPIC_API_KEY`; that version is built but not yet measured. Smoke tests: `npm run gemini:smoke`, `npm run claude:smoke` and `npm run firecrawl:smoke`.
+   Write your own and press **Show me what you understood** to see how the app reads them before you save.
+2. **Ask: the mug.** Press the suggestion "Buy a plain white ceramic coffee mug, under $15". The agent searches real US shops through Channel3, picks a listing and asks to buy it. The rules allow it, so PayPal holds exactly the listing's price, the payment check agrees, and PayPal takes it: "Paid $…, once, for this purchase only."
+3. **Ask: the present.** "Buy a wooden building blocks set for my nephew's birthday, about $40". The gift rule means it asks you first. Open **Approvals**, see why, and press **Approve**. It's paid the same way.
+4. **Ask: the headphones.** "Buy wireless headphones under $80". Live listings are almost always new, so this one is usually approved and paid. On the offline listings the headphones are refurbished, and "Only new items" blocks them: run it locally to see that.
+5. **Activity.** Every decision is listed with its reason, and each paid purchase shows "PayPal took $… (capture …)". On a paid purchase, play the shop trying it on: **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**. The payment check refuses each one before PayPal is even called. (On its own, PayPal lets a shop take up to 15% more than was held, capped at $75. Your rules hold it to the penny.)
+6. **The off switch.** Turn the agent off on Activity: anything waiting for you is cancelled, open PayPal holds are voided, and new tasks are refused. Turn it back on to carry on.
+7. **How well does it decide?** The button at the bottom of Activity shows the checker's measured scores against a keyword baseline (see Evals below).
 
-Gemini uses the free `gemini-3.5-flash-lite` unless `GEMINI_MODEL` says otherwise. Its free tier allows **500 requests a day**: one eval run uses 67 and one agent task up to 12. The bigger `gemini-3.8-flash` allows only 20 free calls a day, too few for one eval run. Google may use free-tier prompts to improve its products, so use mock data only.
-
-Stripe needs a **sandbox** account with Issuing turned on, a funded GBP Issuing balance and one cardholder (`ich_…`). The code refuses any key that doesn't start with `sk_test_`. Then run the Stripe CLI:
-
-```bash
-stripe listen --events issuing_authorization.request --forward-to localhost:3000/api/stripe/webhook
-```
-
-In Issuing settings, set the real-time authorisation timeout fallback to **decline**. Stripe waits only 2 seconds for the app's answer; if the app is slow (for example, `next dev` compiling the route on first use), the charge must fail safe.
-
-## Run it with PayPal (sandbox)
-Needs a PayPal developer sandbox app (Merchant type, with **Save payment methods** ticked) linked to a **US** sandbox business account, plus a personal sandbox account as the buyer. Payments are in US dollars. The code only ever calls `api-m.sandbox.paypal.com`.
-
-In `.env.local`:
+## How it works
 
 ```
-PAYMENTS=paypal
-PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
-PAYPAL_VAULT_ID   # optional: a demo buyer's saved PayPal, used until you connect your own
-APP_URL           # optional locally (defaults to http://localhost:3000); the hosted URL when deployed
+your rules → shopping agent → checker → (you, if it asks) → PayPal hold → payment check → PayPal capture
 ```
 
-Then `npm run seed` and `npm run dev`:
+1. **Rules in plain English.** The rule reader turns each sentence into a structured rule and shows it back ("here's what I understood") before anything is saved. Hard limits (amount, shop, category, dates) become rules that code checks. Fuzzy ones ("only new items", "ask me about gifts") become judgement rules.
+2. **The shopping agent** has exactly two tools: search, and ask to buy. It never gets PayPal tools, tokens or ids, so it can't pay for anything itself.
+3. **The checker decides approve, ask or block.** Code checks the hard limits. The AI judges only the fuzzy rules, and reports facts (clear, breached or unsure, plus hidden costs and prompt-injection attempts); code turns those facts into the decision. So the AI can only make a decision stricter: it can never approve something a hard limit stops. If the AI fails or returns junk, the answer is "ask". Shop and listing text is treated as data, never as instructions.
+4. **An approved purchase becomes a PayPal hold** for exactly its total, paid from the buyer's saved PayPal. An "ask" waits for your tap on Approvals; only your tap counts as consent.
+5. **When the shop asks to be paid, code alone checks the charge** against the approval: the amount, the shop, used once, not expired, and the agent still on. Only then does the app capture the hold. A refused charge never reaches PayPal, and a failed or retried capture can never pay twice.
+6. **The off switch** cancels everything waiting and voids open holds.
 
-1. **Connect PayPal** on the Ask screen (or **Connect your own PayPal** if a demo buyer is set). PayPal opens in a new tab: log in as the sandbox buyer and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**: the app checks with PayPal before saving.
-2. **Run the three suggested tasks:**
-   - **Mug, $12:** approved by your rules and paid at once. PayPal holds exactly $12, and the app takes it only after the payment check agrees.
-   - **Nephew's present, $38:** the checker asks you. Approve it on the Approvals screen and it's paid the same way.
-   - **Headphones:** blocked, because they're refurbished.
-3. **On Activity,** each paid purchase shows "PayPal took $12 (capture …)". Press **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**: the payment check refuses each one before PayPal is called.
-4. **Turn the agent off:** anything waiting for you is cancelled, and open PayPal holds are voided.
+The Rules tab can also export your rules as an **AP2 v0.2 open Payment Mandate** (the Agent Payments Protocol). Rules AP2 has no field for travel in an extension.
 
-**What to look for in the sandbox:** log in as the buyer at sandbox.paypal.com and open Activity. You should see one payment of exactly $12.00 and one of $38.00, and nothing from the demo buttons. Check from the buyer's side: the shop's own sandbox login was refused in testing.
+## PayPal APIs used
 
-## Deploy on Render
-`render.yaml` is a Render Blueprint for one web service: Node 24 (from `.node-version`), the Starter plan, in Frankfurt. Render builds with `npm ci && npm run build`, starts with `npm start`, and checks `/api/health`, which answers `{ "ok": true }` without reading any data, key or outside service. The build needs no keys.
+All calls go to `https://api-m.sandbox.paypal.com`. The address is fixed in code, so no setting can point the app at live PayPal.
 
-The Blueprint turns on hosted mode (`HOSTED=1`): each visitor gets their own seeded data file and daily limits, and the agent, checker and rule reader use Gemini, with Channel3 search and PayPal payments. It holds no secrets. Render asks for these when you create the Blueprint:
+| What | API | When |
+|---|---|---|
+| Sign in as the app | OAuth 2.0 client credentials, `POST /v1/oauth2/token` | Before other calls. The token is reused until it expires. |
+| Save the buyer's PayPal once | Vault v3: `POST /v3/vault/setup-tokens`, then `GET /v3/vault/setup-tokens/{id}` and `POST /v3/vault/payment-tokens` | "Connect PayPal", then "Finish connecting" |
+| Hold exactly the approved amount | Orders v2: `POST /v2/checkout/orders` with `intent: AUTHORIZE` and the saved PayPal (`vault_id`), with the buyer away | When a purchase is approved |
+| Take the money | Payments v2: `POST /v2/payments/authorizations/{id}/capture` (final capture) | Only after the payment check approves the shop's charge |
+| Cancel a hold | Payments v2: `POST /v2/payments/authorizations/{id}/void` | The off switch |
 
-| Variable | Value |
-|---|---|
-| `GEMINI_API_KEY` | Your Gemini key (the free one is fine). Past the app's own daily limits (below), runs use the offline agent with a one-line notice. If Google's allowance runs out first, a run stops and says Gemini is over its usage limit; nothing is approved. |
-| `CHANNEL3_API_KEY` | Your Channel3 key. |
-| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | The PayPal sandbox app's keys. |
-| `PAYPAL_VAULT_ID` | The demo buyer's saved PayPal, so visitors start connected. |
-| `APP_URL` | The service's own address, such as `https://the-payer.onrender.com`. It's shown at the top of the service's page after the first deploy; if it differs, change it under **Environment**. |
+Every call that moves money sends a fixed `PayPal-Request-Id` built from the purchase and the step, so a retried call can't pay twice. Only a `COMPLETED` capture counts as paid. **Refunds aren't built:** an undo button was planned as optional and cut for time.
 
-1. In Render, choose **New → Blueprint** and pick this repo. Render reads `render.yaml`.
-2. Type in the values above, then deploy.
-3. Once it's live, check `APP_URL` matches the service's address.
+## AI used
 
-Good to know:
-- **Don't set `NODE_ENV` yourself.** Render sets it to `production` when the app runs. Set at build time, it would make `npm ci` skip the build tools.
-- **Visitor data is temporary.** It lives on the service's own disk, and every deploy wipes it, so the next visit starts seeded again.
-- **Every merge to `main` redeploys** (Render's default).
-- **Daily limits** default to 8 tasks per visitor, 30 tasks a day and 20 rule previews per visitor. To change them, add `LIMIT_TASKS_PER_VISITOR`, `LIMIT_TASKS_PER_DAY` or `LIMIT_PREVIEWS_PER_VISITOR` under **Environment**.
+- **Gemini `gemini-3.5-flash-lite`** (Google, free tier, through `@google/genai`) does three jobs: the **shopping agent**, the **rule reader** and the **checker** for fuzzy rules. Each job can be switched to Claude, which is built but unmeasured (no Anthropic key).
+- **Built with Claude Code.** The code, tests and docs were written with Claude Code, session by session, from the plan in `docs/superpowers/plans/`.
 
-## How it decides
-1. **Code checks the hard limits:** amount, shop, category, dates. Limits are inclusive. Going over a limit means "ask", unless the rule says never / no / nothing / don't, which means "block". A price in another currency means "ask".
-2. **An AI checker judges the fuzzy rules** ("nothing non-refundable", "ask me about gifts", "ask me if a shop might not be genuine") and flags hidden costs and prompt injection. It's measured on Gemini Flash-Lite; the Claude version runs the same instructions behind a switch. It reports facts and code turns them into outcomes, so the AI can only make a decision stricter. If it fails, times out or returns junk, the answer is "ask".
-3. **At payment time, code alone** checks the charge against the approval: amount, merchant, used once, not expired, agent still on.
+## Channel3 and Render
 
-**No double booking:** within one task, the agent can make up to two different purchases, but a repeat request at the same shop for the same price as one that's waiting, approved or paid is refused, even if worded differently (e.g. a retry after a charge failed part-way).
-
-The agent never holds payment details. After approval the app creates a one-time card for exactly that amount (the agent never sees it), and the payment check only lets it pay the approved merchant once, so a leaked card is useless. Listing and merchant text is data, never instructions, and only the user's tap approves an "ask".
+- **Channel3** is the agent's product search: real products from US shops, in US dollars (`@channel3/sdk`). Each offer gives the shop, price, condition and stock. When the agent picks a Channel3 listing, the purchase uses that listing's own price and shop, whatever the agent wrote, and the checker reads the listing's own text, including its condition.
+- **Render** hosts the demo from the Blueprint in `render.yaml`: one web service on Node 24, with a health check at `/api/health`. Hosted mode gives each visitor their own seeded data and daily limits. The keys are typed into Render's dashboard and never committed.
 
 ## Evals
-67 labelled purchase requests against one fixed set of 10 rules: 50 for tuning ("dev") and 17 held out ("test"). Categories: clearly within or against the rules, ambiguous, rule conflicts, price edge cases, refund wording, gifts and other people, prompt injection. Labelling policy: `evals/README.md`.
+
+The checker was measured against a keyword baseline (the way a simple guardrail works) on **67 labelled purchase requests** against one fixed set of 10 rules: 50 used for tuning ("dev") and 17 held back ("held out"). The categories are clearly within or against the rules, ambiguous, rule conflicts, price edge cases, refund wording, gifts and other people, and prompt injection. Labelling policy: `evals/README.md`.
 
 | Checker | Split | Correct | Wrong approvals | Needless asks |
 |---|---|---|---|---|
 | Keyword baseline | dev (50) | 28 (56%) | 12 | 8 |
 | Keyword baseline | held out (17) | 9 (53%) | 5 | 3 |
-| Claude (`claude-sonnet-5-5`) | both | not measured (no key) | – | – |
-| Gemini 3.5 Flash-Lite (free), prompt v4, two runs | dev (50)* | 48, 47 | 0, 1 | 1, 1 |
-| Gemini 3.5 Flash-Lite (free), prompt v4, two runs | held out (17) | 14, 14 (82%) | 0, 0 | 2, 2 |
+| Gemini 3.5 Flash-Lite, prompt v4, two runs | dev (50) | 48, 47 | 0, 1 | 1, 1 |
+| Gemini 3.5 Flash-Lite, prompt v4, two runs | held out (17) | 14, 14 (82%) | 0, 0 | 2, 2 |
 
-*Dev includes two cases written alongside the relabelling change; on the original 48 dev cases v4 scores 46 and 45. Held-out wrong approvals are 0–1 per run across v3 and v4 (v3's first run wrongly approved `ambiguous-07`, two ratings that disagree), so v4's two clean runs may be partly luck. One run moves by a case or two.
+- **Wrong approvals** (money spent that shouldn't have been) are the worst failure: 0 to 1 per run across all 67 cases, against 17 for the baseline.
+- **Needless asks** are the annoyance. The baseline shows both failures: it asks about harmless words, and it approves paraphrases it has no keyword for, such as "All sales final" against "nothing non-refundable".
+- **Read the zero with care:** across prompt versions it's 0 to 1 held-out wrong approvals per run, and one run moves by a case or two.
+- **Rule reading** ("here's what I understood"), 22 plain-English rules: Gemini 21/22 and 20/22 over two runs; the offline pattern reader 15/22.
+- **Live retail runs:** the demo tasks were run 24 times live (Gemini, Channel3 and the PayPal sandbox). All 25 purchase requests used the listing's own price and shop, and each of the 17 paid purchases is one PayPal hold and one completed capture at that price. Two misreads were found and fixed, test first: a toy set filed as a gift card, and brand names added to searches.
 
-The baseline shows both failure modes the real checker has to beat. It asks needlessly on harmless words ("Hotel Chocolat" trips the hotel-rating rule) and misses paraphrases ("All sales final" passes "nothing non-refundable").
+The eval set predates the retail demo (it uses hotels, gifts and refund terms, mostly in pounds). Full results: `evals/RESULTS.md` and the saved runs in `evals/results/`. Commands: `npm run eval -- --checker gemini --concurrency 1` and `npm run eval:parse -- --parser gemini`.
 
-**Rule reading** ("here's what I understood"): 22 plain-English rules. The offline pattern reader gets 15/22 (14/22 before it read `$` and `€`, 21 Oct). Gemini Flash-Lite gets 21/22 and 20/22 over two runs with reader prompt v2, which fixed "Ask me about gifts." being read as "only gift cards". Claude is unmeasured (no key).
+## Run it locally
 
-Commands: `npm run eval -- --checker gemini --concurrency 1 --label v4` and `npm run eval:parse -- --parser gemini` (or `claude` once there's a key). Results are in `evals/RESULTS.md`, on the `/evals` page, and as saved runs in `evals/results/`.
+Needs Node 22.9 or later.
 
-## AP2 export
-The Rules tab can show your saved rules as an **AP2 v0.2 open Payment Mandate** (the Agent Payments Protocol). Purchase caps, allow-only shop lists and date windows map to AP2 constraints. AP2 v0.2 has no field for judgement rules, blocked shops, categories or per-night caps, so those travel in an `x_agent_mandates` extension. Field names come from the AP2 repo (commit `e1ea56d`), not guesswork; see "Still to verify" in `BRIEF.md`. The export is unsigned content, not a signed mandate.
+**Offline, no keys:**
 
-## Scope
-- Spending only. Non-payment actions (sharing an address, reading email) can't be stopped at the payment step.
-- One local user, no login, no deployment. Storage is one JSON file, `data/db.json`.
+```bash
+npm install
+npm run seed      # fresh data with the four demo rules
+npm run dev       # http://localhost:3000
+```
 
-## Demo checklist
-- `npm run seed` (clean data, demo rules)
-- `.env.local` has all five switches and the keys; `npm run gemini:smoke` and `npm run firecrawl:smoke` pass
-- Gemini's free daily limit (500 requests) not used up: don't run evals on demo day
-- Stripe sandbox Issuing balance funded; timeout fallback set to decline
-- `stripe listen …` running (or tunnel up), `STRIPE_WEBHOOK_SECRET` current
-- `curl localhost:3000/api/stripe/webhook` (warm-up: `next dev` compiles the route on first use)
-- One dry run of every step below
+Offline, the agent picks from canned listings at fictional shops, the checker is the keyword baseline, the rule reader is a simple pattern reader, and payments are offline test payments. The three suggested tasks give the three outcomes: the mug is approved and paid ($12), the present asks, and the refurbished headphones are blocked. From the terminal: `npm run demo:flow -- 'Buy a plain white ceramic coffee mug, under $15'`.
 
-## Video run-of-show (about 90 seconds)
-1. **Rules.** Type "Hotels up to £150 a night. Nothing non-refundable. Ask me about gifts." → "Show me what you understood" → Save.
-2. **Approve.** "Book a hotel in Lisbon 7–9 Nov" → search → approved → paid with a one-time card.
-3. **Ask.** "Birthday present for my nephew" → "Asking you" → Approvals → Approve.
-4. **Activity.** "charge £20 more" → declined by the card limit; "charge from another shop" → declined by the payment check.
-5. **Turn off agent** → the next request is blocked.
-6. **Evals.** Keyword baseline vs the AI checker (Gemini Flash-Lite, prompt v1 vs v4): wrong approvals and needless asks.
+**With the live services:** copy `.env.example` to `.env.local` and set:
 
-Notes:
-- Steps 1–5 were dry-run offline on the stand-ins (16 Oct 2026) and behave as above. Offline, the fake card lists every reason for a decline ("already used" as well as "over the approved amount" or "not the approved merchant"). Step 6's rows are in `evals/RESULTS.md`; there are no Claude rows yet (no key).
-- **Live with Stripe (checked 16 Oct 2026), step 4 looks different:** the card has already paid the full approved amount, so Stripe's own card limit declines "charge from another shop" (and "charge again") before our payment check is asked. Activity says "Declined by the card's own spending limit at Stripe" for all three. In the video, say it that way ("the card itself refuses anything beyond what you approved"), or show the merchant check offline, where Activity names the shop.
-- **Sandbox balance for the video:** Stripe checks the Issuing balance *before* the card's limit. For the Activity buttons to show "declined by the card's own spending limit", the balance left after the booking must still cover the attack charge: at least **£500 per Lisbon take** (£240 booking + £260 "charge £20 more"). Otherwise Activity shows "balance is too low" instead. Top up about £1,000 before recording a few takes, or use the £35 book, which needs only about £90.
-- **Record steps 2–3 on the canned search** (leave `SEARCH` unset), with the AI agent and checker on (`SHOPPER=gemini CHECKER=gemini`). Checked 17 Oct 2026: Lisbon → Hotel Lisboa Plaza, £240, approved and paid; nephew → LEGO Technic, £60, "Asking you". Same result every take, and in pounds.
-- **Live search (`SEARCH=firecrawl`) is less predictable.** Checked 17 Oct 2026: the nephew task found a real LEGO set at John Lewis for £64.98 and asked, which works well. The Lisbon task picked a hotel from a "from €214 a night" line on a guide site, and the checker asked because the price was in euros and the refund policy unclear. Approving that on the Stripe card is untested: Stripe may refuse a euro card, and then Activity shows "Couldn't create a card" and nothing is charged. If you want live search in the video, use it for the nephew step only.
+```
+CHECKER=gemini  PARSER=gemini  SHOPPER=gemini  SEARCH=channel3  PAYMENTS=paypal
+GEMINI_API_KEY, CHANNEL3_API_KEY, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
+PAYPAL_VAULT_ID   # optional: a demo buyer's saved PayPal, used until you connect your own
+APP_URL           # optional locally (defaults to http://localhost:3000)
+```
 
-## Tech notes
-- Look: The Product Kinship's colours and type (Manrope, with Ephesis for one word per screen), built with Impeccable. Product context is in `PRODUCT.md`, the design system in `DESIGN.md`.
-- Next.js 16.4, TypeScript (strict), Zod, Vitest. Cache Components is **off** in `next.config.ts`: every page reads the JSON file on each request, so `export const dynamic = 'force-dynamic'` is the simpler model.
-- Money is whole pence everywhere and only formatted for display.
-- Checks: `npm test`, `npm run typecheck`, `npm run lint`, `npm run build`.
-- Spec and decisions: `BRIEF.md`. Build plan: `docs/superpowers/plans/2026-10-15-agent-mandates.md`.
+Each switch is separate, so you can turn on one service at a time. PayPal needs a sandbox app of the **Merchant** type with **Save payment methods** ticked, linked to a **US** sandbox business account (UK sandbox shops can't save a buyer's PayPal), plus a personal sandbox account as the buyer. Smoke tests: `npm run gemini:smoke` and `npm run channel3:smoke "white ceramic mug"`.
+
+Other switches: `SEARCH=firecrawl` searches the web with Firecrawl instead, and `CHECKER=claude PARSER=claude SHOPPER=claude` uses Claude (`ANTHROPIC_API_KEY`), built but unmeasured.
+
+**Deploy your own:** in Render, choose **New → Blueprint** and pick this repo. Render reads `render.yaml` and asks for `GEMINI_API_KEY`, `CHANNEL3_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_VAULT_ID` (the demo buyer, so visitors start connected) and `APP_URL` (the service's own address, shown on its Render page). Don't set `NODE_ENV`: Render sets it when the app runs, and at build time it would make `npm ci` skip the build tools. Daily limits default to 8 tasks per visitor, 30 tasks a day and 20 rule previews per visitor; change them with `LIMIT_TASKS_PER_VISITOR`, `LIMIT_TASKS_PER_DAY` and `LIMIT_PREVIEWS_PER_VISITOR`.
+
+**Checks:** `npm test` (249 tests), `npm run typecheck`, `npm run lint`, `npm run build`. The stack is Next.js 16 (App Router), TypeScript (strict), Zod, Tailwind CSS 4 and Vitest. Money is whole cents (or pence) everywhere and only formatted for display.
+
+## Stripe as an alternative rail
+
+`PAYMENTS=stripe` pays with Stripe Issuing instead: each approved purchase gets a single-use virtual card limited to the approved amount, and Stripe's real-time authorisation webhook asks the app's payment check to approve or decline each charge. It was tested live in Stripe's sandbox in October 2026, in pounds. It needs `STRIPE_SECRET_KEY` (only `sk_test_` keys are accepted), `STRIPE_CARDHOLDER_ID` and `STRIPE_WEBHOOK_SECRET`, plus the Stripe CLI forwarding webhooks:
+
+```bash
+stripe listen --events issuing_authorization.request --forward-to localhost:3000/api/stripe/webhook
+```
+
+In Stripe's Issuing settings, set the real-time authorisation timeout fallback to **decline**: Stripe waits only 2 seconds for the app's answer, so a slow answer must fail safe. Stripe isn't part of the hosted demo.
+
+## Limits of the demo
+
+- **Sandbox only.** No real money moves, and the code can only call PayPal's sandbox.
+- **One shop receives every payment.** A saved PayPal works only with the shop it was saved for, and paying many different shops needs PayPal partner status. So every payment goes to one sandbox business account; the shop's name goes in the order description, and the payment check still checks it.
+- **Live results show real US shop names and products, but no shop is really paid,** and nothing is ordered. The shop's request to be paid is played by the app.
+- **Visitor data resets on each deploy.** It lives on the service's own disk, so the next visit starts from the seeded demo again.
+- **Daily limits fall back to the offline agent.** Past the limits above, a run uses the offline agent and says so in one line; payments still go through PayPal's sandbox. If Google's own free allowance runs out first, a run stops with a message saying Gemini is over its usage limit, and nothing is approved.
+- **PayPal's sandbox doesn't send you back after you agree.** It shows an error page instead, so the app has a **Finish connecting** button that asks PayPal whether you agreed.
+- **The "blocked" headphones need the offline listings.** Live search hasn't returned a used or refurbished listing, so live, the headphones are usually approved.
+- **Spending only.** The app can't stop an agent's non-payment actions, such as sharing an address.
+- **No refunds yet.** An undo button was planned as optional and cut for time.
+
+## Licence and credits
+
+MIT, see `LICENSE`. Payments: PayPal developer sandbox. Product data: Channel3. Hosting: Render. AI: Google Gemini. Colours and type follow The Product Kinship (its name and logo aren't used), built with Impeccable. Product brief and decisions: `BRIEF.md`. Build plan: `docs/superpowers/plans/2026-10-21-paypal-hackathon.md`.

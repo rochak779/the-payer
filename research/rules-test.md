@@ -2,7 +2,7 @@
 
 **Question:** of the spending rules real people say they would give a shopping or booking agent, how many fit a preset setting (amount cap, merchant, category, time window, "always ask"), and how many need judgement?
 
-**Method (15 Oct 2026):** Firecrawl web search, Reddit threads (read via the Arctic Shift archive API because Reddit blocks scrapers), Hacker News comment search (Algolia API), news and blog pages. Raw search output is in `research/raw/` (see its README). Only spending rules are counted. Rules about non-payment actions (sharing an address, reading email) are listed separately at the bottom, because a payment checker can't stop them.
+**Method (15 Oct 2026):** Firecrawl web search, Reddit threads (read via the Arctic Shift archive API because Reddit blocks scrapers), Hacker News comment search (Algolia API), news and blog pages. Raw scraped sources are not published. Only spending rules are counted. Rules about non-payment actions (sharing an address, reading email) are listed separately at the bottom, because a payment checker can't stop them.
 
 Type **a** = a preset can enforce it fully (amount cap, merchant, category, time window, or "always ask me"). Type **b** = needs judgement (refundability, fees, quality, "only if…", gifts, other people, context such as "things I normally buy"). A rule that mixes a cap with a judgement condition is **b (mixed)**: a cap alone would let through purchases the person clearly didn't want.
 

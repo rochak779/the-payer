@@ -5,12 +5,12 @@ primary_target: "src/app"
 related_targets: ["src/components"]
 ---
 
-# Surface brief: the Agent Mandates app (all screens)
+# Surface brief: The Payer app (all screens)
 
 Scope: the phone-sized app shell and its screens: Rules, Ask, Approvals, Activity, Evals. Visitor mode: Operate.
 Audience: five hands-on testers and viewers of a ~90 s LinkedIn screen recording, equally (PRODUCT.md).
 Job: write rules, send a task, see each decision and why, approve or decline, check what was charged.
-Constraints: The Product Kinship's colours and type only, no TPK name or logo; product name stays Agent Mandates; decision words are fixed (Approved, Asking you, Blocked); copy stays as is; behaviour unchanged. No image generation this session: code-led.
+Constraints: The Product Kinship's colours and type only, no TPK name or logo; product name is The Payer (was Agent Mandates); decision words are fixed (Approved, Asking you, Blocked); copy stays as is; behaviour unchanged. No image generation this session: code-led.
 User asks: polished buttons and components; micro-interactions wherever they help.
 
 ## Direction contract

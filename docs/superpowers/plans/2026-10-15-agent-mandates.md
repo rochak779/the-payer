@@ -158,7 +158,7 @@ This is "First task: the rules test" from BRIEF.md, unchanged. It gates all code
 - Create: `research/incidents.md`
 - Modify: `BRIEF.md` (add verdict under "Build order", step 1)
 
-- [x] **Step 1: Load the research tool.** Invoke the `firecrawl` skill (Firecrawl CLI is installed at `/opt/homebrew/bin/firecrawl`). Save raw search output under `research/raw/`.
+- [x] **Step 1: Load the research tool.** Invoke the `firecrawl` skill (Firecrawl CLI is installed at `/opt/homebrew/bin/firecrawl`). Save raw search output locally. Raw scraped sources are not published.
 
 - [x] **Step 2: Collect 20–30 real rules** people say they would give (or wish they had given) a shopping or booking agent. Search Reddit, X, Hacker News, LinkedIn, product forums and incident threads. Starter queries:
   - `"I would only let an AI agent buy" site:reddit.com`
