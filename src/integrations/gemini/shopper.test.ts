@@ -74,6 +74,20 @@ describe('Gemini shopper', () => {
     ]);
   });
 
+  it("asks to buy at the listing's price and shop from this run's search, not the agent's words", async () => {
+    const offer: SearchResult = {
+      title: 'Ceramic mug, white', url: 'https://mugs.example/white-mug',
+      snippet: 'Shop: mugs.example\nPrice: $12.99\nCondition: new\nAvailability: InStock\nRefund policy: not stated by the shop',
+      offer: { shop: 'mugs.example', price: { minor: 1299, currency: 'USD' }, condition: 'new', inStock: true },
+    };
+    const mug = { ...purchase, item: 'White ceramic mug', merchant: 'Mug World', category: 'home', total_amount: 9.99, currency: 'USD', units: undefined, unit_label: undefined, url: offer.url };
+    const { tools, events, run } = setup([reply([call('search_web', { query: 'white mug' })]), reply([call('request_purchase', mug)]), reply([{ text: 'Done.' }])]);
+    tools.searchWeb.mockResolvedValue([offer]);
+    await run();
+    expect(tools.requestPurchase).toHaveBeenCalledWith(expect.objectContaining({ merchant: 'mugs.example', total: { minor: 1299, currency: 'USD' } }));
+    expect(events).toContainEqual({ kind: 'request', text: 'Asking to buy White ceramic mug at mugs.example for $12.99' });
+  });
+
   it('gets exactly two tools and the Claude agent instructions, with rate-limit retries', async () => {
     const { generateContent, shopper, run } = setup([reply([{ text: 'Nothing suitable.' }])]);
     await run();

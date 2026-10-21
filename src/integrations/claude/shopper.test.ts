@@ -1,7 +1,7 @@
 import type Anthropic from '@anthropic-ai/sdk';
 import { describe, expect, it, vi } from 'vitest';
-import type { ShopperEvent } from '@/agent/types';
-import { PurchaseInput, createClaudeShopper, toPurchaseRequest } from './shopper';
+import type { SearchResult, ShopperEvent } from '@/agent/types';
+import { PurchaseInput, createClaudeShopper, systemPrompt, toPurchaseRequest } from './shopper';
 
 const input = {
   item: 'Hotel Lisboa Plaza, 2 nights', merchant: 'Hotel Lisboa Plaza', category: 'hotel' as const,
@@ -19,6 +19,54 @@ describe('toPurchaseRequest', () => {
 
   it('rejects a non-http link from the agent', () => {
     expect(() => toPurchaseRequest({ ...input, url: 'javascript:alert(1)' }, '2026-11-10')).toThrow();
+  });
+});
+
+/** A Channel3 result: one shop's offer, with the shop's own price and condition. */
+const mugOffer: SearchResult = {
+  title: 'Ceramic mug, white, 12 oz', url: 'https://mugs.example/products/white-mug?variant=7',
+  snippet: 'Shop: mugs.example\nPrice: $12.99\nCondition: refurbished\nAvailability: InStock\nRefund policy: not stated by the shop\nA plain white mug.',
+  offer: { shop: 'mugs.example', price: { minor: 1299, currency: 'USD' }, condition: 'refurbished', inStock: true },
+};
+const otherOffer: SearchResult = {
+  ...mugOffer, url: 'https://cups.example/white-cup',
+  offer: { shop: 'cups.example', price: { minor: 899, currency: 'USD' }, condition: 'new', inStock: true },
+};
+/** The agent's request for the mug, with its own (wrong) price, currency and shop, and no condition line. */
+const mugInput = {
+  ...input, item: 'White ceramic mug', merchant: 'Mug World', category: 'home' as const, total_amount: 9.99, currency: 'GBP' as const,
+  units: undefined, unit_label: undefined, refund_policy: '', url: mugOffer.url, listing_text: 'A plain white mug, $9.99.',
+};
+
+describe('toPurchaseRequest with search results', () => {
+  it("uses the listing's price and shop when the agent picked an offer, even if the agent wrote different ones", () => {
+    const req = toPurchaseRequest(mugInput, '2026-11-10', [otherOffer, mugOffer]);
+    expect(req.total).toEqual({ minor: 1299, currency: 'USD' });
+    expect(req.merchant).toBe('mugs.example');
+  });
+
+  it("gives the checker the listing's own text, Condition line included", () => {
+    const req = toPurchaseRequest(mugInput, '2026-11-10', [mugOffer]);
+    expect(req.listingText).toContain('Condition: refurbished');
+  });
+
+  it("keeps the agent's words when its link matches no offer it was shown", () => {
+    const req = toPurchaseRequest({ ...mugInput, url: 'https://elsewhere.example/mug' }, '2026-11-10', [mugOffer]);
+    expect(req).toMatchObject({ total: { minor: 999, currency: 'GBP' }, merchant: 'Mug World', listingText: 'A plain white mug, $9.99.' });
+  });
+});
+
+describe('systemPrompt', () => {
+  const prompt = systemPrompt('2026-11-10');
+
+  it('assumes US dollars, not pounds', () => {
+    expect(prompt).toContain('US dollars');
+    expect(prompt).not.toContain('GBP');
+  });
+
+  it('tells the agent to pick only in-stock offers and to copy the price and shop from the listing', () => {
+    expect(prompt).toMatch(/only .*in stock/i);
+    expect(prompt).toMatch(/copy .*price.*shop|copy .*shop.*price/i);
   });
 });
 
@@ -43,6 +91,21 @@ describe('Claude shopper run', () => {
     await shopper.run('Book a hotel', { searchWeb: vi.fn(), requestPurchase: vi.fn() }, (e) => events.push(e));
     return events.at(-1);
   }
+
+  it("asks to buy at the listing's price and shop from this run's search, not the agent's words", async () => {
+    // A fake runner that does what the model would: search, then request the offer with the wrong price and shop.
+    const toolRunner = vi.fn(async ({ tools }: { tools: { run(args: unknown): Promise<unknown> }[] }) => {
+      await tools[0].run({ query: 'white mug' });
+      await tools[1].run(mugInput);
+      return { stop_reason: 'end_turn', content: [{ type: 'text', text: 'Done.' }] };
+    });
+    const requestPurchase = vi.fn().mockResolvedValue({ outcome: 'approve', reasons: [], summary: 'Fits your rules.', checker: 'test' });
+    const events: ShopperEvent[] = [];
+    const shopper = createClaudeShopper({ client: { beta: { messages: { toolRunner } } } as unknown as Anthropic, clock: () => new Date('2026-11-10T09:00:00Z') });
+    await shopper.run('Buy a white mug', { searchWeb: vi.fn().mockResolvedValue([mugOffer]), requestPurchase }, (e) => events.push(e));
+    expect(requestPurchase).toHaveBeenCalledWith(expect.objectContaining({ merchant: 'mugs.example', total: { minor: 1299, currency: 'USD' } }));
+    expect(events).toContainEqual({ kind: 'request', text: 'Asking to buy White ceramic mug at mugs.example for $12.99' });
+  });
 
   it('reports its final answer', async () => {
     expect(await endsWith({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'Booked.' }] })).toEqual({ kind: 'status', text: 'Booked.' });
