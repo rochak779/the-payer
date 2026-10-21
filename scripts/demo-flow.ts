@@ -2,7 +2,7 @@ import { getDeps } from '@/deps';
 import { executeRun, startRun, viewRun } from '@/flow/runs';
 
 async function main() {
-  const deps = getDeps();
+  const deps = await getDeps();
   const task = process.argv.slice(2).join(' ') || 'Book a hotel in Lisbon, 7–9 Nov';
   console.log(`Task: ${task}\n`);
   const run = startRun(deps.store, task, deps.clock());

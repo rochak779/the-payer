@@ -6,7 +6,7 @@ import { buttonClass, Nudge, Panel, ReasonLines, Receipt, ReceiptHead, ReceiptSe
 import { STATUS_LABEL } from '@/domain/labels';
 import { formatMoney } from '@/domain/money';
 import type { Approval, LogEntry } from '@/domain/types';
-import { defaultStore } from '@/store/store';
+import { currentStore } from '@/store/visitor';
 import { AgentSwitch } from './AgentSwitch';
 
 export const dynamic = 'force-dynamic';
@@ -63,8 +63,8 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
   );
 }
 
-export default function ActivityPage() {
-  const db = defaultStore().read();
+export default async function ActivityPage() {
+  const db = (await currentStore()).read();
   const purchases = [...db.approvals].reverse();
   const system = db.log.filter((l) => l.approvalId === null).reverse().slice(0, 10);
   const on = db.settings.agentEnabled;

@@ -165,8 +165,8 @@ describe('SHOPPER switch', () => {
     else process.env.SHOPPER = before;
   });
 
-  it('SHOPPER=gemini picks the Gemini agent', () => {
+  it('SHOPPER=gemini picks the Gemini agent', async () => {
     process.env.SHOPPER = 'gemini';
-    expect(getDeps().shopper.name).toMatch(/^gemini:/);
+    expect((await getDeps()).shopper.name).toMatch(/^gemini:/);
   });
 });

@@ -2,13 +2,13 @@ import Link from 'next/link';
 import { ArrowIcon, CheckIcon } from '@/components/icons';
 import { buttonClass, Nudge, ScreenTitle } from '@/components/ui';
 import { formatMoney } from '@/domain/money';
-import { defaultStore } from '@/store/store';
+import { currentStore } from '@/store/visitor';
 import { ApprovalReceipt } from './ApprovalReceipt';
 
 export const dynamic = 'force-dynamic';
 
-export default function ApprovalsPage() {
-  const pending = defaultStore().read().approvals.filter((a) => a.status === 'pending').reverse();
+export default async function ApprovalsPage() {
+  const pending = (await currentStore()).read().approvals.filter((a) => a.status === 'pending').reverse();
   return (
     <div>
       <ScreenTitle before="Waiting for " script="you" />
