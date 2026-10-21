@@ -37,6 +37,30 @@ stripe listen --events issuing_authorization.request --forward-to localhost:3000
 
 In Issuing settings, set the real-time authorisation timeout fallback to **decline**. Stripe waits only 2 seconds for the app's answer; if the app is slow (for example, `next dev` compiling the route on first use), the charge must fail safe.
 
+## Run it with PayPal (sandbox)
+Needs a PayPal developer sandbox app (Merchant type, with **Save payment methods** ticked) linked to a **US** sandbox business account, plus a personal sandbox account as the buyer. Payments are in US dollars. The code only ever calls `api-m.sandbox.paypal.com`.
+
+In `.env.local`:
+
+```
+PAYMENTS=paypal
+PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
+PAYPAL_VAULT_ID   # optional: a demo buyer's saved PayPal, used until you connect your own
+APP_URL           # optional locally (defaults to http://localhost:3000); the hosted URL when deployed
+```
+
+Then `npm run seed` and `npm run dev`:
+
+1. **Connect PayPal** on the Ask screen (or **Connect your own PayPal** if a demo buyer is set). PayPal opens in a new tab: log in as the sandbox buyer and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**: the app checks with PayPal before saving.
+2. **Run the three suggested tasks:**
+   - **Mug, $12:** approved by your rules and paid at once. PayPal holds exactly $12, and the app takes it only after the payment check agrees.
+   - **Nephew's present, $38:** the checker asks you. Approve it on the Approvals screen and it's paid the same way.
+   - **Headphones:** blocked, because they're refurbished.
+3. **On Activity,** each paid purchase shows "PayPal took $12 (capture …)". Press **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**: the payment check refuses each one before PayPal is called.
+4. **Turn the agent off:** anything waiting for you is cancelled, and open PayPal holds are voided.
+
+**What to look for in the sandbox:** log in as the buyer at sandbox.paypal.com and open Activity. You should see one payment of exactly $12.00 and one of $38.00, and nothing from the demo buttons. Check from the buyer's side: the shop's own sandbox login was refused in testing.
+
 ## How it decides
 1. **Code checks the hard limits:** amount, shop, category, dates. Limits are inclusive. Going over a limit means "ask", unless the rule says never / no / nothing / don't, which means "block". A price in another currency means "ask".
 2. **An AI checker judges the fuzzy rules** ("nothing non-refundable", "ask me about gifts", "ask me if a shop might not be genuine") and flags hidden costs and prompt injection. It's measured on Gemini Flash-Lite; the Claude version runs the same instructions behind a switch. It reports facts and code turns them into outcomes, so the AI can only make a decision stricter. If it fails, times out or returns junk, the answer is "ask".

@@ -50,12 +50,17 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
         <ReceiptSection>
           <form action={demoCharge}>
             <input type="hidden" name="id" value={a.id} />
-            <p className="mb-2 text-[0.75rem] font-semibold text-ink-soft">Demo: pretend a merchant tries to…</p>
+            <p className="mb-2 text-[0.75rem] font-semibold text-ink-soft">Demo: what if…</p>
             <div className="flex flex-wrap gap-1.5">
-              <SubmitButton name="kind" value="more">charge {formatMoney({ ...a.request.total, minor: 2000 })} more</SubmitButton>
-              <SubmitButton name="kind" value="other_merchant">charge from another shop</SubmitButton>
-              <SubmitButton name="kind" value="repeat">charge again</SubmitButton>
+              <SubmitButton name="kind" value="more">Shop asks for {formatMoney({ ...a.request.total, minor: 2000 })} more</SubmitButton>
+              <SubmitButton name="kind" value="other_merchant">Another shop asks</SubmitButton>
+              <SubmitButton name="kind" value="repeat">Shop asks again</SubmitButton>
             </div>
+            {a.payment.provider === 'paypal' && (
+              <p className="mt-2.5 text-[0.75rem] leading-relaxed text-muted">
+                On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). Your mandate holds it to the penny.
+              </p>
+            )}
           </form>
         </ReceiptSection>
       )}

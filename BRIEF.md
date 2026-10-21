@@ -244,7 +244,14 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 8. **Paying a second shop** (`purchase_units[0].payee.email_address`): 422 `BILLING_AGREEMENT_NOT_FOUND`. A saved PayPal works only with the shop it was saved for, so one shop receives every payment, as planned.
 9. **The same `PayPal-Request-Id` twice:** the same order and hold (201, then 200). Retries can't double-charge.
 10. **Partial captures** work with no account setting: £30, £40 and £40 on a £100 hold were all taken (110%, inside the 115% limit); a further £10 was refused (`AUTHORIZATION_ALREADY_CAPTURED`). Only needed for the fallback, which we don't need.
-11. **Where it shows:** the buyer's activity at sandbox.paypal.com. The shop's page can't be opened (login refused), so the video screenshot comes from the buyer's side.
+11. **Where it shows:** neither sandbox account can log in at sandbox.paypal.com ("some of your info isn't correct"), though the buyer's login works on PayPal's approval page. The Transaction Search report is refused too (403 `NOT_AUTHORIZED`: not switched on for the app). **What works:** `GET /v2/checkout/orders/{id}` lists every hold and capture against a purchase. The video needs another way to show PayPal's side (Session 14).
+
+**Live end to end (Session 8, 21 Oct):** offline agent and checker, `PAYMENTS=paypal`, the demo buyer:
+- **Mug:** approved by the rules and paid at once. Order `7U1388668G826750N`, hold `6MB25293JV9977037`, capture `56548396UM9724622`: $12.00, `COMPLETED`.
+- **Nephew's present:** asked, then approved by the person. Order `3T681852LJ211873M`, hold `26H821483X0689414`, capture `30P372043E031314L`: $38.00, `COMPLETED`.
+- Each order shows exactly one hold and one capture.
+- The three demo charges ($20 more, another shop, again) were refused by our payment check with no PayPal call.
+- With the agent off, a waiting purchase was cancelled (it never got a hold), approving it was refused, and a new task was blocked.
 
 **For the build:** treat only a `COMPLETED` capture as paid. `invoice_id` must be unique per capture (`DUPLICATE_INVOICE_ID`), and the approval id is.
 

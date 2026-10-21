@@ -629,6 +629,8 @@ The setup-token body is the one from Session 1's `vault-start`, with URLs from `
 
 ### Session 8: PayPal live end to end + the overcharge scene
 
+> **As built (21 Oct 2026):** done, 225 tests (copy only, no logic change). Live with the offline agent and checker and the demo buyer: the mug paid $12 (order `7U1388668G826750N`, hold `6MB25293JV9977037`, capture `56548396UM9724622`) and the approved nephew present paid $38 (order `3T681852LJ211873M`, hold `26H821483X0689414`, capture `30P372043E031314L`), both `COMPLETED`, each order with exactly one capture. **The buyer's sandbox.paypal.com login is refused** (as the shop's was in Session 1), so Step 1's check read each order from PayPal's API instead. The video's PayPal-side shot is left for Session 14. The three demo buttons were refused by the payment check with no PayPal call, and the off switch cancelled a waiting purchase and blocked a new task. The flows ran through the same functions the screens call (`demo:flow`, `userDecides` + `fulfil`, `rail.charge`, `setAgentEnabled`), since there's no browser automation. Labels live in `activity/page.tsx`, not `actions.ts`. The explainer shows only on PayPal purchases, and its "$75" was checked against PayPal's docs (115% or +$75, whichever is less).
+
 **Needs:** PayPal keys and a connected buyer (Session 7). Rochak has the sandbox shop's activity page open.
 
 **Files:**
@@ -648,17 +650,17 @@ The setup-token body is the one from Session 1's `vault-start`, with URLs from `
 1. "On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). Your mandate holds it to the penny."
 2. "Your mandate holds every payment to the penny: a shop gets exactly what you approved, once."
 
-- [ ] **Step 1: Run `npm run seed`, then `PAYMENTS=paypal npm run dev`,** with the offline agent and checker. Do the three suggested tasks and approve the nephew present on the Approvals screen.
+- [x] **Step 1: Run `npm run seed`, then `PAYMENTS=paypal npm run dev`,** with the offline agent and checker. Do the three suggested tasks and approve the nephew present on the Approvals screen.
   Expected: two `paid` entries ($12 and $38) with capture ids, each `COMPLETED`. The sandbox buyer's activity shows two payments of exactly $12.00 and $38.00 (the shop's page can't be opened; see BRIEF.md).
-- [ ] **Step 2: Press each demo button** on the mug purchase.
+- [x] **Step 2: Press each demo button** on the mug purchase.
   Expected: all three are declined by the payment check, with the reason shown, and no new capture appears in the sandbox.
-- [ ] **Step 3: Check the off switch.** Send the nephew task again and leave it waiting on Approvals. Turn the agent off.
+- [x] **Step 3: Check the off switch.** Send the nephew task again and leave it waiting on Approvals. Turn the agent off.
   Expected: the waiting purchase is cancelled and can't be approved, and a new task is blocked.
   In the normal flow a hold is captured straight away, so an open hold is rare. Voiding one is covered by Session 6's tests, not by this live check.
-- [ ] **Step 4: Copy and README.** Add the explainer line and the button labels. Write the README section: env vars, connect, the three tasks, what to look for in the sandbox.
-- [ ] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 6: Record the as-built note** with the sandbox order, hold and capture ids, and the screenshot for the video.
-- [ ] **Step 7: Commit, push, open a PR.** Message: `feat: PayPal end to end; overcharge, other shop and repeat charges refused`.
+- [x] **Step 4: Copy and README.** Add the explainer line and the button labels. Write the README section: env vars, connect, the three tasks, what to look for in the sandbox.
+- [x] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 6: Record the as-built note** with the sandbox order, hold and capture ids, and the screenshot for the video.
+- [x] **Step 7: Commit, push, open a PR.** Message: `feat: PayPal end to end; overcharge, other shop and repeat charges refused`.
 
 #### Session 8b (optional, cut first): Undo with a PayPal refund
 
