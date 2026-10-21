@@ -6,7 +6,7 @@ export type Db = { rules: Rule[]; approvals: Approval[]; log: LogEntry[]; runs: 
 export type Store = { read(): Db; update<T>(fn: (db: Db) => T): T };
 
 export function emptyDb(): Db {
-  return { rules: [], approvals: [], log: [], runs: [], settings: { agentEnabled: true } };
+  return { rules: [], approvals: [], log: [], runs: [], settings: { agentEnabled: true, paypal: null, paypalPending: null } };
 }
 
 /** One JSON file. Writes are synchronous and atomic (write temp, then rename), which is enough for one local user. */

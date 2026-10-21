@@ -138,4 +138,12 @@ export type Run = {
   approvalIds: string[];
 };
 
-export type Settings = { agentEnabled: boolean };
+/**
+ * `paypal` is this person's own saved PayPal; null means none (the demo buyer from PAYPAL_VAULT_ID may still be used).
+ * `paypalPending` is the PayPal approval "Connect PayPal" is waiting for.
+ */
+export type Settings = {
+  agentEnabled: boolean;
+  paypal: { vaultId: string; connectedAt: string } | null;
+  paypalPending: { setupTokenId: string; approveUrl: string } | null;
+};

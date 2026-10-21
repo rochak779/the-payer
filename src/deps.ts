@@ -9,6 +9,7 @@ import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
 import { createGeminiShopper } from '@/integrations/gemini/shopper';
 import { payPalClientFromEnv } from '@/integrations/paypal/client';
 import { createPayPalRail } from '@/integrations/paypal/rail';
+import { vaultIdFor } from '@/integrations/paypal/vault';
 import { createStripeIssuer } from '@/integrations/stripe/issuer';
 import { createFakeRail } from '@/payments/fakeRail';
 import type { PaymentRail } from '@/payments/rail';
@@ -41,10 +42,14 @@ export async function getDeps(opts: { live?: boolean } = {}): Promise<Deps> {
 }
 
 /** PAYMENTS picks the rail; the old name ISSUER is still read. */
+export function paymentsName(): string {
+  return process.env.PAYMENTS ?? process.env.ISSUER ?? 'fake';
+}
+
 function getRail(store: Store, clock: () => Date): PaymentRail {
-  const name = process.env.PAYMENTS ?? process.env.ISSUER;
+  const name = paymentsName();
   if (name === 'stripe') return createStripeIssuer(store, clock);
-  if (name === 'paypal') return createPayPalRail({ store, client: payPalClientFromEnv(), vaultId: () => process.env.PAYPAL_VAULT_ID ?? null, clock });
+  if (name === 'paypal') return createPayPalRail({ store, client: payPalClientFromEnv(), vaultId: () => vaultIdFor(store.read()), clock });
   return createFakeRail(store, clock);
 }
 
