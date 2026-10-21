@@ -255,6 +255,9 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 
 **For the build:** treat only a `COMPLETED` capture as paid. `invoice_id` must be unique per capture (`DUPLICATE_INVOICE_ID`), and the approval id is.
 
+## Channel3: verified live (21 Oct 2026, hackathon Session 9)
+`SEARCH=channel3` searches Channel3 for US shops in dollars (`@channel3/sdk` 4.1.0, pinned). The 3 smoke searches (mug, building blocks, wireless headphones) gave 5 USD results each from US shops, all `new`. Results name real brands and shops, so the video must use a generic query. Credits: 20,000 with code `PAYPAL-HACKATHON-2026`; Channel3 tops up on request in its Discord channel.
+
 ## Earlier research (raw files)
 Saved pages and search results from the research session that produced this brief:
 `/Users/rochakagarwal/orca/projects/Learning/.firecrawl/agent-mandates/`

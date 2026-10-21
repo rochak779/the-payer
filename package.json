@@ -11,6 +11,7 @@
     "typecheck": "next typegen && tsc --noEmit",
     "eval": "node --env-file-if-exists=.env.local --import tsx scripts/eval.ts",
     "seed": "node --env-file-if-exists=.env.local --import tsx scripts/seed.ts",
+    "channel3:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/channel3-smoke.ts",
     "demo:flow": "node --env-file-if-exists=.env.local --import tsx scripts/demo-flow.ts",
     "claude:smoke": "node --env-file-if-exists=.env.local --import tsx scripts/claude-smoke.ts",
     "eval:parse": "node --env-file-if-exists=.env.local --import tsx scripts/eval-parse.ts",
@@ -20,6 +21,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.135.0",
+    "@channel3/sdk": "4.1.0",
     "@google/genai": "^2.26.0",
     "@mendable/firecrawl-js": "^4.46.0",
     "next": "16.4.2",

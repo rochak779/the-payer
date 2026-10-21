@@ -1,6 +1,8 @@
-import type { Decision, PurchaseRequest, RunEvent } from '@/domain/types';
+import type { Decision, Money, PurchaseRequest, RunEvent } from '@/domain/types';
 
-export type SearchResult = { title: string; url: string; snippet: string };
+/** One shop's price for a product, read from a product search (Channel3). */
+export type Offer = { shop: string; price: Money; condition: 'new' | 'used' | 'refurbished' | 'unknown'; inStock: boolean };
+export type SearchResult = { title: string; url: string; snippet: string; offer?: Offer };
 
 export interface WebSearch {
   readonly name: string;
