@@ -7,10 +7,13 @@ Only new items: nothing used or refurbished.
 Ask me before buying anything that's a gift or for someone else.
 No gift cards.`;
 
-/** One task per outcome, in this order: approved and paid, asks first, blocked. */
+/**
+ * One task per outcome, in this order: approved and paid, asks first, blocked (offline; live listings are all new).
+ * The first two are the wordings that gave stable, unbranded live picks in Session 10 (BRIEF.md, "Video wordings").
+ */
 export const SUGGESTED_TASKS: readonly string[] = [
-  'Buy a plain white ceramic mug, under $15',
-  'Buy a birthday present for my nephew, about $40',
+  'Buy a plain white ceramic coffee mug, under $15',
+  "Buy a wooden building blocks set for my nephew's birthday, about $40",
   'Buy wireless headphones under $80',
 ];
 
