@@ -38,11 +38,15 @@ export const TOOL_DESCRIPTIONS = {
  */
 export function toPurchaseRequest(input: z.infer<typeof PurchaseInput>, today: string, seen: readonly SearchResult[] = []): PurchaseRequest {
   const listing = seen.findLast((r) => r.offer && r.url === input.url);
+  const offer = listing?.offer;
   return PurchaseRequest.parse({
     item: input.item,
-    merchant: listing?.offer?.shop ?? input.merchant,
+    merchant: offer?.shop ?? input.merchant,
     category: input.category,
-    total: listing?.offer?.price ?? { minor: Math.round(input.total_amount * 100), currency: input.currency },
+    // A shop's offer is priced per item: two of them cost twice the listing's price.
+    total: offer
+      ? { minor: offer.price.minor * (input.units ?? 1), currency: offer.price.currency }
+      : { minor: Math.round(input.total_amount * 100), currency: input.currency },
     units: input.units,
     unitLabel: input.unit_label,
     refundPolicy: input.refund_policy,

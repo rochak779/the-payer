@@ -50,6 +50,11 @@ describe('toPurchaseRequest with search results', () => {
     expect(req.listingText).toContain('Condition: refurbished');
   });
 
+  it("charges the listing's price for each one when the agent asks for more than one", () => {
+    const req = toPurchaseRequest({ ...mugInput, units: 2, unit_label: 'mug', total_amount: 25.98 }, '2026-11-10', [mugOffer]);
+    expect(req.total).toEqual({ minor: 2598, currency: 'USD' });
+  });
+
   it("keeps the agent's words when its link matches no offer it was shown", () => {
     const req = toPurchaseRequest({ ...mugInput, url: 'https://elsewhere.example/mug' }, '2026-11-10', [mugOffer]);
     expect(req).toMatchObject({ total: { minor: 999, currency: 'GBP' }, merchant: 'Mug World', listingText: 'A plain white mug, $9.99.' });
