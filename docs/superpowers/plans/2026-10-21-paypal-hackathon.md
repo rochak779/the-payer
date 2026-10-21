@@ -44,7 +44,7 @@ The PayPal spike goes first, against the usual "integrations last" rule. If PayP
 Do these in order. Each one names the session that's blocked without it. Only you can create accounts and type passwords. Put every key in `/Users/rochakagarwal/orca/projects/The Payer/.env.local` (already created, copied from Agent Mandates, and ignored by git). Never paste a key into chat.
 
 1. **Eligibility and IP check** (blocks everything). The rules exclude employees, representatives and agents of the sponsor (PayPal), the administrator (Devpost) and their parent companies, subsidiaries and affiliates. They also exclude anyone whose employer employs a judge, and anyone whose entry would be a conflict of interest. Your entry must be your own work and solely owned by you. Check your employment contract's IP and side-project terms. Tell me "eligible" before Session 1.
-2. **Product name** (blocks Session 12). The repo is `the-payer`. Should the app, video and Devpost entry also be called "The Payer", or stay "Agent Mandates"? Until you say, the app keeps "Agent Mandates" and Session 12 does the rename if you want it.
+2. **Product name** (blocks Session 12). The repo is `the-payer`. Should the app, video and Devpost entry also be called "The Payer", or stay "Agent Mandates"? Until you say, the app keeps "Agent Mandates" and Session 12 does the rename if you want it. **Decided 21 Oct: "The Payer".** Session 12 does the rename.
 3. **Devpost** (blocks Session 15). Register for the hackathon at paypalaihackathon.devpost.com and start a draft project. A draft can be edited until the deadline.
 4. **PayPal developer sandbox** (blocks Session 1).
    1. Sign in at developer.paypal.com with your personal PayPal account, or create one with your personal email.
@@ -55,14 +55,14 @@ Do these in order. Each one names the session that's blocked without it. Only yo
    6. Keep the sandbox buyer's email and password handy. You'll type them into PayPal's login page in Sessions 1 and 7. I never see them.
 5. **PayPal Discord** (optional, recommended). Join discord.gg/sJ2G6DyvSK. If Session 1 fails on vaulting, you post the question I draft there. PayPal and Channel3 staff answer in it.
 6. **Channel3** (blocks Session 9). Sign up at trychannel3.com/developers, create an API key, and apply promo code `PAYPAL-HACKATHON-2026` (20,000 free searches). Add `CHANNEL3_API_KEY=…` to `.env.local`.
-7. **Gemini key** (blocks Session 10). Your current key was copied across. Decide by Session 11: keep the free key (500 calls a day, and Google may use free-tier prompts, so mock data only) or switch to a paid key with a spending cap of about £10 for the judging period (1–15 Dec). The usage limits in Session 5 keep either one safe.
+7. **Gemini key** (blocks Session 10). Your current key was copied across. Decide by Session 11: keep the free key (500 calls a day, and Google may use free-tier prompts, so mock data only) or switch to a paid key with a spending cap of about £10 for the judging period (1–15 Dec). The usage limits in Session 5 keep either one safe. **Decided 21 Oct: the free key.** Past the app's own daily limits, runs use the offline agent with a one-line notice.
 8. **Render** (blocks Session 11). Sign up at render.com with your GitHub account, then claim the $50 hackathon credits at credits-portal-mmdm.onrender.com/claim/paypal-ai-hackathon. When Session 11 asks, give Render access to the `rochak779/the-payer` repo. The Starter plan is $7 a month, so the credits cover it through judging.
 9. **Later, when a session asks:**
    - review the repo before it goes public, then make it public (Session 12);
    - create a second sandbox buyer for judges and put its login in the README (Session 12);
-   - run the 5-person test (Session 13, optional);
-   - upload the video to YouTube as Public (Session 14);
-   - paste the write-up into Devpost and submit (Session 15).
+   - the 5-person test (Session 13): skipped (decided 21 Oct);
+   - paste the write-up into Devpost (Session 15; the video link is a placeholder until Session 14);
+   - upload the video to YouTube as Public (Session 14, done last, decided 21 Oct), then add its link to Devpost and submit.
 
 ### Decisions I made (tell me if any is wrong)
 
@@ -194,11 +194,12 @@ src/
 Work through "What I need from you", items 1–8. Session 1 needs items 1 and 4. The others can wait until the session that needs them.
 
 - [x] Eligible: confirmed (21 Oct)
-- [ ] Product name decided
+- [x] Product name decided: "The Payer" (21 Oct; Session 12 renames)
 - [ ] Devpost registered
 - [x] PayPal sandbox app (Merchant type, Save payment methods ticked) linked to a US shop, UK buyer, keys in `.env.local`
 - [x] Channel3 key with promo code, in `.env.local` (21 Oct)
-- [ ] Gemini: free or paid decided
+- [x] Gemini: the free key for the hosted demo (21 Oct)
+- [x] Order: Session 13 skipped; the video (Session 14) is made last, after the write-up (21 Oct)
 - [ ] Render account and credits claimed
 
 ### Session 1: PayPal sandbox spike (go/no-go gate)
@@ -773,6 +774,8 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 
 ### Session 11: Deploy on Render
 
+> **As built (21 Oct 2026):** Steps 1–5 done (code, config and the PR on `feat/render-deploy`); the Render dashboard part of Step 5 and Step 6 wait for Rochak. `GET /api/health` answers `{ ok: true }` without reading any data, key or outside service. `render.yaml` is as listed below with two changes. `NODE_ENV=production` is left out: Render sets it itself, at runtime only, and a Blueprint value would apply to the build too, where `npm ci` then skips the devDependencies the build needs (a test build failed with it and passed without it). `plan: starter` is Render's legacy name for today's `0.5c-512mb`, which Render says is still supported. A Render-like build (a clean copy, no `.env.local`, no keys, only the Blueprint's switches) passes with every route dynamic, and `npm start` then serves `/api/health` with 200. The README has a Deploy section. Also in this PR: the Ask screen's suggested tasks now use the Session 10 video wordings (mug, building blocks) plus the headphones; offline they still give approve and pay $12, ask, and block. Rochak's 21 Oct decisions are recorded (name "The Payer", free Gemini key, Session 13 skipped, video last).
+
 **Needs:** a Render account with credits and repo access. Rochak types the secret values into Render's environment settings; values never pass through chat.
 
 **Read first:** `node_modules/next/dist/docs/01-app/02-guides/self-hosting.md` (especially the section on `after`), and Render's Node and blueprint docs (render.com/docs/blueprint-spec).
@@ -789,15 +792,15 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
   - fixed values: `HOSTED=1`, `NODE_ENV=production`, `CHECKER=gemini`, `PARSER=gemini`, `SEARCH=channel3`, `SHOPPER=gemini`, `PAYMENTS=paypal`;
   - `sync: false` (Rochak types them): `GEMINI_API_KEY`, `CHANNEL3_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_VAULT_ID`, `APP_URL`.
 
-- [ ] **Step 1: Write the failing test.** `GET /api/health` returns 200 `{ ok: true }` and touches no outside service.
-- [ ] **Step 2: Run it.** Expected: FAIL.
-- [ ] **Step 3: Implement the route, `render.yaml` and `.node-version`.**
-- [ ] **Step 4: Run `npm test && npm run typecheck && npm run build`.** Expected: all pass, and the build succeeds.
-- [ ] **Step 5: Commit, push, open a PR.** Rochak merges. Then:
-  1. In Render, choose New → Blueprint and pick `rochak779/the-payer`.
-  2. Type in the secret values.
-  3. Set `APP_URL` to the service URL once it's known.
-  4. Deploy.
+- [x] **Step 1: Write the failing test.** `GET /api/health` returns 200 `{ ok: true }` and touches no outside service.
+- [x] **Step 2: Run it.** Expected: FAIL.
+- [x] **Step 3: Implement the route, `render.yaml` and `.node-version`.**
+- [x] **Step 4: Run `npm test && npm run typecheck && npm run build`.** Expected: all pass, and the build succeeds.
+- [x] **Step 5: Commit, push, open a PR.** Rochak merges. Then (Rochak, in Render):
+  - [ ] In Render, choose New → Blueprint and pick `rochak779/the-payer`.
+  - [ ] Type in the secret values.
+  - [ ] Set `APP_URL` to the service URL once it's known.
+  - [ ] Deploy.
 - [ ] **Step 6: Smoke test the hosted URL** in two browsers:
   - each shows the seeded rules;
   - the three tasks run live;
@@ -844,6 +847,8 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 
 ### Session 13 (optional, cut first): 5-person test kit
 
+> **Skipped (Rochak, 21 Oct 2026).**
+
 **Files:** Create `docs/user-test.md`. It has:
 - a 1-minute intro script;
 - the three suggested tasks, plus "try to make it overspend";
@@ -854,6 +859,8 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up (Potential Impact).
 
 ### Session 14: Demo video (under 3 minutes)
+
+> **Done last (Rochak, 21 Oct 2026):** after Session 15's write-up. Then add the video link to the README and replace the placeholder in `docs/devpost.md` and on Devpost.
 
 **Needs:** the hosted URL (or local with live services) and the Session 8 screenshot. Rochak uploads to YouTube as Public.
 
@@ -879,6 +886,8 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 - [ ] **Step 5: Commit the scripts and the run-of-show, push, open a PR.**
 
 ### Session 15: Devpost write-up and submit
+
+> **Comes before the video (Rochak, 21 Oct 2026):** leave a placeholder for the video link; Session 14 fills it in, and Rochak submits once it's there.
 
 **Files:** Create `docs/devpost.md`, with the text to paste into each Devpost field:
 - inspiration;

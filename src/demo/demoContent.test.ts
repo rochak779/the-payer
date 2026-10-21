@@ -13,6 +13,14 @@ describe('demo content', () => {
     expect(db.settings.agentEnabled).toBe(true);
   });
 
+  it('suggests the wordings that gave stable, unbranded live picks in Session 10, plus the headphones', () => {
+    expect(SUGGESTED_TASKS).toEqual([
+      'Buy a plain white ceramic coffee mug, under $15',
+      "Buy a wooden building blocks set for my nephew's birthday, about $40",
+      'Buy wireless headphones under $80',
+    ]);
+  });
+
   it('the three suggested tasks reach the mug, gift and headphones scenarios', () => {
     expect(SUGGESTED_TASKS.map((t) => scenarioFor(t).pick.merchant)).toEqual(['Hearth & Kiln', 'Brick & Bolt Toys', 'Second Spin Audio']);
   });

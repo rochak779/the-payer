@@ -269,6 +269,14 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 - **Asks first:** "Buy a wooden building blocks set for my nephew's birthday, about $40". After the fix, 3 of 3 asked, with plain product names ("Big Rig Building Set", "Colored Wooden Building Blocks", "Block Playset"), $35.99 to $49.99.
 - **Blocked:** the offline listings (refurbished headphones). Session 14 allows this.
 - **Still open:** the shop is always a real US retailer's web address, and the search list can show brand names. Session 14's frame check decides what to show.
+- **In the app too (21 Oct):** the Ask screen's suggested tasks are now these two wordings plus "Buy wireless headphones under $80", so people trying the live app get the same stable, unbranded picks. Offline, they still reach the mug (approved, $12), the present (asks) and the refurbished headphones (blocked).
+
+## Hackathon decisions (Rochak, 21 Oct 2026)
+- **Name:** the app, video and Devpost entry are called **"The Payer"**. Session 12 does the rename.
+- **Gemini:** the hosted demo uses the **free key**. Past the app's own daily limits, runs use the offline agent with a one-line notice (Session 5). If Google's own allowance (500 calls a day) runs out first, a run stops with a message saying Gemini is over its usage limit, and nothing is approved. Google may use free-tier prompts, so the demo uses mock data only.
+- **Session 13 (5-person test kit) is skipped.**
+- **The video (Session 14) is made last,** after Session 15's write-up. The write-up leaves a placeholder for the video link.
+- **Hosting:** Render, from the Blueprint in `render.yaml` (Session 11): one Starter web service in Frankfurt, Node 24, health check `/api/health`. The keys are typed into Render's dashboard, never committed.
 
 ## Earlier research (raw files)
 Saved pages and search results from the research session that produced this brief:

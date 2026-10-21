@@ -61,6 +61,29 @@ Then `npm run seed` and `npm run dev`:
 
 **What to look for in the sandbox:** log in as the buyer at sandbox.paypal.com and open Activity. You should see one payment of exactly $12.00 and one of $38.00, and nothing from the demo buttons. Check from the buyer's side: the shop's own sandbox login was refused in testing.
 
+## Deploy on Render
+`render.yaml` is a Render Blueprint for one web service: Node 24 (from `.node-version`), the Starter plan, in Frankfurt. Render builds with `npm ci && npm run build`, starts with `npm start`, and checks `/api/health`, which answers `{ "ok": true }` without reading any data, key or outside service. The build needs no keys.
+
+The Blueprint turns on hosted mode (`HOSTED=1`): each visitor gets their own seeded data file and daily limits, and the agent, checker and rule reader use Gemini, with Channel3 search and PayPal payments. It holds no secrets. Render asks for these when you create the Blueprint:
+
+| Variable | Value |
+|---|---|
+| `GEMINI_API_KEY` | Your Gemini key (the free one is fine). Past the app's own daily limits (below), runs use the offline agent with a one-line notice. If Google's allowance runs out first, a run stops and says Gemini is over its usage limit; nothing is approved. |
+| `CHANNEL3_API_KEY` | Your Channel3 key. |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` | The PayPal sandbox app's keys. |
+| `PAYPAL_VAULT_ID` | The demo buyer's saved PayPal, so visitors start connected. |
+| `APP_URL` | The service's own address, such as `https://the-payer.onrender.com`. It's shown at the top of the service's page after the first deploy; if it differs, change it under **Environment**. |
+
+1. In Render, choose **New → Blueprint** and pick this repo. Render reads `render.yaml`.
+2. Type in the values above, then deploy.
+3. Once it's live, check `APP_URL` matches the service's address.
+
+Good to know:
+- **Don't set `NODE_ENV` yourself.** Render sets it to `production` when the app runs. Set at build time, it would make `npm ci` skip the build tools.
+- **Visitor data is temporary.** It lives on the service's own disk, and every deploy wipes it, so the next visit starts seeded again.
+- **Every merge to `main` redeploys** (Render's default).
+- **Daily limits** default to 8 tasks per visitor, 30 tasks a day and 20 rule previews per visitor. To change them, add `LIMIT_TASKS_PER_VISITOR`, `LIMIT_TASKS_PER_DAY` or `LIMIT_PREVIEWS_PER_VISITOR` under **Environment**.
+
 ## How it decides
 1. **Code checks the hard limits:** amount, shop, category, dates. Limits are inclusive. Going over a limit means "ask", unless the rule says never / no / nothing / don't, which means "block". A price in another currency means "ask".
 2. **An AI checker judges the fuzzy rules** ("nothing non-refundable", "ask me about gifts", "ask me if a shop might not be genuine") and flags hidden costs and prompt injection. It's measured on Gemini Flash-Lite; the Claude version runs the same instructions behind a switch. It reports facts and code turns them into outcomes, so the AI can only make a decision stricter. If it fails, times out or returns junk, the answer is "ask".

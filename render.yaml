@@ -1,0 +1,38 @@
+# Render Blueprint for the hosted demo (render.com/docs/blueprint-spec).
+# No secret values here: the `sync: false` variables are typed into Render's dashboard when the Blueprint is created.
+services:
+  - type: web
+    name: the-payer
+    runtime: node # Node 24, from .node-version
+    plan: starter # Render's legacy name for 0.5c-512mb (0.5 CPU, 512 MB), still supported
+    region: frankfurt
+    buildCommand: npm ci && npm run build
+    startCommand: npm start # next start listens on Render's PORT, on 0.0.0.0
+    healthCheckPath: /api/health
+    envVars:
+      # Render sets NODE_ENV=production itself, at runtime only. Setting it here would apply to
+      # the build too, and `npm ci` would then skip the devDependencies the build needs.
+      - key: HOSTED
+        value: "1"
+      - key: CHECKER
+        value: gemini
+      - key: PARSER
+        value: gemini
+      - key: SEARCH
+        value: channel3
+      - key: SHOPPER
+        value: gemini
+      - key: PAYMENTS
+        value: paypal
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: CHANNEL3_API_KEY
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_VAULT_ID
+        sync: false
+      - key: APP_URL # the service's own address, e.g. https://the-payer.onrender.com
+        sync: false
