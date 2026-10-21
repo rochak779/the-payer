@@ -504,6 +504,8 @@ export async function getDeps(opts?: { live?: boolean }): Promise<Deps>; // live
 
 ### Session 6: PayPal client and payment rail (offline tests, no keys)
 
+> **As built (21 Oct 2026):** done, 208 tests. No `/authorize` call (BRIEF.md: the hold comes back in the order response); a missing hold, or one not `CREATED`, makes `open` throw "PayPal didn't hold the payment (…)". A failed void logs "Couldn't cancel the PayPal hold: <issue>." The off-switch PayPal test lives in `rail.test.ts` (there is no `agentSwitch.test.ts`; the off-switch tests are in `fulfil.test.ts`), plus a `PAYMENTS=paypal` switch test. Until Session 7 the vault id comes from `PAYPAL_VAULT_ID`. Not required, but run once live: the mug task held exactly $12 (hold `6D812152HB583421N`) and PayPal completed the capture (`1F6033170D7828805`).
+
 Use the request shapes and answers recorded in BRIEF.md by Session 1. Where this session and BRIEF.md differ, BRIEF.md wins: write a `Ruling:` line in the ledger.
 
 **Files:**
@@ -554,14 +556,14 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
   - On failure, log `error`: `` `PayPal didn't take the payment: ${issue ?? message}. Nothing was charged.` `` Return `{ approved: false, reasons: [that text] }`. The approval stays `used`, so it can never be retried into a double payment.
 - **`cancel(holdId)`:** `POST /v2/payments/authorizations/{holdId}/void` with `requestId: <holdId>-void`. Errors are caught and logged as `error`, never thrown.
 
-- [ ] **Step 1: Write the failing client tests.** Use a fake `fetch` that records the calls.
+- [x] **Step 1: Write the failing client tests.** Use a fake `fetch` that records the calls.
   - `toPayPalAmount`: 1200 gives "12.00", 1999 gives "19.99", 5 gives "0.05", 24000 gives "240.00", and the currency is copied across.
   - Two requests fetch one token; after expiry a new token is fetched; a 401 is retried once with a new token, and a second 401 throws.
   - Every URL starts with `PAYPAL_BASE`.
   - `requestId` is sent as the `PayPal-Request-Id` header.
   - An error body `{ name: 'UNPROCESSABLE_ENTITY', details: [{ issue: 'AUTHORIZATION_ALREADY_CAPTURED' }], debug_id: 'abc' }` with status 422 throws a `PayPalError` with `issue: 'AUTHORIZATION_ALREADY_CAPTURED'` and `status: 422`.
   - The client secret never appears in any thrown message.
-- [ ] **Step 2: Write the failing rail tests.**
+- [x] **Step 2: Write the failing rail tests.**
   - `open` sends `intent: 'AUTHORIZE'`, the exact `toPayPalAmount(total)`, the `vault_id` and `requestId` `<id>-open`, and returns the label "PayPal, held $12".
   - `open` with no vault id throws "PayPal is not connected yet.", and `fulfil` logs "Couldn't set up the payment".
   - `charge` for the exact amount calls capture once with `final_capture: true` and `requestId` `<id>-capture`. The approval is `used`, and the log ends with `charge_approved` then `paid`.
@@ -572,10 +574,10 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
   - **A retry after a failed capture is refused, and capture is not called again.**
   - `cancel` calls void once. **A void failure is logged, not thrown.**
   - In `agentSwitch.test.ts`, **the off switch voids PayPal holds**: one approved purchase with a PayPal hold gives one void call, and the status is `revoked`.
-- [ ] **Step 3: Run `npx vitest run src/integrations/paypal src/payments`.** Expected: FAIL (module not found).
-- [ ] **Step 4: Implement `client.ts`, then `rail.ts`.** Validate PayPal responses with Zod schemas that keep only the fields we read.
-- [ ] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 6: Commit, push, open a PR.** Message: `feat: PayPal payment rail (hold, capture after the payment check, void)`.
+- [x] **Step 3: Run `npx vitest run src/integrations/paypal src/payments`.** Expected: FAIL (module not found).
+- [x] **Step 4: Implement `client.ts`, then `rail.ts`.** Validate PayPal responses with Zod schemas that keep only the fields we read.
+- [x] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 6: Commit, push, open a PR.** Message: `feat: PayPal payment rail (hold, capture after the payment check, void)`.
 
 ### Session 7: "Connect PayPal" (save the buyer's PayPal once)
 
