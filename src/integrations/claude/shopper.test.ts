@@ -68,6 +68,12 @@ describe('systemPrompt', () => {
     expect(prompt).toMatch(/only .*in stock/i);
     expect(prompt).toMatch(/copy .*price.*shop|copy .*shop.*price/i);
   });
+
+  // Live run (Session 10): asked for "a wooden building blocks set for my nephew", Gemini searched "… Melissa and Doug …" and "site:walmart.com".
+  it("tells the agent to search in the person's own words, without adding brands or shops they didn't name", () => {
+    expect(prompt).toMatch(/search .*person's own words/i);
+    expect(prompt).toMatch(/brand or shop .*didn't name/i);
+  });
 });
 
 describe('PurchaseInput', () => {
@@ -75,6 +81,12 @@ describe('PurchaseInput', () => {
     const result = PurchaseInput.safeParse({ ...input, units: undefined, unit_label: undefined });
     expect(result.success).toBe(false);
     expect(result.error?.issues[0]).toMatchObject({ path: ['units'], message: 'A hotel is priced per night: set units to the number of nights and unit_label to "night".' });
+  });
+
+  // Live run (Session 10): Gemini filed a birthday present (a wooden blocks set) as gift_card, so "No gift cards" blocked it.
+  it('tells the agent that gift_card means a gift card or voucher, never a present', () => {
+    expect(PurchaseInput.shape.category.description).toMatch(/gift_card .*only .*gift card or voucher/i);
+    expect(PurchaseInput.shape.category.description).toMatch(/present .*not gift_card/i);
   });
 
   it('other purchases may leave the count out', () => {
