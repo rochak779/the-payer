@@ -16,13 +16,13 @@ function purchase(outcome: Outcome = 'approve') {
 }
 
 describe('checkCharge', () => {
-  it('approves the exact approved charge once, then treats the card as used', () => {
+  it('approves the exact approved charge once, then treats the payment as used', () => {
     const { store, a } = purchase();
     expect(checkCharge(store, { approvalId: a.id, amount: gbp(24000), merchant: MERCHANT }, now)).toEqual({ approved: true, reasons: [] });
     expect(store.read().approvals[0].status).toBe('used');
     const again = checkCharge(store, { approvalId: a.id, amount: gbp(24000), merchant: MERCHANT }, now);
     expect(again.approved).toBe(false);
-    expect(again.reasons).toContain('This one-time card has already been used.');
+    expect(again.reasons).toContain('This one-time payment has already been used.');
   });
 
   it('allows a smaller charge and a differently written merchant name', () => {
@@ -68,9 +68,9 @@ describe('checkCharge', () => {
     expect(checkCharge(b.store, { approvalId: b.a.id, amount: gbp(24000), merchant: MERCHANT }, now).approved).toBe(false);
   });
 
-  it('declines a card with no matching approval and still logs it', () => {
+  it('declines a charge with no matching approval and still logs it', () => {
     const { store } = purchase();
-    expect(checkCharge(store, { approvalId: null, amount: gbp(100), merchant: MERCHANT }, now)).toEqual({ approved: false, reasons: ['No approved purchase matches this card.'] });
+    expect(checkCharge(store, { approvalId: null, amount: gbp(100), merchant: MERCHANT }, now)).toEqual({ approved: false, reasons: ['No approved purchase matches this payment.'] });
     expect(store.read().log.at(-1)).toMatchObject({ type: 'charge_declined', approvalId: null });
   });
 });

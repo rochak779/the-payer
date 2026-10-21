@@ -3,14 +3,15 @@ import { FALLBACK, fixtureSearch } from '@/agent/fixtures';
 import { createScriptedShopper } from '@/agent/scriptedShopper';
 import type { Shopper } from '@/agent/types';
 import { keywordChecker } from '@/checker/keywordChecker';
-import { createFakeIssuer } from '@/payments/fakeIssuer';
+import { formatMoney } from '@/domain/money';
+import { createFakeRail } from '@/payments/fakeRail';
 import { tempStore } from '@/test/tempStore';
 import { executeRun, startRun, viewRun, type FlowDeps } from './runs';
 
 function deps(): FlowDeps {
   const store = tempStore();
   const clock = () => new Date('2026-11-10T10:00:00Z');
-  return { store, clock, fuzzy: keywordChecker, search: fixtureSearch, shopper: createScriptedShopper(clock), issuer: createFakeIssuer(store, clock) };
+  return { store, clock, fuzzy: keywordChecker, search: fixtureSearch, shopper: createScriptedShopper(clock), rail: createFakeRail(store, clock) };
 }
 
 async function runTask(d: FlowDeps, task: string) {
@@ -20,24 +21,25 @@ async function runTask(d: FlowDeps, task: string) {
 }
 
 describe('executeRun', () => {
-  it('auto-approved task: issues a card, charges it, and finishes', async () => {
+  it('auto-approved task: sets up a payment, charges it, and finishes', async () => {
     const view = await runTask(deps(), 'Book a hotel in Lisbon');
     expect(view.status).toBe('done');
     // Enough of each purchase for the Ask screen to print its receipt, without the listing's raw text.
     expect(view.approvals).toEqual([{
       id: expect.any(String), status: 'used', outcome: 'approve',
       item: expect.stringContaining('Hotel Lisboa Plaza'), merchant: 'Hotel Lisboa Plaza', total: { minor: 24000, currency: 'GBP' },
-      summary: 'Within all your rules.', reasons: [], last4: expect.stringMatching(/^\d{4}$/),
+      summary: 'Within all your rules.', reasons: [], paymentLabel: 'Offline test payment',
     }]);
     expect(view.events.map((e) => e.kind)).toEqual(['status', 'search', 'found', 'found', 'request', 'decision', 'status', 'status']);
+    expect(view.events.map((e) => e.text)).toContain('Paid £240, once, for this purchase only.');
   });
 
-  it('task that needs asking: leaves a pending approval and no card', async () => {
+  it('task that needs asking: leaves a pending approval and no payment', async () => {
     const d = deps();
     d.store.update((db) => { db.rules = [{ id: 'gifts', kind: 'judgement', source: 'Ask me about gifts.', onBreach: 'ask', text: 'Ask me about gifts.' }]; });
     const view = await runTask(d, 'Buy a birthday present for my nephew');
     expect(view.status).toBe('done');
-    expect(d.store.read().approvals[0]).toMatchObject({ status: 'pending', card: null });
+    expect(d.store.read().approvals[0]).toMatchObject({ status: 'pending', payment: null });
   });
 
   it('marks the run failed and records the error if the agent crashes', async () => {
@@ -94,16 +96,16 @@ describe('executeRun', () => {
       const view = await runTask(d, 'buy a book');
       expect(decisions).toEqual(['approve', 'block']);
       expect(view.approvals).toEqual([expect.objectContaining({ status: 'used', outcome: 'approve' })]);
-      expect(view.events.filter((e) => e.text === 'Paid with a one-time card.')).toHaveLength(1);
+      expect(view.events.filter((e) => e.text === `Paid ${formatMoney(book.total)}, once, for this purchase only.`)).toHaveLength(1);
       expect(view.events.at(-1)?.text).toContain('Not buying it twice');
     });
 
     it('does not retry into a second booking when a charge fails part-way', async () => {
       const d = deps();
       let failures = 0;
-      const flaky = { ...d.issuer, simulateCharge: async (...args: Parameters<typeof d.issuer.simulateCharge>) => {
+      const flaky = { ...d.rail, charge: async (...args: Parameters<typeof d.rail.charge>) => {
         if (failures++ === 0) throw new Error('network error after the charge');
-        return d.issuer.simulateCharge(...args);
+        return d.rail.charge(...args);
       } };
       const retrier: Shopper = {
         name: 'retrier',
@@ -111,7 +113,7 @@ describe('executeRun', () => {
           await tools.requestPurchase(book).catch(() => tools.requestPurchase(book));
         },
       };
-      const view = await runTask({ ...d, issuer: flaky, shopper: retrier }, 'buy a book');
+      const view = await runTask({ ...d, rail: flaky, shopper: retrier }, 'buy a book');
       expect(view.approvals).toHaveLength(1);
       expect(failures).toBe(1);
     });

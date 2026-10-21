@@ -267,6 +267,8 @@ git commit -m "spike: PayPal sandbox vault, hold, capture, void and refund answe
 
 ### Session 2: Rename "card" to "payment" (fakes only, no behaviour change)
 
+> **As built (21 Oct 2026):** done as written, 166 tests still passing. Also changed, though not in the file list: the payment check's two "card" messages (`paymentGate.ts`: "No approved purchase matches this payment.", "This one-time payment has already been used."), because Step 5 forbids user-facing "card" on the fake rail. `RailName` and `PaymentRef` live in `src/domain/types.ts` (re-exported from `rail.ts`) so the domain doesn't import from payments. The Stripe webhook needed no lookup change: it finds the purchase through the card's `approval_id` tag. `createStripeIssuer` keeps its name. Step 6 was checked without a browser (the Chrome extension wasn't connected): a task through `npm run demo:flow`, then the Ask screen's run data and the rendered Activity and Ask pages.
+
 PayPal has no cards. The code and screens should say what really happens: a one-time payment for exactly the approved amount. This is a rename with copy changes; behaviour stays the same and every existing test stays green.
 
 **Files:**
@@ -320,13 +322,13 @@ export type PaymentRef = PaymentHandle & { provider: RailName };   // replaces C
 | `actions.ts` | "This purchase has no card." | "This purchase has no payment set up." |
 | Labels | — | fake: `Offline test payment`; Stripe: `` `One-time card •••• ${last4}` `` |
 
-- [ ] **Step 1: Update the tests first.** Rename the identifiers in the test files: `createFakeIssuer` → `createFakeRail`, `issuer` → `rail`, `.card` → `.payment`, `'card_issued'` → `'payment_opened'`, `issueCard` → `open`, `simulateCharge` → `charge`, `cancelCard` → `cancel`. Add one assertion to the fulfil test: `expect(saved.payment).toMatchObject({ provider: 'fake', label: 'Offline test payment' })`.
-- [ ] **Step 2: Run `npm run typecheck`.** Expected: FAIL. The tests reference names that don't exist yet.
-- [ ] **Step 3: Do the renames and copy changes** in the files listed. `getDeps()` reads `process.env.PAYMENTS ?? process.env.ISSUER`. The Stripe rail keeps its file and its behaviour; only its method names, `label` and type change. The Stripe webhook looks the approval up by `a.payment?.id`.
-- [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass, same count as before plus nothing removed (166 at the start of this plan).
-- [ ] **Step 5: Check for stray "card" wording.** Run `git grep -n -i -E "card" -- src/app src/flow src/payments`. Expected: hits only in `CardIcon`, gift-card rules or category names, and the Stripe label. No user-facing sentence says "card" for the fake or PayPal rail.
-- [ ] **Step 6: Run the app.** Run `npm run seed && npm run dev`, then do one task from the Ask screen. Expected: the receipt and the activity entry say "Offline test payment" and "Paid $…, once, for this purchase only." (or £ for an old fixture)
-- [ ] **Step 7: Commit, push, open a PR.** Message: `refactor: card issuer becomes a payment rail, ready for PayPal`.
+- [x] **Step 1: Update the tests first.** Rename the identifiers in the test files: `createFakeIssuer` → `createFakeRail`, `issuer` → `rail`, `.card` → `.payment`, `'card_issued'` → `'payment_opened'`, `issueCard` → `open`, `simulateCharge` → `charge`, `cancelCard` → `cancel`. Add one assertion to the fulfil test: `expect(saved.payment).toMatchObject({ provider: 'fake', label: 'Offline test payment' })`.
+- [x] **Step 2: Run `npm run typecheck`.** Expected: FAIL. The tests reference names that don't exist yet.
+- [x] **Step 3: Do the renames and copy changes** in the files listed. `getDeps()` reads `process.env.PAYMENTS ?? process.env.ISSUER`. The Stripe rail keeps its file and its behaviour; only its method names, `label` and type change. The Stripe webhook looks the approval up by `a.payment?.id`.
+- [x] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass, same count as before plus nothing removed (166 at the start of this plan).
+- [x] **Step 5: Check for stray "card" wording.** Run `git grep -n -i -E "card" -- src/app src/flow src/payments`. Expected: hits only in `CardIcon`, gift-card rules or category names, and the Stripe label. No user-facing sentence says "card" for the fake or PayPal rail.
+- [x] **Step 6: Run the app.** Run `npm run seed && npm run dev`, then do one task from the Ask screen. Expected: the receipt and the activity entry say "Offline test payment" and "Paid $…, once, for this purchase only." (or £ for an old fixture)
+- [x] **Step 7: Commit, push, open a PR.** Message: `refactor: card issuer becomes a payment rail, ready for PayPal`.
 
 ### Session 3: Retail demo on fakes (rules, products, suggested tasks)
 

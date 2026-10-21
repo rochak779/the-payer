@@ -21,7 +21,7 @@ Offline, the agent picks from canned listings (a hotel in Lisbon, a present for 
 Copy `.env.example` to `.env.local`, then set:
 
 ```
-CHECKER=gemini  PARSER=gemini  SEARCH=firecrawl  SHOPPER=gemini  ISSUER=stripe
+CHECKER=gemini  PARSER=gemini  SEARCH=firecrawl  SHOPPER=gemini  PAYMENTS=stripe
 GEMINI_API_KEY, FIRECRAWL_API_KEY, STRIPE_SECRET_KEY, STRIPE_CARDHOLDER_ID, STRIPE_WEBHOOK_SECRET
 ```
 

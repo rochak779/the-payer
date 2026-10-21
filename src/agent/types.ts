@@ -9,7 +9,7 @@ export interface WebSearch {
 
 export type ShopperEvent = Omit<RunEvent, 'at'>;
 
-/** Everything the agent may do. It never sees a card. */
+/** Everything the agent may do. It never sees how the person pays. */
 export type ShopperTools = {
   searchWeb(query: string): Promise<SearchResult[]>;
   requestPurchase(req: PurchaseRequest): Promise<Decision>;
