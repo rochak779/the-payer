@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { Ephesis, Manrope } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { TabBar } from '@/components/TabBar';
-import { defaultStore } from '@/store/store';
+import { currentStore } from '@/store/visitor';
 import './globals.css';
 
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
@@ -11,8 +11,8 @@ const ephesis = Ephesis({ subsets: ['latin'], weight: '400', variable: '--font-e
 export const metadata: Metadata = { title: 'Agent Mandates', description: 'Spending rules for your AI shopping agent' };
 export const dynamic = 'force-dynamic';
 
-export default function RootLayout({ children }: { children: ReactNode }) {
-  const db = defaultStore().read();
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const db = (await currentStore()).read();
   const pending = db.approvals.filter((a) => a.status === 'pending').length;
   const on = db.settings.agentEnabled;
   return (

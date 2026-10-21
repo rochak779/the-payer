@@ -407,6 +407,8 @@ it('no fixture names a real brand', () => {
 
 ### Session 4: Hosted mode 1, one data file per visitor
 
+> **As built (21 Oct 2026):** done, 180 tests. `src/proxy.ts` sets the cookie on the forwarded request headers as well as the response, so the first request already sees it; its matcher skips `_next/static`, `_next/image` and anything with a file extension, and keeps API routes (the Ask screen polls `/api/runs/<id>`). The Stripe webhook still uses `defaultStore()`: it carries no visitor cookie, and Stripe isn't used hosted. Step 7 was checked with two curl cookie jars instead of two browser windows (Chrome extension not connected): separate ids and files, visitor A's edited rules and $12 purchase invisible to B, a `../../etc` cookie replaced by a fresh id with nothing written outside `data/visitors`, and no cookie or visitor files without `HOSTED`. Rule edits and the task run were done on A's file directly (`DB_PATH` + `demo:flow`), since curl can't call server actions.
+
 Judges share one URL. Each must start from the same seeded demo and never see another visitor's purchases. This is off unless `HOSTED=1`, so local use is unchanged.
 
 **Read first:**
@@ -441,20 +443,20 @@ export async function getDeps(): Promise<Deps>;
 
 The visitor data folder is `path.join(process.cwd(), 'data', 'visitors')`. `currentStore()` calls `pruneVisitors(dir, 300)` when it creates a new visitor file. If the cookie is missing or invalid in a request (it shouldn't be, after the proxy), `currentStore()` uses a new visitor id for that request only, never a shared file. Pruning removes the orphan file later.
 
-- [ ] **Step 1: Write the failing tests** in `src/store/visitor.test.ts`:
+- [x] **Step 1: Write the failing tests** in `src/store/visitor.test.ts`:
   - `isValidVisitorId` rejects `undefined`, `''`, `'../../etc/passwd'`, `'A'.repeat(24)`, `'a'.repeat(23)`, `'a'.repeat(25)` and `'a'.repeat(23) + '/'`, and accepts `newVisitorId()` 100 times out of 100;
   - `visitorStorePath(dir, '../x')` throws, and a valid id gives a path inside `dir`;
   - the first `openVisitorStore` creates a file seeded with 4 rules and `agentEnabled: true`;
   - after saving 1 rule, a second open still has 1 rule (no re-seed);
   - two ids have separate data;
   - `pruneVisitors(dir, 2)` with 3 files leaves the 2 newest.
-- [ ] **Step 2: Run `npx vitest run src/store/visitor.test.ts`.** Expected: FAIL (module not found).
-- [ ] **Step 3: Implement `visitor.ts`.**
-- [ ] **Step 4: Implement `proxy.ts`.** When `HOSTED=1` and the cookie is missing or invalid, set it to `newVisitorId()` with `httpOnly`, `sameSite: 'lax'`, `secure` in production, `path: '/'` and `maxAge` 30 days. Make it visible to the same request, as the proxy doc shows. Skip static assets.
-- [ ] **Step 5: Make `getDeps()` async and switch every caller to `await getDeps()` or `await currentStore()`.** In `startTask`, resolve deps before `after(...)`.
-- [ ] **Step 6: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 7: Manual check.** Run `HOSTED=1 npm run dev`. Open the app in a normal window and a private window. Edit the rules in one; the other still shows the four demo rules. Run a task in one; the other's Activity is empty. Without `HOSTED`, the app uses `data/db.json` as before.
-- [ ] **Step 8: Commit, push, open a PR.** Message: `feat: hosted mode gives each visitor their own seeded demo`.
+- [x] **Step 2: Run `npx vitest run src/store/visitor.test.ts`.** Expected: FAIL (module not found).
+- [x] **Step 3: Implement `visitor.ts`.**
+- [x] **Step 4: Implement `proxy.ts`.** When `HOSTED=1` and the cookie is missing or invalid, set it to `newVisitorId()` with `httpOnly`, `sameSite: 'lax'`, `secure` in production, `path: '/'` and `maxAge` 30 days. Make it visible to the same request, as the proxy doc shows. Skip static assets.
+- [x] **Step 5: Make `getDeps()` async and switch every caller to `await getDeps()` or `await currentStore()`.** In `startTask`, resolve deps before `after(...)`.
+- [x] **Step 6: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 7: Manual check.** Run `HOSTED=1 npm run dev`. Open the app in a normal window and a private window. Edit the rules in one; the other still shows the four demo rules. Run a task in one; the other's Activity is empty. Without `HOSTED`, the app uses `data/db.json` as before.
+- [x] **Step 8: Commit, push, open a PR.** Message: `feat: hosted mode gives each visitor their own seeded demo`.
 
 ### Session 5: Hosted mode 2, daily usage limits with offline fallback
 

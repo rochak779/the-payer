@@ -2,13 +2,13 @@ import { ChevronIcon } from '@/components/icons';
 import { ScreenTitle } from '@/components/ui';
 import { defaultValidUntil, toAp2OpenMandate } from '@/rules/ap2';
 import { checkedBy, explainRule } from '@/rules/explain';
-import { defaultStore } from '@/store/store';
+import { currentStore } from '@/store/visitor';
 import { RulesEditor } from './RulesEditor';
 
 export const dynamic = 'force-dynamic';
 
-export default function RulesPage() {
-  const rules = defaultStore().read().rules;
+export default async function RulesPage() {
+  const rules = (await currentStore()).read().rules;
   const saved = rules.map((rule) => ({ rule, explanation: explainRule(rule), checkedBy: checkedBy(rule) }));
   const initialText = [...new Set(rules.map((r) => r.source))].join('\n');
   const validUntil = defaultValidUntil(rules);

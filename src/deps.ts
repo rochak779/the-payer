@@ -10,13 +10,13 @@ import { createStripeIssuer } from '@/integrations/stripe/issuer';
 import { createFakeRail } from '@/payments/fakeRail';
 import type { RuleParser } from '@/rules/parser';
 import { getRuleParser } from '@/rules/registry';
-import { defaultStore } from '@/store/store';
+import { currentStore } from '@/store/visitor';
 
 export type Deps = FlowDeps & { parser: RuleParser };
 
-/** Picks fake or real for each outside service from env vars. Defaults are all offline fakes. */
-export function getDeps(): Deps {
-  const store = defaultStore();
+/** Picks fake or real for each outside service from env vars. Defaults are all offline fakes. Hosted: this visitor's data. */
+export async function getDeps(): Promise<Deps> {
+  const store = await currentStore();
   const clock = () => new Date();
   return {
     store,
