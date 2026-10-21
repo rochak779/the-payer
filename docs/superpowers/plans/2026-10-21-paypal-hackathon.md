@@ -581,6 +581,8 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
 
 ### Session 7: "Connect PayPal" (save the buyer's PayPal once)
 
+> **As built (21 Oct 2026):** done, 225 tests. **PayPal's sandbox records the approval but never sends the buyer back** (an error page after Agree, with `localhost` or `https://example.com` as the return address; BRIEF.md). So the app remembers the setup token in `settings.paypalPending`. "Connect PayPal" opens PayPal in a new tab, and **"Finish connecting"** (`finishConnecting` in `vault.ts`) asks PayPal whether the token is `APPROVED`, then saves it. `/paypal/return` calls the same function and ignores the link's query, so the parameter names no longer matter and a crafted link can't attach someone else's PayPal. `isValidSetupTokenId` now checks the id PayPal returns (it goes into a URL path). The strip also has a waiting state ("Open PayPal again", Cancel, Finish connecting) and shows only when `PAYMENTS=paypal`. Live: Rochak connected the sandbox buyer through Connect → approve → Finish connecting, and the strip showed "PayPal connected." A second click during the 2-second finish had reported "wasn't connected"; now fixed (test first) and the button shows a spinner.
+
 **Needs:** PayPal keys. Rochak logs in as the sandbox buyer once (Rochak types the password).
 
 **Files:**
@@ -612,18 +614,18 @@ export function isValidSetupTokenId(id: string | null): id is string;      // /^
 
 The setup-token body is the one from Session 1's `vault-start`, with URLs from `APP_URL`.
 
-- [ ] **Step 1: Write the failing tests:**
+- [x] **Step 1: Write the failing tests:**
   - `startVaultSetup` posts to `/v3/vault/setup-tokens` with `usage_type: 'MERCHANT'`, `customer_type: 'CONSUMER'` and the two URLs, and returns the `rel: 'approve'` link;
   - it throws "PayPal didn't return an approval link" when that link is missing;
   - `finishVaultSetup` posts `{ payment_source: { token: { id, type: 'SETUP_TOKEN' } } }`;
   - `vaultIdFor` prefers the visitor's own vault id over the env one, and returns null when neither is set;
   - an old db file with no `settings.paypal` gives null, not a crash;
   - the return handler with `token=../../x` or no token makes no PayPal call and redirects to `cancelled`.
-- [ ] **Step 2: Run them.** Expected: FAIL.
-- [ ] **Step 3: Implement.** Read the Next docs for route handlers and `redirect` in server actions first.
-- [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 5: Live check.** Run `PAYMENTS=paypal npm run dev` and click "Connect PayPal". Rochak logs in as the sandbox buyer and approves. The Ask strip shows "PayPal connected".
-- [ ] **Step 6: Commit, push, open a PR.** Message: `feat: connect PayPal once so the agent can pay approved purchases`.
+- [x] **Step 2: Run them.** Expected: FAIL.
+- [x] **Step 3: Implement.** Read the Next docs for route handlers and `redirect` in server actions first.
+- [x] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 5: Live check.** Run `PAYMENTS=paypal npm run dev` and click "Connect PayPal". Rochak logs in as the sandbox buyer and approves. The Ask strip shows "PayPal connected".
+- [x] **Step 6: Commit, push, open a PR.** Message: `feat: connect PayPal once so the agent can pay approved purchases`.
 
 ### Session 8: PayPal live end to end + the overcharge scene
 

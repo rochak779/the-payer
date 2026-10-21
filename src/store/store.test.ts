@@ -11,7 +11,7 @@ function tempFile() {
 describe('store', () => {
   it('starts empty with the agent switched on', () => {
     const db = createStore(tempFile()).read();
-    expect(db).toEqual({ rules: [], approvals: [], log: [], runs: [], settings: { agentEnabled: true } });
+    expect(db).toEqual({ rules: [], approvals: [], log: [], runs: [], settings: { agentEnabled: true, paypal: null, paypalPending: null } });
   });
 
   it('persists updates across store instances and leaves no temp file', () => {
