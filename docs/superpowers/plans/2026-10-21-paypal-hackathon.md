@@ -197,7 +197,7 @@ Work through "What I need from you", items 1–8. Session 1 needs items 1 and 4.
 - [ ] Product name decided
 - [ ] Devpost registered
 - [x] PayPal sandbox app (Merchant type, Save payment methods ticked) linked to a US shop, UK buyer, keys in `.env.local`
-- [ ] Channel3 key with promo code, in `.env.local`
+- [x] Channel3 key with promo code, in `.env.local` (21 Oct)
 - [ ] Gemini: free or paid decided
 - [ ] Render account and credits claimed
 
@@ -671,6 +671,8 @@ A "Refund" button on a paid purchase in Activity, shown for 30 minutes after pay
 
 ### Session 9: Channel3 product search
 
+> **As built (21 Oct 2026):** done, 235 tests. `@channel3/sdk` is pinned at **4.1.0** (two months old; 4.4.1 came out the day before). The installed SDK differs from the docs above, and was followed: the class is `Channel3`, the price is `price.price`, country/language/currency go in `config`, and search returns a page whose `data` holds the products. Its errors carry `statusCode`, so `search.ts` translates them for `serviceProblem` (a 429 reads "is over its usage limit"). A product that fails the schema is skipped, not the whole search. Live smoke, 3 searches: **5 USD results from US shops for each** of "white ceramic mug", "building blocks set for kids" and "wireless headphones". All were `new`, so live search won't produce the refurbished-headphones block on its own (Session 10). The results name real brands and shops (Risk 4: the video uses a generic query and gets checked frame by frame).
+
 **Needs:** none for the tests. `CHANNEL3_API_KEY` for Step 6.
 
 **Files:**
@@ -714,7 +716,7 @@ export function createChannel3Search(opts?: { apiKey?: string; client?: { produc
 
 Before writing the code, check the SDK's real method and type names in `node_modules/@channel3/sdk`. The docs show `new Channel3({ apiKey })` and `client.products.search({ query, country, currency })`. If the installed version differs, follow the installed one.
 
-- [ ] **Step 1: Write the failing tests.** Use a fake client.
+- [x] **Step 1: Write the failing tests.** Use a fake client.
   - A product with offers at `{amount: 19.99}`, `{amount: 0.3}` and `{amount: 395}`, all USD, gives prices 1999, 30 and 39500.
   - A SEK offer is skipped.
   - An `OutOfStock` offer is skipped.
@@ -723,13 +725,13 @@ Before writing the code, check the SDK's real method and type names in `node_mod
   - There are at most 8 results.
   - With no key, it throws "CHANNEL3_API_KEY is not set".
   - An SDK error with `status: 429` passes through so that `serviceProblem` gives "is over its usage limit".
-- [ ] **Step 2: Run `npx vitest run src/integrations/channel3`.** Expected: FAIL.
-- [ ] **Step 3: Implement.** Validate the SDK response with Zod, keeping only the fields we read.
-- [ ] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 5: Write `scripts/channel3-smoke.ts`.** It takes the query from `argv` and prints title, shop, price and condition for each result.
-- [ ] **Step 6: Run the smoke test live** (3 searches, about 3 credits): `npm run channel3:smoke "white ceramic mug"`, `"building blocks set for kids"`, `"wireless headphones"`.
+- [x] **Step 2: Run `npx vitest run src/integrations/channel3`.** Expected: FAIL.
+- [x] **Step 3: Implement.** Validate the SDK response with Zod, keeping only the fields we read.
+- [x] **Step 4: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 5: Write `scripts/channel3-smoke.ts`.** It takes the query from `argv` and prints title, shop, price and condition for each result.
+- [x] **Step 6: Run the smoke test live** (3 searches, about 3 credits): `npm run channel3:smoke "white ceramic mug"`, `"building blocks set for kids"`, `"wireless headphones"`.
   Expected: USD results from US shops. If fewer than 3 usable results come back for two of the queries, record that and tell Rochak before going on.
-- [ ] **Step 7: Commit, push, open a PR.** Message: `feat: Channel3 product search with shop, price and condition`.
+- [x] **Step 7: Commit, push, open a PR.** Message: `feat: Channel3 product search with shop, price and condition`.
 
 ### Session 10: Live retail run (Gemini + Channel3 + PayPal)
 

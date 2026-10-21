@@ -1,9 +1,10 @@
 import { fixtureSearch } from '@/agent/fixtures';
 import { createScriptedShopper } from '@/agent/scriptedShopper';
-import type { Shopper } from '@/agent/types';
+import type { Shopper, WebSearch } from '@/agent/types';
 import { keywordChecker } from '@/checker/keywordChecker';
 import { getFuzzyChecker } from '@/checker/registry';
 import type { FlowDeps } from '@/flow/runs';
+import { createChannel3Search } from '@/integrations/channel3/search';
 import { createClaudeShopper } from '@/integrations/claude/shopper';
 import { createFirecrawlSearch } from '@/integrations/firecrawl/search';
 import { createGeminiShopper } from '@/integrations/gemini/shopper';
@@ -35,7 +36,7 @@ export async function getDeps(opts: { live?: boolean } = {}): Promise<Deps> {
     clock,
     fuzzy: getFuzzyChecker(process.env.CHECKER ?? 'keyword'),
     parser: getRuleParser(process.env.PARSER ?? 'pattern'),
-    search: process.env.SEARCH === 'firecrawl' ? createFirecrawlSearch() : fixtureSearch,
+    search: getSearch(process.env.SEARCH),
     shopper: getShopper(process.env.SHOPPER, clock),
     rail,
   };
@@ -51,6 +52,12 @@ function getRail(store: Store, clock: () => Date): PaymentRail {
   if (name === 'stripe') return createStripeIssuer(store, clock);
   if (name === 'paypal') return createPayPalRail({ store, client: payPalClientFromEnv(), vaultId: () => vaultIdFor(store.read()), clock });
   return createFakeRail(store, clock);
+}
+
+function getSearch(name: string | undefined): WebSearch {
+  if (name === 'channel3') return createChannel3Search();
+  if (name === 'firecrawl') return createFirecrawlSearch();
+  return fixtureSearch;
 }
 
 function getShopper(name: string | undefined, clock: () => Date): Shopper {
