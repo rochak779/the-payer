@@ -1,6 +1,6 @@
 # The Payer: Devpost write-up
 
-The text to paste into each Devpost field, one section per field. Two placeholders are left: `HOSTED_URL_TBD` (the Render address, once the service is live) and `VIDEO_URL_TBD` (the YouTube link, made last in Session 14). Replace both here and on Devpost before submitting. Every claim matches `README.md` and the code as built on 22 Oct 2026.
+The text to paste into each Devpost field, one section per field. One placeholder is left: `VIDEO_URL_TBD` (the YouTube link, made last in Session 14). Replace it here and on Devpost before submitting. Every claim matches `README.md` and the code as built on 22 Oct 2026, and the hosted demo was smoke-tested the same day.
 
 ---
 
@@ -14,7 +14,7 @@ PayPal made shops agent-ready. The Payer makes buyers agent-safe: your AI shoppi
 
 ## Links
 
-- **Try it:** HOSTED_URL_TBD (no login, nothing to install)
+- **Try it:** https://the-payer.onrender.com (no login, nothing to install)
 - **Video:** VIDEO_URL_TBD
 - **Code:** https://github.com/rochak779/the-payer (MIT licence)
 
@@ -49,7 +49,7 @@ Then you give the shopping agent a task. It searches real products from US shops
 
 **Activity** lists every decision with its reason, and each paid purchase shows PayPal's capture id. Three demo buttons play a shop trying it on: **Shop asks for $20 more**, **Another shop asks** and **Shop asks again**. The payment check refuses each one before PayPal is even called. On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). The Payer holds it to the penny.
 
-The **off switch** stops everything: purchases waiting for you are cancelled, open PayPal holds are voided and new tasks are refused.
+The **off switch** stops everything: purchases waiting for you are cancelled, open PayPal holds are voided and anything a new task tries to buy is blocked.
 
 ## How we built it
 
@@ -139,7 +139,7 @@ Channel3 and Render.
 
 ## Testing instructions
 
-**Open HOSTED_URL_TBD.** There's nothing to install and no login. Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)."). It's sandbox money in US dollars. The demo is free to use until judging ends (15 Dec 2026).
+**Open https://the-payer.onrender.com** in any browser. There's nothing to install and no login. Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)."). It's sandbox money in US dollars. The demo is free to use until judging ends (15 Dec 2026).
 
 1. **Rules.** Read the four rules, or write your own and press **Show me what you understood**.
 2. **Ask.** Press each suggested task in turn:
@@ -147,7 +147,7 @@ Channel3 and Render.
    - "Buy a wooden building blocks set for my nephew's birthday, about $40": the gift rule makes it ask first. Open **Approvals**, read why, and press **Approve**. It's paid the same way.
    - "Buy wireless headphones under $80": live listings are almost always new, so this one is usually approved and paid. The "blocked" scene (refurbished headphones, stopped by "Only new items") appears reliably only on the offline listings: run the app locally with no keys to see it (`npm install && npm run seed && npm run dev`).
 3. **Activity.** Each paid purchase shows "PayPal took $… (capture …)". On a paid purchase, press **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**. Each is refused by the payment check before PayPal is called. The button at the bottom shows the checker's measured scores.
-4. **The off switch.** Turn the agent off on Activity. Anything waiting for you is cancelled, open PayPal holds are voided and new tasks are refused. Turn it back on to carry on.
+4. **The off switch.** Turn the agent off on Activity. Anything waiting for you is cancelled, open PayPal holds are voided and anything a new task tries to buy is blocked. Turn it back on to carry on.
 
 **Good to know:**
 
