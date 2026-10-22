@@ -46,3 +46,7 @@ next-env.d.ts
 .firecrawl/
 .impeccable/review/
 .impeccable/questions/
+
+# local agent notes and raw research (never published)
+.superpowers/
+research/raw/

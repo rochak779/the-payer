@@ -58,12 +58,12 @@ export const SCENARIOS: Scenario[] = [
 
 export const FALLBACK: Scenario = {
   match: /.*/,
-  query: 'The Pragmatic Programmer paperback',
-  results: [{ title: 'The Pragmatic Programmer – £35', url: 'https://example.com/pragmatic-programmer', snippet: 'Paperback. Returns within 30 days.' }],
+  query: 'illustrated hardback cookbook',
+  results: [{ title: 'Illustrated hardback cookbook – £35', url: 'https://example.com/hardback-cookbook', snippet: 'Hardback. Returns within 30 days.' }],
   pick: {
-    item: 'The Pragmatic Programmer (paperback)', merchant: 'Paper Lane Books', category: 'other',
-    total: { minor: 3500, currency: 'GBP' }, refundPolicy: 'Returns within 30 days.', url: 'https://example.com/pragmatic-programmer',
-    agentNote: 'Matches the request.', listingText: 'Paperback. Returns within 30 days.',
+    item: 'Illustrated hardback cookbook', merchant: 'Paper Lane Books', category: 'other',
+    total: { minor: 3500, currency: 'GBP' }, refundPolicy: 'Returns within 30 days.', url: 'https://example.com/hardback-cookbook',
+    agentNote: 'Matches the request.', listingText: 'Hardback. Returns within 30 days.',
   },
 };
 

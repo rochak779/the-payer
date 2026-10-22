@@ -11,18 +11,13 @@ I'm a Product Manager, not an engineer. Act like an engineering manager advising
 - Where a tool exists for web research (Firecrawl CLI or the browser), use it. Cite sources with dates.
 - For technical choices with a sensible default, decide and tell me. Only ask me when the answer changes what you do.
 
-## About me (context for positioning)
-- London-based PM. About 4 years in UK Open Banking: account aggregation, payment initiation, variable recurring payments (VRP).
-  I've also worked on delegated account access (letting a trusted person act on someone's account, with permissions chosen at share time).
-- I shipped a production LLM spending assistant at a UK bank, at very large scale. I own its evals and guardrails.
-  My best story is fixing over-refusal: the model refused legitimate questions because transaction text contained restricted words.
-  That maps directly onto "over-blocking" in this project.
+## Confidentiality
 - **Confidentiality, strict:** never name my employer, my client bank or their products in anything we write or publish.
   Use "a UK bank" or "a bank-scale AI assistant". Use only public specs, public sources and mock data. Nothing from my day job.
 
 ## Goal
-This is a **portfolio build to get interviews, not a startup.** Required deliverables:
-1. A working demo (plus a short screen-recorded video for LinkedIn)
+This is a **demo build, not a startup.** Required deliverables:
+1. A working demo (plus a short screen-recorded video)
 2. An eval set with measured results
 3. 5 real people tested
 4. A one-page write-up with the trade-offs I made
@@ -128,11 +123,11 @@ These are saved as structured rules, stored in AP2-style format.
 2. **Ask the agent:** a request box plus the agent's progress.
 3. **Approval prompt:** "Agent wants to spend £180 at X. Asking because: …" with Approve / Decline.
 4. **Activity log:** every decision with its reason, plus a "turn off agent" button.
-5. Optional, for interviews: an eval results page.
+5. Optional: an eval results page.
 Tech: one web app holding both the UI and the checker (e.g. Next.js + TypeScript, SQLite or a JSON file for storage).
 Run it locally; deploy to Vercel only when I need a shareable link. AI: measured on Google's free `gemini-3.5-flash-lite`, using the instructions written for Claude. The Claude version (claude-sonnet-5-5; claude-haiku-5-5 for cheap checks) is built behind a switch and will be measured once there's an Anthropic key.
 
-## Evals (the core of the interview story)
+## Evals (the core of the story)
 - Test set: 50–100 purchase requests, each labelled approve / ask / block against a fixed set of user rules.
   Build them from real agent incidents, the real rules collected in Step 1, and edge cases.
 - Categories:
@@ -146,7 +141,7 @@ Run it locally; deploy to Vercel only when I need a shareable link. AI: measured
   - prompt injection in listings
 - Metrics:
   - **wrong approvals** (most severe: money lost)
-  - **needless asks** (user annoyance; the over-blocking equivalent of my over-refusal story)
+  - **needless asks** (user annoyance: over-blocking)
   - wrong blocks
   - rule-reading accuracy (did "here's what I understood" match the intent?)
 - Iterate on the checker prompt and logic, and report before/after numbers.
@@ -300,8 +295,7 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 - **Hosting:** Render, from the Blueprint in `render.yaml` (Session 11): one Starter web service in Frankfurt, Node 24, health check `/api/health`. The keys are typed into Render's dashboard, never committed.
 
 ## Earlier research (raw files)
-Saved pages and search results from the research session that produced this brief (on Rochak's machine only; raw scraped sources are not published):
-`/Users/rochakagarwal/orca/projects/Learning/.firecrawl/agent-mandates/`
+Saved pages and search results from the research session that produced this brief (on Rochak's machine only; raw scraped sources are not published).
 Includes:
 - Stripe: Link wallet for agents, Issuing for agents, Issuing testing, SPT docs, SPT expansion post
 - Revolut: Business cards API, sandbox guide, TechTimes article
