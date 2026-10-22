@@ -1,325 +1,419 @@
 ---
 name: The Payer
-description: Spending rules for your AI shopping agent; every checker decision is printed as a receipt.
+description: Spending rules for your AI shopping agent, in the look of Rochak's portfolio (site-dime); every decision is a sheet whose offset colour says the verdict.
 colors:
-  forest: "#173f35"
-  forest-deep: "#0f2e26"
-  cream: "#f7f2e8"
-  paper: "#fffdf8"
-  line: "#e4dccd"
-  sage: "#c6cbc1"
-  gold: "#e9a51a"
-  orange: "#d96a32"
-  orange-ink: "#b4511f"
-  orange-soft: "#ecb898"
-  peach: "#f8e1d2"
-  slate: "#24333b"
-  ink-soft: "#4a5a55"
-  muted: "#5c6a64"
+  yellow: "#ffca49"
+  yellow-line: "#e9c893"
+  cream: "#fefaf4"
+  paper: "#ffffff"
+  surface: "#f6f2e9"
+  ink: "#1c1c1c"
+  muted: "#5c5c5c"
+  line: "#d3c9bc"
+  rule: "#91867b"
+  brown: "#5c491a"
+  mint: "#c7e9cc"
+  pink: "#f8b7c7"
 typography:
-  display:
-    fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "1.75rem"
-    fontWeight: 800
-    lineHeight: 1.15
-    letterSpacing: "-0.03em"
-  script:
-    fontFamily: "Ephesis, Snell Roundhand, cursive"
-    fontSize: "2.6rem"
-    fontWeight: 400
-    lineHeight: 0.8
-    letterSpacing: "normal"
-  headline:
-    fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "1.375rem"
-    fontWeight: 800
-    lineHeight: 1.25
-    letterSpacing: "-0.02em"
-  amount:
-    fontFamily: "Manrope, system-ui, sans-serif"
+  wordmark:
+    fontFamily: "Satoshi, Inter, sans-serif"
     fontSize: "1.5rem"
     fontWeight: 800
-    lineHeight: 1.333
-    letterSpacing: "-0.02em"
+    lineHeight: 1.1
+    letterSpacing: "-0.035em"
+  display:
+    fontFamily: "Satoshi, Inter, sans-serif"
+    fontSize: "2rem"
+    fontWeight: 900
+    lineHeight: 1.05
+    letterSpacing: "-0.04em"
+  amount:
+    fontFamily: "Satoshi, Inter, sans-serif"
+    fontSize: "1.75rem"
+    fontWeight: 900
+    lineHeight: 1
+    letterSpacing: "-0.035em"
     fontFeature: "\"tnum\" on"
   title:
-    fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "1.0625rem"
-    fontWeight: 700
-    lineHeight: 1.375
-  body:
-    fontFamily: "Manrope, system-ui, sans-serif"
+    fontFamily: "Satoshi, Inter, sans-serif"
+    fontSize: "1.1875rem"
+    fontWeight: 800
+    lineHeight: 1.15
+    letterSpacing: "-0.025em"
+  section:
+    fontFamily: "Satoshi, Inter, sans-serif"
+    fontSize: "1.125rem"
+    fontWeight: 800
+    lineHeight: 1.25
+    letterSpacing: "-0.03em"
+  tag:
+    fontFamily: "Satoshi, Inter, sans-serif"
     fontSize: "0.9375rem"
+    fontWeight: 800
+    lineHeight: 1.15
+    letterSpacing: "-0.01em"
+  figure:
+    fontFamily: "Satoshi, Inter, sans-serif"
+    fontSize: "1.25rem"
+    fontWeight: 900
+    lineHeight: 1.4
+    letterSpacing: "-0.02em"
+    fontFeature: "\"tnum\" on"
+  body:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "1rem"
     fontWeight: 400
     lineHeight: 1.625
-    fontFeature: "\"ss01\" on"
   body-sm:
-    fontFamily: "Manrope, system-ui, sans-serif"
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 400
     lineHeight: 1.625
-  caption:
-    fontFamily: "Manrope, system-ui, sans-serif"
+  intro:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 400
+    lineHeight: 1.625
+  label:
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "0.8125rem"
-    fontWeight: 500
+    fontWeight: 650
     lineHeight: 1.375
-  label-stamp:
-    fontFamily: "Manrope, system-ui, sans-serif"
+  caption:
+    fontFamily: "Inter, system-ui, sans-serif"
     fontSize: "0.8125rem"
-    fontWeight: 800
-    lineHeight: 1
-    letterSpacing: "0.08em"
-  label-tag:
-    fontFamily: "Manrope, system-ui, sans-serif"
-    fontSize: "0.6875rem"
-    fontWeight: 700
+    fontWeight: 400
     lineHeight: 1.5
-    letterSpacing: "0.05em"
+  small:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 400
+    lineHeight: 1.625
+  nav:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.75rem"
+    fontWeight: 700
+    lineHeight: 1.33
+  button:
+    fontFamily: "Inter, system-ui, sans-serif"
+    fontSize: "0.9375rem"
+    fontWeight: 650
+    lineHeight: 1.35
+  mono:
+    fontFamily: "ui-monospace, SFMono-Regular, Menlo, monospace"
+    fontSize: "0.6875rem"
+    fontWeight: 400
+    lineHeight: 1.625
 rounded:
-  stamp: "10px"
-  tab: "16px"
-  card: "20px"
-  frame: "44px"
-  pill: "9999px"
+  knob: "3px"
+  control: "4px"
+  circle: "9999px"
 spacing:
-  xs: "8px"
-  sm: "12px"
+  tight: "8px"
+  group: "12px"
   md: "16px"
   screen: "20px"
-  lg: "24px"
+  section: "24px"
+  major: "40px"
 components:
   button-primary:
-    backgroundColor: "{colors.forest}"
-    textColor: "{colors.cream}"
-    rounded: "{rounded.pill}"
-    padding: "0 24px"
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.control}"
+    padding: "0 20px"
     height: "48px"
-  button-primary-hover:
-    backgroundColor: "{colors.forest-deep}"
   button-secondary:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.forest}"
-    rounded: "{rounded.pill}"
-    padding: "0 16px"
-    height: "40px"
-  button-secondary-hover:
     backgroundColor: "{colors.cream}"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.control}"
+    padding: "0 16px"
+    height: "44px"
   button-needs:
-    backgroundColor: "{colors.gold}"
-    textColor: "{colors.forest-deep}"
-    rounded: "{rounded.pill}"
-    padding: "0 24px"
+    backgroundColor: "{colors.ink}"
+    textColor: "{colors.cream}"
+    typography: "{typography.button}"
+    rounded: "{rounded.control}"
+    padding: "0 20px"
     height: "48px"
   button-quiet:
-    textColor: "{colors.forest}"
-    rounded: "{rounded.pill}"
+    textColor: "{colors.ink}"
+    typography: "{typography.button}"
+    rounded: "{rounded.control}"
     padding: "0 16px"
-    height: "40px"
-  button-warn:
-    textColor: "{colors.orange-ink}"
-    rounded: "{rounded.pill}"
-  receipt:
+    height: "44px"
+  button-quiet-hover:
+    backgroundColor: "{colors.surface}"
+  sheet:
     backgroundColor: "{colors.paper}"
-    rounded: "{rounded.card}"
-    padding: "20px 20px 24px"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "20px"
   panel:
     backgroundColor: "{colors.paper}"
-    rounded: "{rounded.card}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    padding: "16px"
+  empty-state:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.muted}"
+    rounded: "{rounded.control}"
+    padding: "24px 16px"
   field:
     backgroundColor: "{colors.paper}"
-    textColor: "{colors.slate}"
+    textColor: "{colors.ink}"
     typography: "{typography.body}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.control}"
     padding: "14px 16px"
   chip:
-    backgroundColor: "{colors.paper}"
-    textColor: "{colors.forest}"
-    typography: "{typography.caption}"
-    rounded: "{rounded.pill}"
-    padding: "6px 14px"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "8px 12px"
+    height: "40px"
   chip-selected:
-    backgroundColor: "{colors.peach}"
-  stamp:
-    typography: "{typography.label-stamp}"
-    rounded: "{rounded.stamp}"
-    padding: "6px 12px"
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.ink}"
+  stamp-approve:
+    backgroundColor: "{colors.mint}"
+    textColor: "{colors.ink}"
+    typography: "{typography.tag}"
+    rounded: "{rounded.control}"
+    padding: "5px 12px 5px 9px"
+  stamp-ask:
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.ink}"
+    typography: "{typography.tag}"
+    rounded: "{rounded.control}"
+    padding: "5px 12px 5px 9px"
+  stamp-block:
+    backgroundColor: "{colors.pink}"
+    textColor: "{colors.ink}"
+    typography: "{typography.tag}"
+    rounded: "{rounded.control}"
+    padding: "5px 12px 5px 9px"
+  stamp-withdrawn:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    typography: "{typography.tag}"
+    rounded: "{rounded.control}"
+    padding: "5px 12px 5px 9px"
   reason-tag:
+    backgroundColor: "{colors.surface}"
+    textColor: "{colors.ink}"
+    typography: "{typography.small}"
+    rounded: "{rounded.control}"
+    padding: "1px 6px"
+  masthead:
     backgroundColor: "{colors.cream}"
-    textColor: "{colors.ink-soft}"
-    typography: "{typography.label-tag}"
-    rounded: "{rounded.pill}"
-    padding: "2px 8px"
-  app-header:
-    backgroundColor: "{colors.forest}"
-    textColor: "{colors.cream}"
-    padding: "28px 20px 20px"
-  tab-bar:
+    textColor: "{colors.ink}"
+    padding: "24px 20px 16px"
+  status-on:
     backgroundColor: "{colors.paper}"
-    textColor: "{colors.muted}"
-  tab-active:
-    backgroundColor: "{colors.forest}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "6px 10px"
+  status-off:
+    backgroundColor: "{colors.pink}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    padding: "6px 10px"
+  dock:
+    backgroundColor: "{colors.ink}"
     textColor: "{colors.cream}"
-    rounded: "{rounded.pill}"
+    typography: "{typography.nav}"
+    rounded: "{rounded.control}"
+    padding: "6px"
+  dock-active:
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.control}"
+    height: "52px"
+  pending-badge:
+    backgroundColor: "{colors.yellow}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.circle}"
+    height: "18px"
+  switch-on:
+    backgroundColor: "{colors.mint}"
+    rounded: "{rounded.control}"
     height: "32px"
     width: "56px"
-  pending-badge:
-    backgroundColor: "{colors.gold}"
-    textColor: "{colors.forest-deep}"
-    rounded: "{rounded.pill}"
-    height: "18px"
+  switch-off:
+    backgroundColor: "{colors.surface}"
+    rounded: "{rounded.control}"
+    height: "32px"
+    width: "56px"
 ---
 
 # Design System: The Payer
 
 ## Overview
 
-**Creative North Star: "The Decision Receipt"**
+**Creative North Star: "The Verdict Sheet"**
 
-Every checker decision is printed, not displayed. A purchase arrives as a sheet of warm paper with a torn bottom edge; the decision comes down on it as a tilted rubber stamp (Approved, Asking you, Blocked); the reasons are its line items, each tagged with who checked it. The rest of the app is the counter the receipts sit on: a cream ground, a forest header, forest pills for the one thing to do next, and a single hand-written word per screen.
+The Payer wears Rochak's portfolio design, site-dime: golden yellow, warm cream, ink outlines and white paper, carried from an editorial portfolio into a working app. Every checker decision is a sheet of white paper with a 1px ink edge, sitting on a hard coloured offset that says the verdict before a word is read: mint for Approved, yellow for Asking you, pink for Blocked, warm line for a person's own decline or cancel. On the sheet, the verdict is a tag with the same fill, tilted 2 degrees and pressed down with a hard ink offset.
 
-The app is a phone-sized shell (max 420px), dense but calm. Manrope carries everything, heavy and tight at display sizes, relaxed at reading sizes. Colour is semantic before it is decorative: forest is the product's voice and the primary action, gold means "needs you" and nothing else, orange-ink is Blocked and errors. Motion is one ease, `cubic-bezier(0.16, 1, 0.3, 1)`: steps slide in, the stamp lands with an overshoot, buttons press down, and reduced motion collapses all of it to an instant.
+The app is one phone-sized column (max 420px). On wide screens it stands on a flat yellow field, the way the portfolio sets its portrait on yellow. The shell is a cream masthead with the "The Payer." wordmark and an ink dock at the foot whose yellow marker slides to the active tab. Satoshi carries every display word, heavy and tight; Inter carries everything people read. Controls are Dime controls: 4px corners, an ink edge and a hard ink offset that grows on hover and vanishes on press.
 
-Colours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called The Payer (Agent Mandates until 21 Oct 2026).
+The previous look (The Product Kinship's forest, gold and orange, Manrope and a script word, torn receipts and rubber stamps) is retired. None of Rochak's personal identity is used: no portrait, mascot or monogram.
 
 **Key Characteristics:**
-- Decisions live on receipts: paper, torn edge, dashed rules between sections, a stamp, line-item reasons.
-- One accent per meaning: forest acts, gold waits on the person, orange-ink refuses.
-- Manrope only, except one Ephesis script word per screen title with a hand-drawn soft-orange stroke.
-- Pills for every control; 20px corners for every surface.
-- Soft, forest-tinted shadows; depth comes mostly from paper on cream.
-- One easing curve for all motion; reduced motion turns it off.
+- Decisions on white sheets with ink edges; the offset colour is the verdict.
+- Yellow is the voice: primary actions, chosen chips, the highlighted title word, the dock marker, the pending count.
+- Satoshi 800–900 with tight tracking for display; Inter for body, labels and controls; sentence case everywhere.
+- 4px corners, 1px ink outlines, hard offsets on controls; dashed rules between sections.
+- Paper and tags move on one curve, `cubic-bezier(0.16, 1, 0.3, 1)`; controls move on plain `ease` at 180ms; reduced motion turns it all off.
 
 ## Colors
 
-A warm paper-and-forest palette where each accent carries exactly one meaning.
+site-dime's palette: golden yellow and cream with ink, two of its pastels promoted to decision colours.
 
 ### Primary
-- **Kinship Forest** (forest): header, primary pill buttons, the active tab, focus rings, headings, Approved stamps, caret. The product's voice.
-- **Deep Forest** (forest-deep): primary hover, text on gold and soft orange, selection text, the tint base of every shadow.
+- **Golden Yellow** (#ffca49): primary buttons, a chosen example chip, the highlight band under one title word, the dock's active marker, the pending count badge, the Asking you tag and its sheet offset, the default offset of non-decision sheets, text selection, scrollbars. Also the offset of the ink "Review in Approvals" button.
+- **Warm Yellow Line** (#e9c893): the resting border of example chips, as on the portfolio's filters.
 
 ### Secondary
-- **Needs-You Gold** (gold): the "Review in Approvals" button, the pending count badge on the Approvals tab, and the Asking you stamp's fill (at 30%). Nothing else.
-
-### Tertiary
-- **Refusal Orange** (orange): the Ephesis script word on screen titles, and as a 8-10% tint behind Blocked stamps and warn-button hover.
-- **Refusal Ink** (orange-ink): Blocked stamp text, error notes, error steps, the remove-rule action, alarming eval numbers. The legible form of orange; use it for any orange text below display size.
-- **Soft Orange** (orange-soft): the hand-drawn stroke under the script word, the selected chip ring, and the "Agent is turned off" pill.
-- **Peach** (peach): selected chip fill, chip hover, error-step icon disc, text selection.
+- **Approved Mint** (#c7e9cc): the Approved tag and its sheet offset, the "Agent on" dot, the agent switch's on track, the check discs in the rules list and the empty Approvals state, success notes.
+- **Blocked Pink** (#f8b7c7): the Blocked tag and its sheet offset, the "Agent is turned off" chip, error-step discs and error notes, the remove-rule underline and hover, alarming eval figures.
 
 ### Neutral
-- **Counter Cream** (cream): the app ground; reason-tag fill; ring colour that cuts the step timeline behind icons.
-- **Receipt Paper** (paper): receipts, panels, fields, chips, secondary buttons, the tab bar.
-- **Ruled Line** (line): hairline rings, borders, dashed receipt rules, the step timeline, dotted eval leaders, scrollbars.
-- **Sage** (sage): the agent switch's off track.
-- **Slate Ink** (slate): body text; also the page backdrop behind the phone frame on wide screens.
-- **Soft Ink** (ink-soft): supporting copy under titles, receipt meta, reason tags, Declined and Cancelled stamps.
-- **Muted** (muted): captions, timestamps, inactive tabs, placeholders, empty states.
+- **Ink** (#1c1c1c): all body text, headings, outlines, control offsets, the dock, focus rings.
+- **Cream** (#fefaf4): the app ground, the masthead, secondary buttons, the ring that cuts the step line behind each disc.
+- **White Paper** (#ffffff): decision sheets, panels, fields, step discs, the status chip.
+- **Warm Surface** (#f6f2e9): empty states, reason tags, withdrawn tags, the AP2 JSON block, the eval table header, the switch's off track, quiet-button hover.
+- **Muted Charcoal** (#5c5c5c): supporting copy, sheet meta, log lines, captions, placeholders. 6.4:1 on cream; never on yellow or pink.
+- **Paper Line** (#d3c9bc): the masthead's bottom rule, panel edges, dashed rules inside sheets, the withdrawn sheet offset.
+- **Dashed Rule** (#91867b): the step timeline, section-heading rules, the AP2 details rules, empty-state outlines, eval leaders (3.4:1 on cream).
+- **Deep Brown** (#5c491a): hover colour on the AP2 summary, as on the portfolio's drawer links.
 
 ### Named Rules
-**The Gold Means You Rule.** Gold appears only where the person must act on a pending purchase: the needs button, the pending badge, the Asking you stamp. Never as decoration, never as a highlight, never under the script word.
+**The Verdict Colour Rule.** Mint is Approved, yellow is Asking you, pink is Blocked, warm line is a person's own decline or cancel. A decision always shows its colour twice (tag fill and sheet offset) and never alone: the tag carries an icon (check, question, cross) and the fixed word.
 
-**The Three Stamps Rule.** Approved is forest, Asking you is forest-deep on gold, Blocked is orange-ink on orange; a person's own Declined or Cancelled is ink-soft. The decision words never change.
+**The Ink Text Rule.** Text on yellow, mint, pink or surface is always ink (10:1 or better). Muted charcoal is for cream and white only.
+
+**The Yellow Is Yours Rule.** Yellow marks what a person can do or must do next. It is never a status colour for something already settled.
 
 ## Typography
 
-**Display Font:** Manrope (with system-ui, sans-serif), stylistic set 1 on
-**Script Font:** Ephesis (with Snell Roundhand, cursive)
+**Display Font:** Satoshi variable, 300–900 (with Inter, then the system sans), from Fontshare's CDN
+**Body Font:** Inter variable (with the system sans), self-hosted by `next/font`
+**Mono:** the system monospace, for the AP2 JSON and inline code only
 
-**Character:** A sturdy, friendly grotesque set heavy and tight for titles and amounts, paired with one loose hand-written word that makes each screen feel signed.
+**Character:** a heavy geometric grotesque set tight for every display word, over a calm, legible workhorse sans; the same pairing as the portfolio.
 
 ### Hierarchy
-- **Display** (800, 1.75rem, 1.15, -0.03em): the screen title, forest, balanced.
-- **Script** (400, 2.6rem, 0.8): one word inside the screen title, orange, with the drawn stroke.
-- **Headline** (800, 1.375rem, -0.02em): the product name in the header. The amount on a receipt uses the same weight at 1.5rem with tabular figures.
-- **Title** (700, 1.0625rem, snug): receipt titles and panel headings (section headings drop to 0.875-1rem bold forest).
-- **Body** (400, 0.9375rem, 1.625): field text and screen intros (capped at 34ch). Reason lines and steps use 0.875rem at the same leading.
-- **Caption** (500, 0.8125rem): receipt meta, card rows, links, tab labels at 0.75rem.
-- **Label** (800, 0.8125rem, 0.08em, uppercase): stamp text only. Reason tags use 700, 0.6875rem, 0.05em uppercase.
+- **Wordmark** (Satoshi 800, 1.5rem, 1.1, -0.035em): "The Payer" in the masthead, with a yellow full stop added in CSS (`content: "." / ""`), hidden from screen readers.
+- **Display** (Satoshi 900, 2rem, 1.05, -0.04em): the screen title, balanced; at most one word on the highlight band.
+- **Amount** (Satoshi 900, 1.75rem, 1, -0.035em, tabular): the price on a decision sheet and the latest eval score.
+- **Title** (Satoshi 800, 1.1875rem, 1.15, -0.025em): sheet titles. Panel titles use 1.0625rem.
+- **Section** (Satoshi 800, 1.125rem, -0.03em): headings inside a screen, followed by a dashed rule to the edge. The AP2 summary and table title use 1rem.
+- **Tag** (Satoshi 800, 0.9375rem, -0.01em, sentence case): the verdict tag.
+- **Body** (Inter 400, 1rem, 1.625): field text. Screen intros use 0.9375rem in muted, capped at 36ch; reasons and steps use 0.875rem.
+- **Label** (Inter 650, 0.8125rem): chips, links, payment rows, status chip. Buttons are 650 at 0.9375 / 0.875 / 0.8125 / 0.75rem by size.
+- **Small** (Inter, 0.75rem): log lines (time in 650 ink, tabular), reason tags (650), the eval table, footnotes. The dock's labels are 0.75rem 700.
 
 ### Named Rules
-**The One Signature Rule.** At most one word per screen is set in Ephesis, inside the screen title, with its soft-orange stroke drawn in. Screens may have none (Rules does not).
+**The Sentence Case Rule.** No uppercase tracking anywhere: tags, labels, buttons and table headers are sentence case, as on the portfolio.
 
-**The Tabular Money Rule.** Amounts, card digits, counts and eval figures use tabular numerals.
+**The One Highlight Rule.** At most one word per screen sits on the yellow band (Rules spends it on "understood" in the preview heading).
+
+**The Tabular Figures Rule.** Amounts, times, counts and eval figures use tabular numerals; text columns next to them do not (Inter's tabular set widens hyphens).
 
 ## Layout
 
-A single phone column, max 420px. On wide screens the column becomes a 880px-tall device with 44px corners on a slate backdrop, scrolling inside. Structure top to bottom: forest header (28px top, 20px sides and bottom), a scrolling main area (20px sides, 24px top, 32px bottom), a four-tab bar pinned at the foot.
+One phone column, max 420px. Below 640px it fills the screen: the masthead scrolls away, the dock sticks to the bottom of the viewport. From 640px the column becomes a framed sheet `min(880px, 100dvh - 4rem)` tall with a 1px ink edge and a 4px corner, centred on a flat yellow field, scrolling inside.
 
-Rhythm is 4px-based: 12px inside control groups, 16px between receipt sections (dashed rule plus 16px above and below), 20-24px between blocks on a screen. Primary actions are full width. Agent steps form a vertical timeline: a 1px line-coloured rule at 13px from the left, 28px icon discs ringed in cream sitting on it, search results indented 40px; a receipt drops into the timeline at full width when a decision arrives.
+Structure top to bottom: masthead (24px top, 20px sides, 16px bottom, paper-line rule below); main (20px sides, 24px top, 32px bottom); the dock (12px inset, 6px padding). Rhythm: 8px inside small groups, 12px inside control groups, 16px between sheet sections (a dashed line rule with 16px above and below), 20–24px between blocks on a screen, 40px before the AP2 details. Primary actions are full width.
+
+Agent steps form a vertical timeline: a 1px dashed rule at 13.5px from the left, 28px white discs with an ink edge ringed in cream sitting on it, search results indented 40px. A decision sheet drops into the timeline at full width.
 
 ## Elevation & Depth
 
-Mostly tonal: paper sits on cream with a 1px line ring. Shadows are soft, low and tinted forest-deep, never grey and never hard-edged. The receipt is the only surface lifted by default.
+Depth is physical and hard-edged, as on the portfolio: papers and controls sit on solid offsets with no blur. Only two soft shadows exist, both under whole objects: the dock and the framed column.
 
 ### Shadow Vocabulary
-- **Receipt lift** (`filter: drop-shadow(0 1px 1px rgb(15 46 38 / 0.08)) drop-shadow(0 10px 18px rgb(15 46 38 / 0.09))`): on the receipt's wrapper, because the torn-edge mask would clip a box-shadow.
-- **Primary press-ready** (`box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.08), 0 8px 16px -10px rgb(15 46 38 / 0.75)`): primary pill buttons; removed when disabled.
-- **Needs glow** (`box-shadow: 0 8px 16px -10px rgb(150 100 0 / 0.8)`): the gold needs button.
-- **Field inset** (`box-shadow: inset 0 1px 2px rgb(15 46 38 / 0.05)`): text areas, plus a 4px forest/10% ring on focus.
-- **Switch knob** (`box-shadow: 0 2px 6px rgb(15 46 38 / 0.3)`): the agent switch thumb.
+- **Control offset** (`box-shadow: 2px 2px 0 #1c1c1c`; hover `4px 4px 0` with `translate(-1px,-1px)`; pressed `0 0 0` with `translate(2px,2px)`): every bordered button. A busy button stays pressed.
+- **Needs offset** (`box-shadow: 2px 2px 0 #ffca49`, growing the same way): the ink "Review in Approvals" button.
+- **Verdict offset** (`box-shadow: 5px 5px 0 <verdict colour>`): decision sheets; non-decision sheets (saved rules, latest eval run) use yellow. It eases between colours over 350ms when a person decides.
+- **Tag offset** (`box-shadow: 2px 2px 0 #1c1c1c`): verdict tags; withdrawn tags have none.
+- **Field focus** (`box-shadow: 4px 4px 0 0 #ffca49, 4px 4px 0 1px #1c1c1c`): a yellow backing sheet with an ink edge appears behind a focused field.
+- **Knob offset** (`box-shadow: 2px 2px 0 #1c1c1c`): the agent switch's knob.
+- **Dock lift** (`box-shadow: 0 6px 22px rgb(28 28 28 / 0.16)`): the ink dock, as on the portfolio.
+- **Frame lift** (`box-shadow: 8px 12px 28px rgb(92 73 26 / 0.22)`): the framed column on wide screens, the portfolio's warm paper shadow.
 
 ### Named Rules
-**The Paper Lifts Rule.** Only receipts float. Panels, chips and fields stay flat with a line ring.
+**The Hard Offset Rule.** Offsets are solid and blur-free, down and to the right, in ink, yellow or a verdict colour. Panels, empty states and the masthead stay flat.
 
 ## Shapes
 
-Two radii do almost all the work: full pills for controls (buttons, chips, tags, tab indicators, status pill, switch, badges) and 20px for surfaces (receipts, panels, fields, dashed empty states). The receipt rounds its top corners only; its bottom is an irregular torn edge, a 120x10 SVG tear repeated across the width. The stamp is the one squared form: 10px corners, a 2px border plus a 1.5px outline offset 2.5px, rotated -4deg. Icons are one line set on a 24px grid, 1.75 stroke (2-2.5 inside small discs and stamps), round caps and joins.
+One corner does almost everything: 4px on buttons, chips, fields, sheets, panels, tags, the status chip, the dock and its marker, the switch (its knob is 3px inside the 1px edge). Circles are reserved for small round things: step discs, note and check discs, status dots, the pending badge, the spinner. Outlines are 1px ink on controls and decision sheets, 1px paper line on panels, 1px dashed rule on empty states. The verdict tag is the only tilted form (-2deg). Icons are one line set on a 24px grid, 1.75 stroke (2–2.75 inside small discs and tags), round caps and joins.
 
 ## Components
 
 ### Buttons
-Tactile, rounded and confident; they press down.
-- **Shape:** full pill; sizes 48px (lg, 0.9375rem), 40px (md, 0.875rem), 32px (sm), 28px (xs, 0.75rem); semibold.
-- **Primary:** forest on cream text with the press-ready shadow; hover forest-deep; disabled forest at 35% with no shadow.
-- **Secondary:** paper with a line ring, forest text; hover cream with a forest/35% ring.
-- **Needs:** gold with forest-deep text and the needs glow; only for routing a person to a pending approval.
-- **Quiet / Warn:** text-only, forest or orange-ink, with a 6% forest or 10% orange wash on hover.
-- **States:** all transition background, shadow, colour and transform over 200ms; active scales to 0.97; busy shows a spinner inside the button that was pressed, not its siblings. A trailing arrow nudges 2px right on hover.
+Dime buttons: an ink edge and an offset you can press.
+- **Shape:** 4px corners; heights 48px (lg, 0.9375rem), 44px (md, 0.875rem), 36px (sm, 0.8125rem), 32px (xs, 0.75rem); Inter 650; 8px icon gap.
+- **Primary:** yellow with ink text. **Secondary:** cream with ink text. **Needs:** ink with cream text and a yellow offset, only for routing a person to a waiting purchase.
+- **Quiet / Warn:** text actions with no edge and a 3px underline (yellow, or pink for warn), offset 6px; hover fills warm surface.
+- **States:** hover lifts 1px and grows the offset (pointer devices only); press sinks 2px and drops it; disabled is 40% with no offset; busy shows a spinner in the pressed button only and keeps it pressed. A trailing arrow nudges 2px right on hover. All over 180ms `ease`.
 
 ### Chips
-- **Style:** paper pill, line ring, forest 0.8125rem medium text.
-- **State:** hover and selected turn peach with a soft-orange ring; active scales to 0.96. Used for example tasks.
+- **Style:** transparent with a 1px warm yellow line border, ink 0.8125rem 650 text, 40px minimum height, left-aligned so long tasks wrap.
+- **State:** hover and chosen (`aria-pressed`) fill yellow with a yellow border.
 
 ### Cards / Containers
-- **Receipt:** paper, 20px top corners, torn bottom, 20px padding, receipt lift. Head: title left, amount right. Sections divide with a 1.5px dashed line rule.
-- **Panel:** paper, 20px, 1px line ring, flat. Used for settings rows and the eval table.
-- **Empty state:** 20px dashed line border, centred muted text, no fill.
+- **Decision sheet:** white paper, 1px ink edge, 4px corners, 20px padding, verdict offset. Head: title left, amount right. Sections divide with a 1px dashed paper-line rule.
+- **Panel:** white paper, 1px paper-line edge, flat. Settings rows, the PayPal strip, the eval table.
+- **Empty state:** warm surface, 1px dashed rule outline, centred muted text.
 
 ### Inputs / Fields
-- **Style:** paper, 1px line border, 20px corners, 14px/16px padding, auto-sizing between 7.5rem and 22rem, field inset shadow.
-- **Focus:** border goes forest/55% and a 4px forest/10% ring appears; the global focus outline is 2px forest offset 2px (cream on the header).
+- **Style:** white paper, 1px ink edge, 4px corners, 14px/16px padding, Inter 1rem, auto-sizing between 7.5rem and 22rem.
+- **Focus:** the field focus offset appears (yellow backing with an ink edge); the browser outline is replaced by it. Elsewhere focus is a 3px ink ring offset 3px; on the dock it turns yellow, offset 2px.
 
 ### Navigation
-- **Tab bar:** paper, top line border, four equal tabs (Rules, Ask, Approvals, Activity; Evals lights Activity). Labels 0.75rem muted, bold forest when active.
-- **Active indicator:** a 56x32 forest pill behind the icon, cream icon; hover shows a 6% forest wash; press scales to 0.9.
-- **Pending badge:** 18px gold pill with forest-deep count and a paper ring, popping in when the count changes.
-- **Header status pill:** "Agent on" is a translucent cream pill with a pinging dot; "Agent is turned off" is soft orange with forest-deep text.
+- **Dock:** an ink bar with 4px corners at the foot, four equal tabs (Rules, Ask, Approvals, Activity; Evals lights Activity), icon over a 0.75rem 700 label in cream at 85%.
+- **Active:** a yellow marker slides under the active tab (transform only, 360ms on the paper curve); the active label and icon turn ink.
+- **Pending badge:** an 18px yellow circle with an ink count and a 2px ink ring, popping in when the count changes.
+- **Status chip:** "Agent on" is white with an ink edge and a pinging mint dot; "Agent is turned off" is pink with an ink dot.
 
-### Decision Stamp (signature)
-The checker's verdict as a rubber stamp: icon plus uppercase word inside a double border, tilted -4deg, tinted per the Three Stamps Rule. When a decision arrives it lands: from 1.7x, -12deg and blurred to 0.93x then settles, 220ms on the house ease. When a person approves or declines, the new stamp lands in place of Asking you before the receipt leaves.
+### Verdict tag (signature)
+The checker's decision as a tag on the sheet: icon plus the fixed word, Satoshi 800 in sentence case, 1px ink edge, filled per the Verdict Colour Rule, tilted -2deg on a 2px ink offset. A person's decline or cancel is a flat dashed tag on warm surface. When a decision arrives the tag lands: it starts lifted on a deep ink offset (8px 12px), is pressed flat (0 offset) and settles at 2px, over 420ms on the paper curve. When a person approves or declines, the new tag lands in place of Asking you and the sheet's offset eases to the new colour before the sheet leaves.
 
-### Reason Lines
-The receipt's line items: each reason is 0.875rem slate text led by a small uppercase cream pill naming who checked it (Rule check, AI check, System).
+### Reason lines
+Each reason is 0.875rem ink text led by a small sentence-case tag naming who checked it (Rule check, AI check, System): warm surface, 1px paper-line edge, Inter 650 at 0.75rem.
+
+### Highlight band
+One title word sits on a hard yellow band across 77–95% of its line box, drawn left to right over 700ms after 120ms. Alarming eval figures sit on a small pink block instead.
+
+### Section heading
+A Satoshi heading followed by a 1px dashed rule that runs to the edge, as on the portfolio's section headings.
+
+### Agent switch
+A 56×32 track with 4px corners and an ink edge, mint when on and warm surface when off; a white 24px knob with an ink edge and offset slides across over 300ms.
 
 ### Notes
-One line under a control with a leading icon: errors in orange-ink with an alert icon (role alert), confirmations in forest with a check (role status); they slide in.
+One line under a control with a 20px disc: pink with an alert icon for errors (role alert), mint with a check for confirmations (role status); ink text; they slide in.
 
 ### Motion
-One ease, `cubic-bezier(0.16, 1, 0.3, 1)`. Steps and receipts slide up 6px over 360ms; the script stroke draws in over 700ms after 120ms; badges pop over 320ms; removed rules slide out right over 180ms; the working indicator is three bobbing dots. Under reduced motion every animation and transition is cut to 1ms.
+Controls: 180ms `ease`. Paper, tags, steps and the dock marker: `cubic-bezier(0.16, 1, 0.3, 1)`; steps and sheets rise 6px over 350ms; badges pop over 320ms; removed rules slide out right over 180ms; the working indicator is three bobbing ink dots. Under reduced motion every animation and transition is cut to 1ms.
 
 ## Do's and Don'ts
 
 ### Do:
-- **Do** put every checker decision on a receipt with a stamp and reason lines, using the shared Receipt, Stamp and ReasonLines parts.
-- **Do** keep gold for "needs you" only: the needs button, the pending badge, the Asking you stamp.
-- **Do** use orange-ink, not orange, for any orange text below display size.
-- **Do** make controls full pills and surfaces 20px; tilt only the stamp.
-- **Do** tint every shadow forest-deep (`rgb(15 46 38 / …)`), soft and offset downward.
-- **Do** animate with the one house ease and honour reduced motion.
+- **Do** put every checker decision on a sheet with a verdict tag and reason lines, using the shared Receipt, Stamp and ReasonLines parts with the decision's `tone`.
+- **Do** keep text ink on every coloured fill; keep muted charcoal on cream and white only.
+- **Do** use 4px corners, 1px ink outlines and blur-free offsets for controls and decision sheets.
+- **Do** keep one highlighted word per screen and sentence case everywhere.
+- **Do** load Satoshi from Fontshare's CDN; never commit its font files to this public repo.
+- **Do** honour reduced motion and keep every state readable without animation.
 
 ### Don't:
-- **Don't** use The Product Kinship's name, logo or blob mark; only its colours and type.
-- **Don't** set more than one Ephesis word on a screen, or use the script outside screen titles.
-- **Don't** reword the decision labels (Approved, Asking you, Blocked).
-- **Don't** fall back to small coloured status badges in a grey list for decisions; that is the default this world replaces.
-- **Don't** add hard-edged or grey shadows, or lift panels and chips off the cream.
+- **Don't** use Rochak's portrait, mascot, "r." monogram or the portfolio's layouts (hero, project selector, marquee, bookshelf, games) in the app.
+- **Don't** reword the decision labels (Approved, Asking you, Blocked) or show a verdict by colour alone.
+- **Don't** use yellow for a settled status, or pink and mint as decoration.
+- **Don't** bring back the retired Product Kinship look: forest and gold, Manrope, the script word, torn receipt edges or rubber-stamp double borders.
+- **Don't** add uppercase tracked labels, gradients, glass or soft-blurred card shadows.

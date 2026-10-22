@@ -36,7 +36,7 @@ It is the layer between "approve every purchase" and blunt spending caps. Code e
 
 ## Brand Commitments
 
-- The product is called **The Payer** (renamed from Agent Mandates for the PayPal AI Hackathon, 21 Oct 2026). Visual identity borrows **The Product Kinship's colours and type only** (confirmed): no Product Kinship name, logo or claim anywhere in the app, so it isn't presented as a community project.
+- The product is called **The Payer** (renamed from Agent Mandates for the PayPal AI Hackathon, 21 Oct 2026). The look follows **Rochak's portfolio design, site-dime** (reskinned 22 Oct 2026, replacing The Product Kinship's colours and type): golden yellow, cream and ink, Satoshi and Inter. Only the visual system carries over: none of Rochak's portrait, mascot or monogram, and none of the portfolio's layouts. Satoshi loads from Fontshare's CDN, because its licence doesn't allow committing the font file to this public repo.
 - Never name the builder's employer, its client bank or their products; write "a UK bank". Mock data and public sources only.
 
 ## Evidence on Hand

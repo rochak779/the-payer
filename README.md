@@ -144,4 +144,4 @@ In Stripe's Issuing settings, set the real-time authorisation timeout fallback t
 
 ## Licence and credits
 
-MIT, see `LICENSE`. Payments: PayPal developer sandbox. Product data: Channel3. Hosting: Render. AI: Google Gemini. Colours and type follow The Product Kinship (its name and logo aren't used), built with Impeccable. Product brief and decisions: `BRIEF.md`. Build plan: `docs/superpowers/plans/2026-10-21-paypal-hackathon.md`.
+MIT, see `LICENSE`. Payments: PayPal developer sandbox. Product data: Channel3. Hosting: Render. AI: Google Gemini. The look follows Rochak's portfolio design (site-dime), built with Impeccable. Fonts: Satoshi by Indian Type Foundry, loaded from Fontshare's CDN under the ITF Free Font License (the font file isn't in this repo); Inter by Rasmus Andersson, SIL Open Font License, served by `next/font`. Product brief and decisions: `BRIEF.md`. Build plan: `docs/superpowers/plans/2026-10-21-paypal-hackathon.md`.

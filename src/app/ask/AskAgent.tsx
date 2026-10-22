@@ -35,14 +35,14 @@ function purchaseFor(e: RunEvent, purchases: RunPurchase[], used: Set<string>): 
 function RunReceipt({ p }: { p: RunPurchase }) {
   const shown = p.reasons.filter((r) => r.outcome !== 'approve');
   return (
-    <Receipt className="step-in">
+    <Receipt className="step-in" tone={stampFor(p.status, p.outcome)}>
       <ReceiptHead title={p.item} sub={`${p.merchant} · ${STATUS_LABEL[p.status]}`} amount={formatMoney(p.total)} />
       <ReceiptSection className="space-y-3">
         <Stamp outcome={stampFor(p.status, p.outcome)} land />
         <ReasonLines reasons={shown} fallback={p.summary} />
       </ReceiptSection>
       {p.paymentLabel && (
-        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
+        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-[650] text-ink">
           <CardIcon width={18} height={18} />
           {p.paymentLabel}
         </ReceiptSection>
@@ -56,7 +56,7 @@ function Step({ e }: { e: RunEvent }) {
     const { name, url } = splitFound(e.text);
     return (
       <li className="step-in truncate pl-10 text-[0.8125rem] text-muted">
-        {url ? <a href={url} target="_blank" rel="noreferrer" title={url} className="hover:text-forest hover:underline">{name}</a> : name}
+        {url ? <a href={url} target="_blank" rel="noreferrer" title={url} className="hover:text-ink hover:underline">{name}</a> : name}
       </li>
     );
   }
@@ -64,11 +64,11 @@ function Step({ e }: { e: RunEvent }) {
   const error = e.kind === 'error';
   return (
     <li className="step-in relative flex items-start gap-3">
-      <span className={`relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full ring-4 ring-cream ${error ? 'bg-peach text-orange-ink' : 'bg-forest/[0.08] text-forest'}`}>
+      <span className={`relative z-10 flex size-7 shrink-0 items-center justify-center rounded-full border border-ink text-ink ring-4 ring-cream ${error ? 'bg-pink' : 'bg-paper'}`}>
         <Icon width={15} height={15} strokeWidth={2} />
       </span>
-      <p className={`min-w-0 pt-1 text-sm leading-relaxed ${error ? 'text-orange-ink' : 'text-slate'}`}>
-        {lead && <span className={`font-bold ${error ? '' : 'text-forest'}`}>{lead}: </span>}
+      <p className="min-w-0 pt-1 text-sm leading-relaxed text-ink">
+        {lead && <span className="font-bold">{lead}: </span>}
         {e.text}
       </p>
     </li>
@@ -128,7 +128,7 @@ export function AskAgent({ suggestions }: { suggestions: readonly string[] }) {
         />
         <div className="flex flex-wrap gap-2">
           {suggestions.map((ex) => (
-            <button key={ex} type="button" onClick={() => setTask(ex)} aria-pressed={task === ex} className={`${CHIP} ${task === ex ? 'bg-peach ring-orange-soft' : ''}`}>
+            <button key={ex} type="button" onClick={() => setTask(ex)} aria-pressed={task === ex} className={CHIP}>
               {ex}
             </button>
           ))}
@@ -142,17 +142,17 @@ export function AskAgent({ suggestions }: { suggestions: readonly string[] }) {
 
       {run && (
         <section aria-live="polite" aria-label="Agent progress" className="space-y-4">
-          <ol className="relative space-y-3 before:absolute before:bottom-3 before:left-[13px] before:top-3 before:w-px before:bg-line">
+          <ol className="relative space-y-3 before:absolute before:bottom-3 before:left-[13.5px] before:top-3 before:border-l before:border-dashed before:border-rule">
             {run.events.map((e, i) => {
               const p = e.kind === 'decision' ? purchaseFor(e, run.approvals, used) : undefined;
               return p ? <li key={i} className="relative z-10 py-1"><RunReceipt p={p} /></li> : <Step key={i} e={e} />;
             })}
             {run.status === 'running' && (
               <li className="relative flex items-center gap-3">
-                <span className="thinking relative z-10 flex size-7 items-center justify-center gap-[3px] rounded-full bg-forest/[0.08] ring-4 ring-cream">
-                  <span className="size-1 rounded-full bg-forest" />
-                  <span className="size-1 rounded-full bg-forest" />
-                  <span className="size-1 rounded-full bg-forest" />
+                <span className="thinking relative z-10 flex size-7 items-center justify-center gap-[3px] rounded-full border border-ink bg-paper ring-4 ring-cream">
+                  <span className="size-1 rounded-full bg-ink" />
+                  <span className="size-1 rounded-full bg-ink" />
+                  <span className="size-1 rounded-full bg-ink" />
                 </span>
                 <span className="text-sm text-muted">Working…</span>
               </li>

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { ArrowIcon, CheckIcon } from '@/components/icons';
-import { buttonClass, Nudge, ScreenTitle } from '@/components/ui';
+import { buttonClass, EMPTY, Nudge, ScreenTitle } from '@/components/ui';
 import { formatMoney } from '@/domain/money';
 import { currentStore } from '@/store/visitor';
 import { ApprovalReceipt } from './ApprovalReceipt';
@@ -11,13 +11,13 @@ export default async function ApprovalsPage() {
   const pending = (await currentStore()).read().approvals.filter((a) => a.status === 'pending').reverse();
   return (
     <div>
-      <ScreenTitle before="Waiting for " script="you" />
+      <ScreenTitle before="Waiting for " highlight="you" />
       {pending.length === 0 ? (
-        <div className="step-in flex flex-col items-center rounded-[20px] border border-dashed border-line px-6 py-10 text-center">
-          <span className="flex size-11 items-center justify-center rounded-full bg-forest/[0.08] text-forest">
+        <div className={`step-in flex flex-col items-center ${EMPTY} px-6 py-10`}>
+          <span className="flex size-11 items-center justify-center rounded-full border border-ink bg-mint text-ink">
             <CheckIcon width={22} height={22} strokeWidth={2.25} />
           </span>
-          <p className="mt-3 text-[0.9375rem] font-semibold text-forest">Nothing to approve.</p>
+          <p className="mt-3 font-display text-lg font-extrabold tracking-[-0.02em] text-ink">Nothing to approve.</p>
           <Link href="/ask" className={buttonClass('quiet', 'md', 'mt-2')}>
             Ask the agent
             <Nudge><ArrowIcon width={16} height={16} strokeWidth={2} /></Nudge>

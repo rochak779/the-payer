@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { previewRules, saveRules, type PreviewItem } from '@/app/actions';
 import { CheckIcon, CrossIcon } from '@/components/icons';
-import { Button, FIELD, Note, Receipt, Script } from '@/components/ui';
+import { Button, EMPTY, FIELD, Highlight, Note, Receipt, SectionHeading } from '@/components/ui';
 
 export function RulesEditor({ initialText, saved }: { initialText: string; saved: PreviewItem[] }) {
   const [text, setText] = useState(initialText);
@@ -59,31 +59,31 @@ export function RulesEditor({ initialText, saved }: { initialText: string; saved
 
       <section aria-live="polite" className="space-y-3">
         {preview ? (
-          <h3 className="text-xl font-extrabold tracking-[-0.02em] text-forest">
-            Here’s what I <Script>understood</Script>
-          </h3>
+          <SectionHeading>
+            Here’s what I <Highlight>understood</Highlight>
+          </SectionHeading>
         ) : (
-          <h3 className="text-base font-bold text-forest">Saved rules</h3>
+          <SectionHeading>Saved rules</SectionHeading>
         )}
         {shown.length === 0 ? (
-          <p className="rounded-[20px] border border-dashed border-line px-4 py-6 text-center text-sm text-muted">No rules yet. Write one above and I’ll read it back to you.</p>
+          <p className={EMPTY}>No rules yet. Write one above and I’ll read it back to you.</p>
         ) : (
           <Receipt key={preview ? 'preview' : 'saved'} className={preview ? 'step-in' : ''}>
             <ol>
               {shown.map((p, i) => (
                 <li key={p.rule.id} className={`${i > 0 ? 'rule-dashed mt-3.5 pt-3.5' : ''} ${leaving === p.rule.id ? 'leaving' : ''}`}>
                   <div className="flex items-start gap-3">
-                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-forest/[0.08] text-forest">
+                    <span className="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full border border-ink bg-mint text-ink">
                       <CheckIcon width={13} height={13} strokeWidth={2.5} />
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="text-[0.9375rem] font-semibold leading-snug text-slate">{p.explanation}</p>
+                      <p className="text-[0.9375rem] font-medium leading-snug text-ink">{p.explanation}</p>
                       <p className="mt-1 text-[0.8125rem] leading-snug text-muted">{p.checkedBy} · from “{p.rule.source}”</p>
                       {preview && (
                         <button
                           type="button"
                           onClick={() => remove(p.rule.id)}
-                          className="mt-2 inline-flex items-center gap-1.5 rounded-full py-1 pr-2 text-[0.8125rem] font-semibold text-orange-ink transition-colors duration-200 hover:text-orange active:scale-[0.97]"
+                          className="-ml-1.5 mt-2 inline-flex min-h-8 items-center gap-1.5 rounded-[4px] px-1.5 text-[0.8125rem] font-[650] text-ink underline decoration-pink decoration-[3px] underline-offset-4 transition-colors duration-200 hover:bg-pink active:translate-y-px"
                         >
                           <CrossIcon width={14} height={14} strokeWidth={2.25} />
                           Remove: that’s not what I meant
