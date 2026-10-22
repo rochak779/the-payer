@@ -890,6 +890,8 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 ### Session 15: Devpost write-up and submit
 
 > **Comes before the video (Rochak, 21 Oct 2026):** leave a placeholder for the video link; Session 14 fills it in, and Rochak submits once it's there.
+>
+> **As built (22 Oct 2026):** Steps 1 and 4 done (PR on `docs/devpost`, not merged). `docs/devpost.md` has a section per Devpost field, the testing instructions, "Updated during the hackathon" (first commit 15 Oct 2026, checked in `git log`; PayPal, Channel3 and hosting from 21 Oct), the AI and partner tools, and one paragraph per judging criterion. Two placeholders stay until Rochak has them: `HOSTED_URL_TBD` (3 places) and `VIDEO_URL_TBD` (3 places). There's no judge login: the testing instructions say the hosted demo is pre-connected to the demo sandbox buyer (Session 12). The write-up names only PayPal, Channel3, Render, Gemini, Claude Code and AP2 (an open protocol); the survey behind "3%" is described, not named. The Presentation paragraph is marked to check against the final video. **Steps 2 and 3 are Rochak's, after the video (Session 14):** paste into Devpost, add the links, submit, then freeze the demo.
 
 **Files:** Create `docs/devpost.md`, with the text to paste into each Devpost field:
 - inspiration;
@@ -905,9 +907,9 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 
 The positioning line: "PayPal made shops agent-ready. The Payer makes buyers agent-safe."
 
-- [ ] **Step 1: Draft `docs/devpost.md`.** Every claim must match what the video and the hosted app show.
+- [x] **Step 1: Draft `docs/devpost.md`.** Every claim must match what the video and the hosted app show.
 - [ ] **Step 2: Rochak pastes it into Devpost** and adds the video link, repo link and hosted URL.
   - Partner tools: Channel3 and Render.
   - Rochak submits by 10 Nov. The hard deadline is 12 Nov, 20:00 UK.
 - [ ] **Step 3: Freeze the demo.** After submitting, no changes to `main` that could break the hosted demo until 15 Dec, except fixes. Keep Render running until winners are announced (about 21 Dec).
-- [ ] **Step 4: Commit `docs/devpost.md`, push, open a PR.**
+- [x] **Step 4: Commit `docs/devpost.md`, push, open a PR.**
