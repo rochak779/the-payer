@@ -221,18 +221,18 @@ The product is entered in the PayPal AI Hackathon on Devpost as **The Payer** (r
 - **The agent gets no PayPal tools.** It can only ask to buy. Only the payment check's code path can move money.
 - **Retail, not hotels.** Product search comes from Channel3 (US shops), because Channel3 is retail only. The hotel scenarios stay in the offline listings and the evals.
 - **US dollars,** because UK sandbox shops can't save a buyer's PayPal (below). UK spelling stays.
-- **Hosted on Render** for judges (`HOSTED=1`): each visitor gets their own seeded demo, already connected to a sandbox buyer, with daily limits that fall back to the offline agent.
+- **Hosted on Render** for judges (`HOSTED=1`) at **https://the-payer.onrender.com**: each visitor gets their own seeded demo, already connected to a sandbox buyer, with daily limits that fall back to the offline agent. Smoke-tested live on 22 Oct 2026 (plan, Session 11 Step 6).
 - **Generic demo content:** fictional shops and unbranded products, because the hackathon bans third-party trademarks in the video.
 
 **The hackathon's requirements, and where they're met:**
 - PayPal central, with an AI tool: the PayPal rail (vault, hold, capture, void; plan Sessions 1, 6–8) and Gemini as the agent, rule reader and checker.
 - New since the 1 Oct 2026 start: the first commit is 15 Oct 2026.
-- A working demo judges can use, free, until 15 Dec 2026: the Render service (Session 11), with no login needed.
+- A working demo judges can use, free, until 15 Dec 2026: the Render service at https://the-payer.onrender.com (Session 11), with no login needed.
 - A public repo with an open-source licence: MIT (`LICENSE`, Session 12). Rochak makes the repo public.
 - A video under 3 minutes with no third-party trademarks: Session 14, made last.
 - Prizes aimed for: Best Use of Agentic Commerce, and Best Use of Channel3.
 
-**Status (21 Oct 2026):** Sessions 1–11 are built and merged. Session 12 (licence, judges' README, the rename) is in review. Left: the Render deploy and its smoke test, making the repo public (both Rochak), the Devpost write-up (Session 15) and the video (Session 14). Not built: refund (Session 8b, optional) and retail eval cases (Session 10b, optional).
+**Status (22 Oct 2026):** Sessions 1–12 and the Devpost draft (Session 15, Steps 1 and 4) are merged. The demo is live on Render at https://the-payer.onrender.com and passed its smoke test (Session 11 Step 6). Left: making the repo public (Rochak), the video (Session 14), then pasting the write-up into Devpost and submitting (Session 15, Steps 2–3). Not built: refund (Session 8b, optional) and retail eval cases (Session 10b, optional).
 
 ## PayPal: verified in sandbox (21 Oct 2026, hackathon Session 1)
 

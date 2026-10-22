@@ -8,7 +8,7 @@ Built for the PayPal AI Hackathon (October to November 2026), entirely on PayPal
 
 ## Try it
 
-**HOSTED_URL_TBD**
+**https://the-payer.onrender.com**
 
 - **Nothing to install, no login.** Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)").
 - **Optional: use your own PayPal sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**; the app checks with PayPal before saving.
@@ -28,7 +28,7 @@ Built for the PayPal AI Hackathon (October to November 2026), entirely on PayPal
 3. **Ask: the present.** "Buy a wooden building blocks set for my nephew's birthday, about $40". The gift rule means it asks you first. Open **Approvals**, see why, and press **Approve**. It's paid the same way.
 4. **Ask: the headphones.** "Buy wireless headphones under $80". Live listings are almost always new, so this one is usually approved and paid. On the offline listings the headphones are refurbished, and "Only new items" blocks them: run it locally to see that.
 5. **Activity.** Every decision is listed with its reason, and each paid purchase shows "PayPal took $… (capture …)". On a paid purchase, play the shop trying it on: **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**. The payment check refuses each one before PayPal is even called. (On its own, PayPal lets a shop take up to 15% more than was held, capped at $75. Your rules hold it to the penny.)
-6. **The off switch.** Turn the agent off on Activity: anything waiting for you is cancelled, open PayPal holds are voided, and new tasks are refused. Turn it back on to carry on.
+6. **The off switch.** Turn the agent off on Activity: anything waiting for you is cancelled, open PayPal holds are voided, and anything a new task tries to buy is blocked. Turn it back on to carry on.
 7. **How well does it decide?** The button at the bottom of Activity shows the checker's measured scores against a keyword baseline (see Evals below).
 
 ## How it works

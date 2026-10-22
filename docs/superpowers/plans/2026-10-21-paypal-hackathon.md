@@ -776,6 +776,23 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 
 > **As built (21 Oct 2026):** Steps 1–5 done (code, config and the PR on `feat/render-deploy`); the Render dashboard part of Step 5 and Step 6 wait for Rochak. `GET /api/health` answers `{ ok: true }` without reading any data, key or outside service. `render.yaml` is as listed below with two changes. `NODE_ENV=production` is left out: Render sets it itself, at runtime only, and a Blueprint value would apply to the build too, where `npm ci` then skips the devDependencies the build needs (a test build failed with it and passed without it). `plan: starter` is Render's legacy name for today's `0.5c-512mb`, which Render says is still supported. A Render-like build (a clean copy, no `.env.local`, no keys, only the Blueprint's switches) passes with every route dynamic, and `npm start` then serves `/api/health` with 200. The README has a Deploy section. Also in this PR: the Ask screen's suggested tasks now use the Session 10 video wordings (mug, building blocks) plus the headphones; offline they still give approve and pay $12, ask, and block. Rochak's 21 Oct decisions are recorded (name "The Payer", free Gemini key, Session 13 skipped, video last).
 
+> **As built, Step 6 (22 Oct 2026):** the hosted demo at **https://the-payer.onrender.com** passed its smoke test. Two visitors (A and B) were two curl cookie jars, not two browsers (no browser automation). Every step went through the real server actions: `startTask`, `decideApproval` and `toggleAgent` with the `Next-Action` header and the ids from the hosted client JS, and `demoCharge` and the Connect strip's Cancel as plain form posts. Live switches: Gemini agent, rule reader and checker, Channel3 search, PayPal sandbox with the demo buyer. 5 live tasks in all.
+>
+> | Visitor | Task | Product | Shop | Price | Outcome | Paid | Capture |
+> |---|---|---|---|---|---|---|---|
+> | A | mug | ceramic coffee mug | a US big-box retailer | $8.72 | approve | yes | `6US64791RG4870919` |
+> | A | nephew | wooden building blocks set | a US department store | $49.99 | ask, then approved on Approvals | yes | `5W619783DA6736114` |
+> | A | headphones | wireless headphones | a US department store | $49.49 | approve | yes | `2SJ16722WP686802D` |
+> | B | nephew | wooden building blocks set | a US big-box retailer | $37.99 | ask, then cancelled by the off switch; approving it refused | no | none |
+> | B | mug, agent off | ceramic coffee mug | a US big-box retailer | $8.72 | block ("The agent is turned off.") | no | none |
+>
+> - **Visitors:** each got its own cookie and file. Both `/rules` pages showed the four seeded rules, with different rule ids. After A's purchases, B's Activity said "No purchases yet", B's Approvals was empty, and B reading A's run by id got 404. At the end, neither visitor's Activity showed the other's purchases.
+> - **PayPal:** each paid purchase showed "PayPal took $X (capture …)" on Activity. PayPal's API confirmed each capture `COMPLETED` at exactly the requested price, with 1 hold and 1 capture per order (orders `22467906TM063015P`, `7G557209AF9274235`, `9HR66226P2723371M`). The requests used the Channel3 offer's price (Session 10).
+> - **Demo buttons:** all three were refused on the mug ("$28.72 is more than the approved $8.72", "isn't the approved merchant", "already been used"). The mug's order still had exactly 1 capture afterwards.
+> - **Off switch:** B's waiting purchase was cancelled ("1 open purchase(s) cancelled"). The real `decideApproval` then failed, and the purchase stayed cancelled with no hold. A new task still ran its searches, then its purchase was blocked. So the README and Devpost text now say "anything a new task tries to buy is blocked", not "new tasks are refused". B's agent was turned back on afterwards.
+> - **Connect PayPal (limited):** pressing Connect made a setup token, and its PayPal approve link loads. PayPal's approve page carries `https://the-payer.onrender.com/paypal/return?cancelled=1`, so `APP_URL` is right. The return itself can't be tested: PayPal's sandbox never sends the buyer back (Session 7). No PayPal login was made, and the pending connect was cancelled.
+> - **Offline notice (skipped):** the `LIMIT_TASKS_PER_VISITOR=1` check needs a Render setting change. Session 5 already checked the fallback through the real `startTask` action.
+
 **Needs:** a Render account with credits and repo access. Rochak types the secret values into Render's environment settings; values never pass through chat.
 
 **Read first:** `node_modules/next/dist/docs/01-app/02-guides/self-hosting.md` (especially the section on `after`), and Render's Node and blueprint docs (render.com/docs/blueprint-spec).
@@ -797,19 +814,19 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 - [x] **Step 3: Implement the route, `render.yaml` and `.node-version`.**
 - [x] **Step 4: Run `npm test && npm run typecheck && npm run build`.** Expected: all pass, and the build succeeds.
 - [x] **Step 5: Commit, push, open a PR.** Rochak merges. Then (Rochak, in Render):
-  - [ ] In Render, choose New → Blueprint and pick `rochak779/the-payer`.
-  - [ ] Type in the secret values.
-  - [ ] Set `APP_URL` to the service URL once it's known.
-  - [ ] Deploy.
-- [ ] **Step 6: Smoke test the hosted URL** in two browsers:
+  - [x] In Render, choose New → Blueprint and pick `rochak779/the-payer`.
+  - [x] Type in the secret values.
+  - [x] Set `APP_URL` to the service URL once it's known.
+  - [x] Deploy. (Rochak, 22 Oct. The service is live at https://the-payer.onrender.com. Step 6 confirmed the keys and `APP_URL` from outside.)
+- [x] **Step 6: Smoke test the hosted URL** in two browsers (done 22 Oct with two curl cookie jars; results in the as-built note above):
   - each shows the seeded rules;
   - the three tasks run live;
   - the sandbox shows the captures;
   - the Activity buttons are refused;
   - the off switch works;
-  - "Connect PayPal" returns to the hosted URL.
+  - "Connect PayPal" returns to the hosted URL. **Limited:** the setup token and its approve link were checked, and the approve page carries the hosted return address. The return itself can't be tested: PayPal's sandbox never sends the buyer back (Session 7).
 
-  Then, for 2 minutes, set `LIMIT_TASKS_PER_VISITOR=1` and check that the offline notice appears; set it back. Record the URL in BRIEF.md and the README.
+  Then, for 2 minutes, set `LIMIT_TASKS_PER_VISITOR=1` and check that the offline notice appears; set it back. **Skipped:** it needs a Render setting change. Session 5 checked the fallback through the real `startTask` action. Record the URL in BRIEF.md and the README. (Done.)
 
 ### Session 12: Public-repo prep (licence, judge README, clean-up)
 
