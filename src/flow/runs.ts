@@ -88,6 +88,13 @@ export async function executeRun(deps: FlowDeps, runId: string): Promise<void> {
     },
   };
 
+  // Off means off: don't spend AI or search calls on a task whose purchase would be blocked anyway.
+  if (!deps.store.read().settings.agentEnabled) {
+    emit({ kind: 'status', text: "The agent is turned off, so it won't shop. Turn it on in Activity." });
+    deps.store.update((db) => { findRun(db, runId).status = 'done'; });
+    return;
+  }
+
   try {
     await deps.shopper.run(task, tools, emit);
     deps.store.update((db) => { findRun(db, runId).status = 'done'; });

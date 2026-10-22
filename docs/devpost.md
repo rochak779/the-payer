@@ -49,7 +49,7 @@ Then you give the shopping agent a task. It searches real products from US shops
 
 **Activity** lists every decision with its reason, and each paid purchase shows PayPal's capture id. Three demo buttons play a shop trying it on: **Shop asks for $20 more**, **Another shop asks** and **Shop asks again**. The payment check refuses each one before PayPal is even called. On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). The Payer holds it to the penny.
 
-The **off switch** stops everything: purchases waiting for you are cancelled, open PayPal holds are voided and anything a new task tries to buy is blocked.
+The **off switch** stops everything: purchases waiting for you are cancelled, open PayPal holds are voided and a new task stops at once, without shopping.
 
 ## How we built it
 
@@ -147,7 +147,7 @@ Channel3 and Render.
    - "Buy a wooden building blocks set for my nephew's birthday, about $40": the gift rule makes it ask first. Open **Approvals**, read why, and press **Approve**. It's paid the same way.
    - "Buy wireless headphones under $80": live listings are almost always new, so this one is usually approved and paid. The "blocked" scene (refurbished headphones, stopped by "Only new items") appears reliably only on the offline listings: run the app locally with no keys to see it (`npm install && npm run seed && npm run dev`).
 3. **Activity.** Each paid purchase shows "PayPal took $… (capture …)". On a paid purchase, press **Shop asks for $20 more**, **Another shop asks** or **Shop asks again**. Each is refused by the payment check before PayPal is called. The button at the bottom shows the checker's measured scores.
-4. **The off switch.** Turn the agent off on Activity. Anything waiting for you is cancelled, open PayPal holds are voided and anything a new task tries to buy is blocked. Turn it back on to carry on.
+4. **The off switch.** Turn the agent off on Activity. Anything waiting for you is cancelled, open PayPal holds are voided and a new task stops at once, without shopping. Turn it back on to carry on.
 
 **Good to know:**
 
