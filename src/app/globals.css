@@ -1,4 +1,6 @@
 @import "tailwindcss";
+/* The demo video (video/) is a separate project; keep its source out of the app's class scan. */
+@source not "../../video";
 
 /* The look follows Rochak's portfolio design, site-dime: golden yellow, warm cream, ink outlines, white paper. */
 @theme {

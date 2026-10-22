@@ -1,0 +1,7 @@
+node_modules/
+out/
+# Generated: the app recordings, the rendered score and effects (re-made by `npm run record` and `npm run music`).
+public/rec/
+public/music/
+public/sfx/
+.rec-tmp/

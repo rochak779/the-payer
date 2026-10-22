@@ -1,0 +1,34 @@
+{
+  "source": "PayPal sandbox API, GET /v2/payments/authorizations/{id} and GET /v2/checkout/orders/{id}",
+  "readAt": "2026-10-22T16:09:59.443Z",
+  "order": {
+    "id": "5HK74664W0829772V",
+    "status": "COMPLETED",
+    "intent": "AUTHORIZE",
+    "amount": {
+      "value": "12.00",
+      "currency": "USD"
+    }
+  },
+  "holds": [
+    {
+      "id": "4BS156651G170202M",
+      "status": "CAPTURED",
+      "amount": {
+        "value": "12.00",
+        "currency": "USD"
+      }
+    }
+  ],
+  "captures": [
+    {
+      "id": "72B64000K3396642N",
+      "status": "COMPLETED",
+      "amount": {
+        "value": "12.00",
+        "currency": "USD"
+      },
+      "finalCapture": true
+    }
+  ]
+}
