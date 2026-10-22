@@ -118,7 +118,7 @@ Other switches: `SEARCH=firecrawl` searches the web with Firecrawl instead, and 
 
 **Deploy your own:** in Render, choose **New → Blueprint** and pick this repo. Render reads `render.yaml` and asks for `GEMINI_API_KEY`, `CHANNEL3_API_KEY`, `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_VAULT_ID` (the demo buyer, so visitors start connected) and `APP_URL` (the service's own address, shown on its Render page). Don't set `NODE_ENV`: Render sets it when the app runs, and at build time it would make `npm ci` skip the build tools. Daily limits default to 8 tasks per visitor, 30 tasks a day and 20 rule previews per visitor; change them with `LIMIT_TASKS_PER_VISITOR`, `LIMIT_TASKS_PER_DAY` and `LIMIT_PREVIEWS_PER_VISITOR`.
 
-**Checks:** `npm test` (249 tests), `npm run typecheck`, `npm run lint`, `npm run build`. The stack is Next.js 16 (App Router), TypeScript (strict), Zod, Tailwind CSS 4 and Vitest. Money is whole cents (or pence) everywhere and only formatted for display.
+**Checks:** `npm test` (250 tests), `npm run typecheck`, `npm run lint`, `npm run build`. The stack is Next.js 16 (App Router), TypeScript (strict), Zod, Tailwind CSS 4 and Vitest. Money is whole cents (or pence) everywhere and only formatted for display.
 
 ## Stripe as an alternative rail
 

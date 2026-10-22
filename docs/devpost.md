@@ -86,7 +86,7 @@ your rules → shopping agent → checker → (you, if it asks) → PayPal hold 
 
 **Offline mode:** every service has an offline stand-in (canned listings at fictional shops, a keyword checker, a simple rule reader and offline test payments). So the app runs with no keys at all.
 
-**Tests:** 249 automated tests, including PayPal's failure cases: a capture that fails after the check approved, a retry after that, and a void that fails.
+**Tests:** 250 automated tests, including PayPal's failure cases: a capture that fails after the check approved, a retry after that, and a void that fails.
 
 ## Challenges we ran into
 
@@ -172,7 +172,7 @@ The Payer is new. The repository's first commit is 15 Oct 2026, two weeks after 
 
 ## How it meets the judging criteria
 
-**Technological Implementation.** PayPal is the payment path, not a decoration: Vault v3 saves the buyer's PayPal once, Orders v2 with `intent: AUTHORIZE` holds exactly the approved amount, and Payments v2 captures it only after a code-only check, or voids it at the off switch. Fixed `PayPal-Request-Id`s stop double payments on retries. Gemini runs the agent, the rule reader and the checker. Channel3 gives real products, and its listing data overrides the agent's words. It works live: 17 paid purchases in 24 live runs, each one hold and one completed capture at the listing's price, with 249 automated tests behind it.
+**Technological Implementation.** PayPal is the payment path, not a decoration: Vault v3 saves the buyer's PayPal once, Orders v2 with `intent: AUTHORIZE` holds exactly the approved amount, and Payments v2 captures it only after a code-only check, or voids it at the off switch. Fixed `PayPal-Request-Id`s stop double payments on retries. Gemini runs the agent, the rule reader and the checker. Channel3 gives real products, and its listing data overrides the agent's words. It works live: 17 paid purchases in 24 live runs, each one hold and one completed capture at the listing's price, with 250 automated tests behind it.
 
 **Design.** It's a complete product, not a proof of concept: four screens (Rules, Ask, Approvals, Activity), plain-English rules read back before saving, a reason on every decision, one-tap approval and an off switch. Judges get their own seeded copy with a sandbox buyer already connected, so there's nothing to set up. Past a daily limit, runs switch to the offline agent and say so in one line. If an outside service is over its own limit, the run stops with a plain message and nothing is approved.
 

@@ -27,6 +27,6 @@ describe('demo content', () => {
 
   it('no fixture names a real brand', () => {
     const text = JSON.stringify([...SCENARIOS, FALLBACK]);
-    for (const brand of ['LEGO', 'Bose', 'Waterstones']) expect(text).not.toContain(brand);
+    for (const brand of ['LEGO', 'Bose', 'Waterstones', 'Pragmatic Programmer']) expect(text).not.toContain(brand);
   });
 });
