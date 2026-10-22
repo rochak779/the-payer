@@ -51,6 +51,20 @@ describe('executeRun', () => {
     expect(d.store.read().approvals[0]).toMatchObject({ status: 'pending', payment: null });
   });
 
+  it('with the agent turned off, stops at once: no search, no AI, no purchase', async () => {
+    const d = deps();
+    d.store.update((db) => { db.settings.agentEnabled = false; });
+    let searches = 0;
+    const shopperCalled: string[] = [];
+    const spy: Shopper = { name: 'spy', run: async (task) => { shopperCalled.push(task); } };
+    const view = await runTask({ ...d, shopper: spy, search: { name: 'count', search: async () => { searches += 1; return []; } } }, 'Buy a mug');
+    expect(shopperCalled).toEqual([]);
+    expect(searches).toBe(0);
+    expect(view.status).toBe('done');
+    expect(view.events.at(-1)).toMatchObject({ kind: 'status', text: 'The agent is turned off, so it won\'t shop. Turn it on in Activity.' });
+    expect(d.store.read().approvals).toEqual([]);
+  });
+
   it('marks the run failed and records the error if the agent crashes', async () => {
     const broken: Shopper = { name: 'broken', run: async () => { throw new Error('agent crashed'); } };
     const view = await runTask({ ...deps(), shopper: broken }, 'anything');
