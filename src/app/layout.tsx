@@ -1,14 +1,17 @@
-import type { Metadata } from 'next';
-import { Ephesis, Manrope } from 'next/font/google';
+import type { Metadata, Viewport } from 'next';
+import { Inter } from 'next/font/google';
 import type { ReactNode } from 'react';
 import { TabBar } from '@/components/TabBar';
 import { currentStore } from '@/store/visitor';
 import './globals.css';
 
-const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
-const ephesis = Ephesis({ subsets: ['latin'], weight: '400', variable: '--font-ephesis' });
+const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
+
+/** Satoshi comes from Fontshare's CDN: its licence allows using it on our own site but not committing the file to a public repo. */
+const SATOSHI_CSS = 'https://api.fontshare.com/v2/css?f[]=satoshi@1&display=swap';
 
 export const metadata: Metadata = { title: 'The Payer', description: 'Spending rules for your AI shopping agent' };
+export const viewport: Viewport = { themeColor: '#fefaf4' };
 export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -16,21 +19,26 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const pending = db.approvals.filter((a) => a.status === 'pending').length;
   const on = db.settings.agentEnabled;
   return (
-    <html lang="en-GB" className={`${manrope.variable} ${ephesis.variable}`}>
-      <body className="min-h-screen bg-slate font-sans text-slate antialiased">
-        <div className="mx-auto flex min-h-screen max-w-[420px] flex-col bg-cream sm:my-8 sm:h-[880px] sm:min-h-0 sm:overflow-hidden sm:rounded-[2.75rem] sm:shadow-[0_30px_60px_-20px_rgb(0_0_0/0.55),0_0_0_10px_rgb(255_255_255/0.04)]">
-          <header className="on-forest bg-forest px-5 pb-5 pt-7 text-cream">
+    <html lang="en-GB" className={inter.variable}>
+      <head>
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link rel="preconnect" href="https://cdn.fontshare.com" crossOrigin="anonymous" />
+        <link rel="stylesheet" href={SATOSHI_CSS} />
+      </head>
+      <body className="min-h-screen bg-cream font-sans text-ink antialiased sm:bg-yellow">
+        <div className="mx-auto flex min-h-screen max-w-[420px] flex-col bg-cream sm:my-8 sm:h-[min(880px,calc(100dvh-4rem))] sm:min-h-[640px] sm:overflow-hidden sm:rounded-[4px] sm:border sm:border-ink sm:shadow-[8px_12px_28px_rgb(92_73_26/0.22)]">
+          <header className="border-b border-line bg-cream px-5 pb-4 pt-6">
             <div className="flex items-center justify-between gap-3">
-              <div>
-                <h1 className="text-[1.375rem] font-extrabold leading-tight tracking-[-0.02em]">The Payer</h1>
-                <p className="text-[0.8125rem] text-cream/70">Spending rules for your shopping agent</p>
+              <div className="min-w-0">
+                <h1 className="wordmark text-ink">The Payer</h1>
+                <p className="mt-1 text-[0.8125rem] text-muted text-pretty">Spending rules for your shopping agent</p>
               </div>
               <span
-                className={`inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1.5 text-[0.8125rem] font-semibold ${on ? 'bg-cream/10 text-cream ring-1 ring-cream/15' : 'bg-orange-soft text-forest-deep'}`}
+                className={`inline-flex shrink-0 items-center gap-2 rounded-[4px] border border-ink px-2.5 py-1.5 text-[0.8125rem] font-[650] text-ink ${on ? 'bg-paper' : 'bg-pink'}`}
               >
-                <span className="relative flex size-2">
-                  {on && <span className="absolute inset-0 animate-ping rounded-full bg-cream/60" />}
-                  <span className={`relative size-2 rounded-full ${on ? 'bg-cream' : 'bg-forest-deep'}`} />
+                <span className="relative flex size-2.5">
+                  {on && <span className="absolute inset-0 animate-ping rounded-full bg-mint" />}
+                  <span className={`relative size-2.5 rounded-full border border-ink ${on ? 'bg-mint' : 'bg-ink'}`} />
                 </span>
                 {on ? 'Agent on' : 'Agent is turned off'}
               </span>

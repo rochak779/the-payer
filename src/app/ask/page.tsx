@@ -12,7 +12,7 @@ export default async function AskPage({ searchParams }: { searchParams: Promise<
   const { paypal } = await searchParams;
   return (
     <div>
-      <ScreenTitle before="Ask the " script="agent">
+      <ScreenTitle before="Ask the " highlight="agent">
         The agent finds an option and asks to buy it. It never sees how you pay.
       </ScreenTitle>
       {paymentsName() === 'paypal' && <PayPalStrip result={paypal} />}
@@ -37,8 +37,8 @@ async function PayPalStrip({ result }: { result: string | string[] | undefined }
   return (
     <div className="mb-6 space-y-2">
       <Panel className="flex flex-wrap items-center gap-3 px-4 py-3">
-        <CardIcon width={18} height={18} className="shrink-0 text-forest" />
-        <p className="min-w-0 flex-1 text-sm text-slate">
+        <CardIcon width={18} height={18} className="shrink-0 text-ink" />
+        <p className="min-w-0 flex-1 text-sm text-ink">
           {own ? 'PayPal connected.'
             : pending ? 'Approve on PayPal in the new tab, then come back and finish.'
             : demo ? 'Using the demo PayPal buyer (sandbox).'
@@ -48,7 +48,7 @@ async function PayPalStrip({ result }: { result: string | string[] | undefined }
           <form action={disconnectPayPal}><Button size="sm" variant="secondary">Disconnect</Button></form>
         ) : pending ? (
           <>
-            <a href={pending.approveUrl} target="_blank" rel="noopener noreferrer" className="text-[0.8125rem] font-medium text-forest underline-offset-2 hover:underline">
+            <a href={pending.approveUrl} target="_blank" rel="noopener noreferrer" className="text-[0.8125rem] font-[650] text-ink underline decoration-yellow decoration-[3px] underline-offset-4 hover:decoration-ink">
               Open PayPal again
             </a>
             <form action={disconnectPayPal}><Button size="sm" variant="quiet">Cancel</Button></form>

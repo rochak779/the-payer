@@ -1,365 +1,350 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-10-17T17:06:20+00:00",
+  "generatedAt": "2026-10-22T12:37:55+00:00",
   "title": "Design System: The Payer",
   "extensions": {
     "colorMeta": {
-      "forest": {
+      "yellow": {
         "role": "primary",
-        "displayName": "Kinship Forest",
-        "canonical": "#173f35",
-        "oklch": "oklch(33.6% 0.049 174.3)",
+        "displayName": "Golden Yellow",
+        "canonical": "#ffca49",
         "tonalRamp": [
-          "oklch(15% 0.049 174.3)",
-          "oklch(26% 0.049 174.3)",
-          "oklch(38% 0.049 174.3)",
-          "oklch(50% 0.049 174.3)",
-          "oklch(62% 0.049 174.3)",
-          "oklch(74% 0.049 174.3)",
-          "oklch(85% 0.049 174.3)",
-          "oklch(95% 0.049 174.3)"
+          "#110a00",
+          "#302302",
+          "#533f09",
+          "#7b5c01",
+          "#a27c15",
+          "#cc9d1f",
+          "#f5c13d",
+          "#feedc8"
         ]
       },
-      "forest-deep": {
+      "yellow-line": {
         "role": "primary",
-        "displayName": "Deep Forest",
-        "canonical": "#0f2e26",
-        "oklch": "oklch(27.5% 0.040 173.8)",
+        "displayName": "Warm Yellow Line",
+        "canonical": "#e9c893",
         "tonalRamp": [
-          "oklch(15% 0.040 173.8)",
-          "oklch(26% 0.040 173.8)",
-          "oklch(38% 0.040 173.8)",
-          "oklch(50% 0.040 173.8)",
-          "oklch(62% 0.040 173.8)",
-          "oklch(74% 0.040 173.8)",
-          "oklch(85% 0.040 173.8)",
-          "oklch(95% 0.040 173.8)"
+          "#120900",
+          "#322203",
+          "#583c01",
+          "#795c28",
+          "#9c7d4a",
+          "#c0a06c",
+          "#e5c48f",
+          "#ffecce"
         ]
       },
-      "gold": {
+      "mint": {
         "role": "secondary",
-        "displayName": "Needs-You Gold",
-        "canonical": "#e9a51a",
-        "oklch": "oklch(76.8% 0.155 77.9)",
+        "displayName": "Approved Mint",
+        "canonical": "#c7e9cc",
         "tonalRamp": [
-          "oklch(15% 0.155 77.9)",
-          "oklch(26% 0.155 77.9)",
-          "oklch(38% 0.155 77.9)",
-          "oklch(50% 0.155 77.9)",
-          "oklch(62% 0.155 77.9)",
-          "oklch(74% 0.155 77.9)",
-          "oklch(85% 0.155 77.9)",
-          "oklch(95% 0.155 77.9)"
+          "#001003",
+          "#102c16",
+          "#2d4a33",
+          "#4c6a51",
+          "#6c8c71",
+          "#8eaf93",
+          "#b2d3b7",
+          "#d7f9dc"
         ]
       },
-      "orange": {
-        "role": "tertiary",
-        "displayName": "Refusal Orange",
-        "canonical": "#d96a32",
-        "oklch": "oklch(64.7% 0.155 44.9)",
+      "pink": {
+        "role": "secondary",
+        "displayName": "Blocked Pink",
+        "canonical": "#f8b7c7",
         "tonalRamp": [
-          "oklch(15% 0.155 44.9)",
-          "oklch(26% 0.155 44.9)",
-          "oklch(38% 0.155 44.9)",
-          "oklch(50% 0.155 44.9)",
-          "oklch(62% 0.155 44.9)",
-          "oklch(74% 0.155 44.9)",
-          "oklch(85% 0.155 44.9)",
-          "oklch(95% 0.155 44.9)"
+          "#1d0009",
+          "#421022",
+          "#632f3e",
+          "#864e5d",
+          "#aa6f7e",
+          "#cf91a1",
+          "#f5b4c4",
+          "#ffe8ed"
         ]
       },
-      "orange-ink": {
-        "role": "tertiary",
-        "displayName": "Refusal Ink",
-        "canonical": "#b4511f",
-        "oklch": "oklch(55.3% 0.142 44.1)",
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#1c1c1c",
         "tonalRamp": [
-          "oklch(15% 0.142 44.1)",
-          "oklch(26% 0.142 44.1)",
-          "oklch(38% 0.142 44.1)",
-          "oklch(50% 0.142 44.1)",
-          "oklch(62% 0.142 44.1)",
-          "oklch(74% 0.142 44.1)",
-          "oklch(85% 0.142 44.1)",
-          "oklch(95% 0.142 44.1)"
-        ]
-      },
-      "orange-soft": {
-        "role": "tertiary",
-        "displayName": "Soft Orange",
-        "canonical": "#ecb898",
-        "oklch": "oklch(82.2% 0.074 53.0)",
-        "tonalRamp": [
-          "oklch(15% 0.074 53.0)",
-          "oklch(26% 0.074 53.0)",
-          "oklch(38% 0.074 53.0)",
-          "oklch(50% 0.074 53.0)",
-          "oklch(62% 0.074 53.0)",
-          "oklch(74% 0.074 53.0)",
-          "oklch(85% 0.074 53.0)",
-          "oklch(95% 0.074 53.0)"
-        ]
-      },
-      "peach": {
-        "role": "tertiary",
-        "displayName": "Peach",
-        "canonical": "#f8e1d2",
-        "oklch": "oklch(92.4% 0.032 55.3)",
-        "tonalRamp": [
-          "oklch(15% 0.032 55.3)",
-          "oklch(26% 0.032 55.3)",
-          "oklch(38% 0.032 55.3)",
-          "oklch(50% 0.032 55.3)",
-          "oklch(62% 0.032 55.3)",
-          "oklch(74% 0.032 55.3)",
-          "oklch(85% 0.032 55.3)",
-          "oklch(95% 0.032 55.3)"
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
         ]
       },
       "cream": {
         "role": "neutral",
-        "displayName": "Counter Cream",
-        "canonical": "#f7f2e8",
-        "oklch": "oklch(96.2% 0.014 84.6)",
+        "displayName": "Cream",
+        "canonical": "#fefaf4",
         "tonalRamp": [
-          "oklch(15% 0.014 84.6)",
-          "oklch(26% 0.014 84.6)",
-          "oklch(38% 0.014 84.6)",
-          "oklch(50% 0.014 84.6)",
-          "oklch(62% 0.014 84.6)",
-          "oklch(74% 0.014 84.6)",
-          "oklch(85% 0.014 84.6)",
-          "oklch(95% 0.014 84.6)"
+          "#0d0b07",
+          "#272520",
+          "#45413d",
+          "#64615c",
+          "#85827c",
+          "#a8a49f",
+          "#ccc8c3",
+          "#f2eee8"
         ]
       },
       "paper": {
         "role": "neutral",
-        "displayName": "Receipt Paper",
-        "canonical": "#fffdf8",
-        "oklch": "oklch(99.4% 0.007 88.6)",
+        "displayName": "White Paper",
+        "canonical": "#ffffff",
         "tonalRamp": [
-          "oklch(15% 0.007 88.6)",
-          "oklch(26% 0.007 88.6)",
-          "oklch(38% 0.007 88.6)",
-          "oklch(50% 0.007 88.6)",
-          "oklch(62% 0.007 88.6)",
-          "oklch(74% 0.007 88.6)",
-          "oklch(85% 0.007 88.6)",
-          "oklch(95% 0.007 88.6)"
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
         ]
       },
-      "line": {
+      "surface": {
         "role": "neutral",
-        "displayName": "Ruled Line",
-        "canonical": "#e4dccd",
-        "oklch": "oklch(89.7% 0.022 83.3)",
+        "displayName": "Warm Surface",
+        "canonical": "#f6f2e9",
         "tonalRamp": [
-          "oklch(15% 0.022 83.3)",
-          "oklch(26% 0.022 83.3)",
-          "oklch(38% 0.022 83.3)",
-          "oklch(50% 0.022 83.3)",
-          "oklch(62% 0.022 83.3)",
-          "oklch(74% 0.022 83.3)",
-          "oklch(85% 0.022 83.3)",
-          "oklch(95% 0.022 83.3)"
-        ]
-      },
-      "sage": {
-        "role": "neutral",
-        "displayName": "Sage",
-        "canonical": "#c6cbc1",
-        "oklch": "oklch(83.5% 0.015 128.7)",
-        "tonalRamp": [
-          "oklch(15% 0.015 128.7)",
-          "oklch(26% 0.015 128.7)",
-          "oklch(38% 0.015 128.7)",
-          "oklch(50% 0.015 128.7)",
-          "oklch(62% 0.015 128.7)",
-          "oklch(74% 0.015 128.7)",
-          "oklch(85% 0.015 128.7)",
-          "oklch(95% 0.015 128.7)"
-        ]
-      },
-      "slate": {
-        "role": "neutral",
-        "displayName": "Slate Ink",
-        "canonical": "#24333b",
-        "oklch": "oklch(31.1% 0.025 231.8)",
-        "tonalRamp": [
-          "oklch(15% 0.025 231.8)",
-          "oklch(26% 0.025 231.8)",
-          "oklch(38% 0.025 231.8)",
-          "oklch(50% 0.025 231.8)",
-          "oklch(62% 0.025 231.8)",
-          "oklch(74% 0.025 231.8)",
-          "oklch(85% 0.025 231.8)",
-          "oklch(95% 0.025 231.8)"
-        ]
-      },
-      "ink-soft": {
-        "role": "neutral",
-        "displayName": "Soft Ink",
-        "canonical": "#4a5a55",
-        "oklch": "oklch(45.2% 0.021 174.4)",
-        "tonalRamp": [
-          "oklch(15% 0.021 174.4)",
-          "oklch(26% 0.021 174.4)",
-          "oklch(38% 0.021 174.4)",
-          "oklch(50% 0.021 174.4)",
-          "oklch(62% 0.021 174.4)",
-          "oklch(74% 0.021 174.4)",
-          "oklch(85% 0.021 174.4)",
-          "oklch(95% 0.021 174.4)"
+          "#0d0b06",
+          "#28251e",
+          "#45423a",
+          "#646159",
+          "#86827a",
+          "#a8a59c",
+          "#cdc9c0",
+          "#f2eee5"
         ]
       },
       "muted": {
         "role": "neutral",
-        "displayName": "Muted",
-        "canonical": "#5c6a64",
-        "oklch": "oklch(51.1% 0.019 167.9)",
+        "displayName": "Muted Charcoal",
+        "canonical": "#5c5c5c",
         "tonalRamp": [
-          "oklch(15% 0.019 167.9)",
-          "oklch(26% 0.019 167.9)",
-          "oklch(38% 0.019 167.9)",
-          "oklch(50% 0.019 167.9)",
-          "oklch(62% 0.019 167.9)",
-          "oklch(74% 0.019 167.9)",
-          "oklch(85% 0.019 167.9)",
-          "oklch(95% 0.019 167.9)"
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "line": {
+        "role": "neutral",
+        "displayName": "Paper Line",
+        "canonical": "#d3c9bc",
+        "tonalRamp": [
+          "#100a03",
+          "#2b241a",
+          "#494136",
+          "#686054",
+          "#8a8175",
+          "#ada397",
+          "#d1c7bb",
+          "#f7eddf"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Dashed Rule",
+        "canonical": "#91867b",
+        "tonalRamp": [
+          "#110903",
+          "#2c231a",
+          "#4a4036",
+          "#6a5f55",
+          "#8b8075",
+          "#aea397",
+          "#d3c7bb",
+          "#f8ece0"
+        ]
+      },
+      "brown": {
+        "role": "neutral",
+        "displayName": "Deep Brown",
+        "canonical": "#5c491a",
+        "tonalRamp": [
+          "#110a00",
+          "#302300",
+          "#523f0e",
+          "#725f31",
+          "#948051",
+          "#b8a373",
+          "#ddc796",
+          "#feedc6"
         ]
       }
     },
     "typographyMeta": {
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "\"The Payer\" in the masthead, with a yellow full stop added in CSS."
+      },
       "display": {
         "displayName": "Display",
-        "purpose": "Screen titles."
-      },
-      "script": {
-        "displayName": "Script",
-        "purpose": "One word per screen title, with the drawn stroke."
-      },
-      "headline": {
-        "displayName": "Headline",
-        "purpose": "Product name in the forest header."
+        "purpose": "Screen titles; at most one word on the yellow highlight band."
       },
       "amount": {
         "displayName": "Amount",
-        "purpose": "Receipt totals, tabular."
+        "purpose": "The price on a decision sheet and the latest eval score."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Receipt and panel titles."
+        "purpose": "Decision sheet titles."
+      },
+      "section": {
+        "displayName": "Section",
+        "purpose": "Headings inside a screen, followed by a dashed rule."
+      },
+      "tag": {
+        "displayName": "Tag",
+        "purpose": "The verdict tag (Approved, Asking you, Blocked, You declined, Cancelled)."
+      },
+      "figure": {
+        "displayName": "Figure",
+        "purpose": "Eval scorecard figures."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Field text and screen intros."
+        "purpose": "Field text."
       },
       "body-sm": {
-        "displayName": "Body small",
-        "purpose": "Reason lines and agent steps."
+        "displayName": "Body sm",
+        "purpose": "Reasons and agent steps."
+      },
+      "intro": {
+        "displayName": "Intro",
+        "purpose": "Screen intros, muted, capped at 36ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Chips, links, payment rows, the status chip."
       },
       "caption": {
         "displayName": "Caption",
-        "purpose": "Receipt meta, card rows, chips, links."
+        "purpose": "Sheet meta and supporting lines."
       },
-      "label-stamp": {
-        "displayName": "Stamp label",
-        "purpose": "Uppercase stamp word only."
+      "small": {
+        "displayName": "Small",
+        "purpose": "Log lines, reason tags, the eval table, footnotes."
       },
-      "label-tag": {
-        "displayName": "Reason tag",
-        "purpose": "Who checked a reason (Rule check, AI check, System)."
+      "nav": {
+        "displayName": "Nav",
+        "purpose": "Dock labels."
+      },
+      "button": {
+        "displayName": "Button",
+        "purpose": "Button labels (0.9375 / 0.875 / 0.8125 / 0.75rem by size)."
+      },
+      "mono": {
+        "displayName": "Mono",
+        "purpose": "AP2 JSON and inline code only."
       }
     },
     "shadows": [
       {
-        "name": "receipt-lift",
-        "value": "drop-shadow(0 1px 1px rgb(15 46 38 / 0.08)) drop-shadow(0 10px 18px rgb(15 46 38 / 0.09))",
-        "purpose": "Filter on the receipt wrapper; the torn-edge mask would clip a box-shadow."
+        "name": "control-offset",
+        "value": "2px 2px 0 #1c1c1c",
+        "purpose": "Every bordered button at rest; hover 4px 4px 0 with translate(-1px,-1px); pressed 0 0 0 with translate(2px,2px)."
       },
       {
-        "name": "primary-press-ready",
-        "value": "inset 0 1px 0 rgb(255 255 255 / 0.08), 0 8px 16px -10px rgb(15 46 38 / 0.75)",
-        "purpose": "Primary pill buttons; removed when disabled."
+        "name": "needs-offset",
+        "value": "2px 2px 0 #ffca49",
+        "purpose": "The ink \"Review in Approvals\" button; grows like the control offset."
       },
       {
-        "name": "needs-glow",
-        "value": "0 8px 16px -10px rgb(150 100 0 / 0.8)",
-        "purpose": "Gold needs button."
+        "name": "verdict-offset",
+        "value": "5px 5px 0 var(--sheet-offset)",
+        "purpose": "Decision sheets: mint approved, yellow asking (and non-decision sheets), pink blocked, paper line for a decline or cancel."
       },
       {
-        "name": "field-inset",
-        "value": "inset 0 1px 2px rgb(15 46 38 / 0.05)",
-        "purpose": "Text areas at rest."
+        "name": "tag-offset",
+        "value": "2px 2px 0 #1c1c1c",
+        "purpose": "Verdict tags; none on withdrawn tags."
       },
       {
-        "name": "field-focus-ring",
-        "value": "0 0 0 4px rgb(23 63 53 / 0.1)",
-        "purpose": "Text area focus, with border forest/55%."
+        "name": "field-focus",
+        "value": "4px 4px 0 0 #ffca49, 4px 4px 0 1px #1c1c1c",
+        "purpose": "A yellow backing sheet with an ink edge behind a focused field."
       },
       {
-        "name": "switch-knob",
-        "value": "0 2px 6px rgb(15 46 38 / 0.3)",
-        "purpose": "Agent switch thumb."
+        "name": "knob-offset",
+        "value": "2px 2px 0 #1c1c1c",
+        "purpose": "The agent switch knob."
       },
       {
-        "name": "device-frame",
-        "value": "0 30px 60px -20px rgb(0 0 0 / 0.55), 0 0 0 10px rgb(255 255 255 / 0.04)",
-        "purpose": "Phone frame on wide screens only."
+        "name": "dock-lift",
+        "value": "0 6px 22px rgb(28 28 28 / 0.16)",
+        "purpose": "The ink dock."
+      },
+      {
+        "name": "frame-lift",
+        "value": "8px 12px 28px rgb(92 73 26 / 0.22)",
+        "purpose": "The framed app column on wide screens."
       }
     ],
     "motion": [
       {
-        "name": "ease-out",
-        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
-        "purpose": "The one house ease for every animation and transition."
+        "name": "control",
+        "value": "180ms ease",
+        "purpose": "Button offset, lift and press; colour changes."
       },
       {
-        "name": "stamp-land",
-        "value": "220ms ease-out; from scale 1.7, tilt -12deg, blur 3px; 55% scale 0.93; settle at -4deg",
-        "purpose": "A decision stamp arriving or changing in place."
+        "name": "ease-paper",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Paper, tags, steps, the dock marker, the switch knob."
       },
       {
         "name": "step-in",
-        "value": "360ms ease-out; from opacity 0, translateY 6px",
-        "purpose": "Agent steps, receipts, notes, follow-on buttons."
+        "value": "350ms ease-paper, rise 6px",
+        "purpose": "Steps, sheets and notes arriving."
       },
       {
-        "name": "draw",
-        "value": "700ms ease-out, 120ms delay; stroke-dasharray 140",
-        "purpose": "The stroke under the script word."
+        "name": "stamp-land",
+        "value": "420ms ease-paper",
+        "purpose": "The verdict tag lifted on an 8px 12px ink offset, pressed flat, settled at 2px."
+      },
+      {
+        "name": "highlight-draw",
+        "value": "700ms ease-out, 120ms delay",
+        "purpose": "The yellow band drawing in under the title word."
+      },
+      {
+        "name": "dock-marker",
+        "value": "360ms ease-paper, transform only",
+        "purpose": "The yellow marker sliding to the active tab."
       },
       {
         "name": "pop",
-        "value": "320ms ease-out; scale 0.4 to 1.15 to 1",
-        "purpose": "Pending badge when its count changes."
+        "value": "320ms ease-paper",
+        "purpose": "The pending badge when its count changes."
       },
       {
         "name": "leave",
-        "value": "180ms ease-out; to opacity 0, translateX 12px",
-        "purpose": "A rule being removed."
-      },
-      {
-        "name": "thinking",
-        "value": "1.2s ease-in-out infinite, 0.15s stagger",
-        "purpose": "Three-dot working indicator."
-      },
-      {
-        "name": "control-transition",
-        "value": "200ms ease-out; active scale 0.97 (chips 0.96, tabs 0.9)",
-        "purpose": "Buttons, chips, links, tabs."
+        "value": "180ms ease-paper, slide 12px right",
+        "purpose": "A removed rule in the preview."
       },
       {
         "name": "reduced-motion",
-        "value": "all animation and transition durations 1ms, one iteration",
-        "purpose": "prefers-reduced-motion: reduce."
+        "value": "1ms",
+        "purpose": "prefers-reduced-motion cuts every animation and transition."
       }
     ],
     "breakpoints": [
       {
         "name": "sm",
         "value": "640px",
-        "purpose": "Column becomes an 880px-tall device frame with 44px corners on slate."
+        "purpose": "The column becomes a framed sheet on a yellow field."
       }
     ]
   },
@@ -368,127 +353,128 @@
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Forest pill for the one next action; full width on screens.",
-      "html": "<button class=\"ds-btn ds-btn-primary\">Send to agent <span class=\"ds-nudge\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></span></button>",
-      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:9999px;font-family:var(--font-sans,Manrope,system-ui,sans-serif);font-weight:600;cursor:pointer;transition:background-color .2s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .2s cubic-bezier(0.16, 1, 0.3, 1),color .2s cubic-bezier(0.16, 1, 0.3, 1),transform .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-btn:active{transform:scale(.97);} .ds-btn:focus-visible{outline:2px solid #173f35;outline-offset:2px;} .ds-btn-primary{height:48px;padding:0 24px;font-size:.9375rem;background:var(--color-forest,#173f35);color:var(--color-cream,#f7f2e8);box-shadow:inset 0 1px 0 rgb(255 255 255/.08),0 8px 16px -10px rgb(15 46 38/.75);} .ds-btn-primary:hover{background:var(--color-forest-deep,#0f2e26);} .ds-nudge{display:inline-flex;transition:transform .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-btn:hover .ds-nudge{transform:translateX(2px);}"
+      "description": "The main action on a screen: yellow, ink edge, hard ink offset.",
+      "html": "<button class=\"ds-btn ds-btn-primary\">Send to agent <svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 12h14M13 6l6 6-6 6\"/></svg></button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid #1c1c1c;border-radius:4px;font:650 15px/1.35 Inter,system-ui,sans-serif;color:#1c1c1c;box-shadow:2px 2px 0 var(--o,#1c1c1c);transition:transform .18s ease,box-shadow .18s ease;cursor:pointer}.ds-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--o,#1c1c1c)}.ds-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--o,#1c1c1c)}.ds-btn:focus-visible{outline:3px solid #1c1c1c;outline-offset:3px}.ds-btn-primary{background:#ffca49}"
     },
     {
       "name": "Secondary Button",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Paper pill with a line ring; Decline, demo charges, secondary links.",
-      "html": "<button class=\"ds-btn-secondary\">Decline</button>",
-      "css": ".ds-btn-secondary{height:40px;padding:0 16px;border:0;border-radius:9999px;font:600 .875rem var(--font-sans,Manrope,system-ui,sans-serif);background:var(--color-paper,#fffdf8);color:var(--color-forest,#173f35);box-shadow:0 0 0 1px var(--color-line,#e4dccd);cursor:pointer;transition:background-color .2s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .2s cubic-bezier(0.16, 1, 0.3, 1),transform .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-btn-secondary:hover{background:var(--color-cream,#f7f2e8);box-shadow:0 0 0 1px rgb(23 63 53/.35);} .ds-btn-secondary:active{transform:scale(.97);} .ds-btn-secondary:focus-visible{outline:2px solid #173f35;outline-offset:2px;}"
+      "description": "A second choice beside a primary, such as Decline.",
+      "html": "<button class=\"ds-btn ds-btn-secondary\">Decline</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid #1c1c1c;border-radius:4px;font:650 15px/1.35 Inter,system-ui,sans-serif;color:#1c1c1c;box-shadow:2px 2px 0 var(--o,#1c1c1c);transition:transform .18s ease,box-shadow .18s ease;cursor:pointer}.ds-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--o,#1c1c1c)}.ds-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--o,#1c1c1c)}.ds-btn:focus-visible{outline:3px solid #1c1c1c;outline-offset:3px}.ds-btn-secondary{background:#fefaf4;min-height:44px;padding:0 16px;font-size:14px}"
     },
     {
       "name": "Needs Button",
       "kind": "button",
       "refersTo": "button-needs",
-      "description": "Gold pill that routes the person to a pending approval; gold's only button.",
-      "html": "<button class=\"ds-btn-needs\">Review in Approvals</button>",
-      "css": ".ds-btn-needs{height:48px;padding:0 24px;border:0;border-radius:9999px;font:600 .9375rem var(--font-sans,Manrope,system-ui,sans-serif);background:var(--color-gold,#e9a51a);color:var(--color-forest-deep,#0f2e26);box-shadow:0 8px 16px -10px rgb(150 100 0/.8);cursor:pointer;transition:background-color .2s cubic-bezier(0.16, 1, 0.3, 1),transform .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-btn-needs:active{transform:scale(.97);} .ds-btn-needs:focus-visible{outline:2px solid #173f35;outline-offset:2px;}"
-    },
-    {
-      "name": "Task Field",
-      "kind": "input",
-      "refersTo": "field",
-      "description": "Auto-sizing paper text area for rules and tasks.",
-      "html": "<textarea class=\"ds-field\" rows=\"3\" placeholder=\"What should the agent buy?\"></textarea>",
-      "css": ".ds-field{width:100%;min-height:7.5rem;resize:none;border:1px solid var(--color-line,#e4dccd);border-radius:20px;background:var(--color-paper,#fffdf8);padding:14px 16px;font:400 .9375rem/1.625 var(--font-sans,Manrope,system-ui,sans-serif);color:var(--color-slate,#24333b);box-shadow:inset 0 1px 2px rgb(15 46 38/.05);transition:border-color .2s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-field::placeholder{color:var(--color-muted,#5c6a64);} .ds-field:focus{outline:none;border-color:rgb(23 63 53/.55);box-shadow:inset 0 1px 2px rgb(15 46 38/.05),0 0 0 4px rgb(23 63 53/.1);}"
+      "description": "Routes a person to a purchase waiting for them.",
+      "html": "<button class=\"ds-btn ds-btn-needs\">Review in Approvals</button>",
+      "css": ".ds-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border:1px solid #1c1c1c;border-radius:4px;font:650 15px/1.35 Inter,system-ui,sans-serif;color:#1c1c1c;box-shadow:2px 2px 0 var(--o,#1c1c1c);transition:transform .18s ease,box-shadow .18s ease;cursor:pointer}.ds-btn:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--o,#1c1c1c)}.ds-btn:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--o,#1c1c1c)}.ds-btn:focus-visible{outline:3px solid #1c1c1c;outline-offset:3px}.ds-btn-needs{background:#1c1c1c;color:#fefaf4;--o:#ffca49}"
     },
     {
       "name": "Example Chip",
       "kind": "chip",
       "refersTo": "chip",
-      "description": "Paper pill that fills the task field; peach when selected.",
-      "html": "<button class=\"ds-chip\">Book a hotel in Lisbon, 7–9 Nov</button> <button class=\"ds-chip\" aria-pressed=\"true\">Get me some headphones</button>",
-      "css": ".ds-chip{border:0;border-radius:9999px;background:var(--color-paper,#fffdf8);padding:6px 14px;font:500 .8125rem var(--font-sans,Manrope,system-ui,sans-serif);color:var(--color-forest,#173f35);box-shadow:0 0 0 1px var(--color-line,#e4dccd);cursor:pointer;transition:background-color .2s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .2s cubic-bezier(0.16, 1, 0.3, 1),transform .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-chip:hover,.ds-chip[aria-pressed=true]{background:var(--color-peach,#f8e1d2);box-shadow:0 0 0 1px var(--color-orange-soft,#ecb898);} .ds-chip:active{transform:scale(.96);} .ds-chip:focus-visible{outline:2px solid #173f35;outline-offset:2px;}"
+      "description": "An example task; fills yellow when hovered or chosen.",
+      "html": "<button class=\"ds-chip\" aria-pressed=\"false\">Buy wireless headphones under $80</button> <button class=\"ds-chip\" aria-pressed=\"true\">Buy a plain white ceramic coffee mug, under $15</button>",
+      "css": ".ds-chip{min-height:40px;padding:8px 12px;border:1px solid #e9c893;border-radius:4px;background:transparent;font:650 13px/1.375 Inter,system-ui,sans-serif;color:#1c1c1c;text-align:left;transition:background-color .2s ease,border-color .2s ease;cursor:pointer}.ds-chip:hover,.ds-chip[aria-pressed=\"true\"]{background:#ffca49;border-color:#ffca49}.ds-chip:focus-visible{outline:3px solid #1c1c1c;outline-offset:3px}"
     },
     {
-      "name": "Tab Bar",
-      "kind": "nav",
-      "refersTo": "tab-bar",
-      "description": "Four tabs; forest pill behind the active icon; gold pending badge on Approvals.",
-      "html": "<nav class=\"ds-tabs\"><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-ic\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M5 6h9M5 12h14M5 18h6\"/><circle cx=\"18\" cy=\"6\" r=\"2\"/><circle cx=\"15\" cy=\"18\" r=\"2\"/></svg></span>Rules</a><a class=\"ds-tab\" aria-current=\"page\" href=\"#\"><span class=\"ds-tab-ic\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 12.5 19.5 5l-4 15-3.5-6.5Z\"/><path d=\"m12 13.5 7.5-8.5\"/></svg></span>Ask</a><a class=\"ds-tab\" href=\"#\"><span class=\"ds-tab-ic\"><svg width=\"19\" height=\"19\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.75\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M4 13.5V18a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4.5\"/><path d=\"M4 13.5 6.5 5h11l2.5 8.5h-4.5a3.5 3.5 0 0 1-7 0Z\"/></svg><span class=\"ds-badge\">1</span></span>Approvals</a></nav>",
-      "css": ".ds-tabs{display:grid;grid-template-columns:repeat(3,1fr);background:var(--color-paper,#fffdf8);border-top:1px solid var(--color-line,#e4dccd);padding:8px 8px 12px;font-family:var(--font-sans,Manrope,system-ui,sans-serif);} .ds-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;border-radius:16px;font-size:.75rem;font-weight:500;color:var(--color-muted,#5c6a64);text-decoration:none;transition:color .2s cubic-bezier(0.16, 1, 0.3, 1);} .ds-tab:hover{color:var(--color-forest,#173f35);} .ds-tab-ic{position:relative;display:flex;align-items:center;justify-content:center;width:56px;height:32px;border-radius:9999px;transition:background-color .3s cubic-bezier(0.16, 1, 0.3, 1),transform .3s cubic-bezier(0.16, 1, 0.3, 1);} .ds-tab:hover .ds-tab-ic{background:rgb(23 63 53/.06);} .ds-tab:active .ds-tab-ic{transform:scale(.9);} .ds-tab[aria-current=page]{font-weight:700;color:var(--color-forest,#173f35);} .ds-tab[aria-current=page] .ds-tab-ic{background:var(--color-forest,#173f35);color:var(--color-cream,#f7f2e8);} .ds-tab:focus-visible{outline:2px solid #173f35;outline-offset:2px;} .ds-badge{position:absolute;top:-4px;right:-4px;min-width:18px;height:18px;padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:9999px;background:var(--color-gold,#e9a51a);color:var(--color-forest-deep,#0f2e26);font-size:.6875rem;font-weight:800;box-shadow:0 0 0 2px var(--color-paper,#fffdf8);}"
+      "name": "Task Field",
+      "kind": "input",
+      "refersTo": "field",
+      "description": "White paper with an ink edge; a yellow backing appears on focus.",
+      "html": "<textarea class=\"ds-field\" rows=\"3\" placeholder=\"What should the agent buy?\"></textarea>",
+      "css": ".ds-field{width:100%;min-height:7.5rem;padding:14px 16px;border:1px solid #1c1c1c;border-radius:4px;background:#fff;font:400 16px/1.625 Inter,system-ui,sans-serif;color:#1c1c1c;resize:none;transition:box-shadow .2s ease}.ds-field::placeholder{color:#5c5c5c}.ds-field:focus{outline:none;box-shadow:4px 4px 0 0 #ffca49,4px 4px 0 1px #1c1c1c}"
     },
     {
-      "name": "Decision Receipt",
+      "name": "Decision Sheet",
       "kind": "card",
-      "refersTo": "receipt",
-      "description": "Signature surface: paper with a torn bottom edge, title and amount, stamp, reason lines, dashed sections.",
-      "html": "<div class=\"ds-receipt-shadow\"><article class=\"ds-receipt\"><div class=\"ds-rhead\"><div><h3 class=\"ds-rtitle\">Hotel Lisboa Plaza, 2 nights</h3><p class=\"ds-rsub\">Hotel Lisboa Plaza · paid</p></div><p class=\"ds-ramount\">£240</p></div><div class=\"ds-rsec\"><span class=\"ds-stamp ds-stamp-approve\"><svg width=\"15\" height=\"15\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m5 12.5 4.5 4.5L19 7.5\"/></svg>Approved</span><ul class=\"ds-reasons\"><li><span class=\"ds-tag\">Rule check</span><span>Within all your rules.</span></li></ul></div></article></div>",
-      "css": ".ds-receipt-shadow{filter:drop-shadow(0 1px 1px rgb(15 46 38/.08)) drop-shadow(0 10px 18px rgb(15 46 38/.09));} .ds-receipt{--tear:10px;background:var(--color-paper,#fffdf8);border-radius:20px 20px 0 0;padding:20px 20px calc(var(--tear) + 14px);font-family:var(--font-sans,Manrope,system-ui,sans-serif);-webkit-mask:linear-gradient(#000 0 0) top/100% calc(100% - var(--tear)) no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M0 0H120V6L115 8.5L111 4.5L104 9.5L99 5L93 7.5L86 3.5L81 8L74 5.5L69 9.5L62 4L57 7L50 3L46 8.5L39 5L33 9L28 4.5L21 8L16 3.5L10 9L5 5L0 6Z'/%3E%3C/svg%3E\") bottom/120px var(--tear) repeat-x;mask:linear-gradient(#000 0 0) top/100% calc(100% - var(--tear)) no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M0 0H120V6L115 8.5L111 4.5L104 9.5L99 5L93 7.5L86 3.5L81 8L74 5.5L69 9.5L62 4L57 7L50 3L46 8.5L39 5L33 9L28 4.5L21 8L16 3.5L10 9L5 5L0 6Z'/%3E%3C/svg%3E\") bottom/120px var(--tear) repeat-x;} .ds-rhead{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;} .ds-rtitle{margin:0;font-size:1.0625rem;font-weight:700;line-height:1.375;color:var(--color-forest,#173f35);} .ds-rsub{margin:2px 0 0;font-size:.8125rem;color:var(--color-muted,#5c6a64);} .ds-ramount{margin:0;font-size:1.5rem;font-weight:800;letter-spacing:-.02em;color:var(--color-forest,#173f35);font-variant-numeric:tabular-nums;} .ds-rsec{border-top:1.5px dashed var(--color-line,#e4dccd);margin-top:16px;padding-top:16px;display:grid;gap:12px;justify-items:start;} .ds-stamp{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:2px solid currentColor;border-radius:10px;outline:1.5px solid currentColor;outline-offset:2.5px;font-weight:800;font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;line-height:1;transform:rotate(-4deg);} .ds-stamp-approve{color:#173f35;background:rgb(23 63 53/.06);} .ds-reasons{list-style:none;margin:0;padding:0;} .ds-reasons li{display:flex;gap:10px;align-items:flex-start;font-size:.875rem;line-height:1.625;color:var(--color-slate,#24333b);} .ds-tag{margin-top:3px;flex-shrink:0;border-radius:9999px;background:var(--color-cream,#f7f2e8);padding:2px 8px;font-size:.6875rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--color-ink-soft,#4a5a55);box-shadow:0 0 0 1px var(--color-line,#e4dccd);}"
+      "refersTo": "sheet",
+      "description": "A checker decision: white paper, ink edge, verdict offset, tilted verdict tag and reason lines.",
+      "html": "<article class=\"ds-sheet\"><div class=\"ds-head\"><h3>Building blocks race car set, ages 9+</h3><p class=\"ds-amt\">$38</p></div><p class=\"ds-sub\">Brick &amp; Bolt Toys · waiting for you</p><div class=\"ds-sec\"><span class=\"ds-tag\">Asking you</span><p class=\"ds-reason\"><span>AI check</span>Mentions \"gift\". Your rule: \"Ask me before buying anything that's a gift or for someone else.\"</p></div></article>",
+      "css": ".ds-sheet{max-width:380px;padding:20px;background:#fff;border:1px solid #1c1c1c;border-radius:4px;box-shadow:5px 5px 0 #ffca49;font-family:Inter,system-ui,sans-serif;color:#1c1c1c}.ds-head{display:flex;justify-content:space-between;gap:16px}.ds-head h3{margin:0;font:800 19px/1.15 Satoshi,Inter,sans-serif;letter-spacing:-.025em}.ds-amt{margin:0;font:900 28px/1 Satoshi,Inter,sans-serif;letter-spacing:-.035em}.ds-sub{margin:4px 0 0;font-size:13px;color:#5c5c5c}.ds-sec{margin-top:16px;padding-top:16px;border-top:1px dashed #d3c9bc}.ds-tag{display:inline-flex;padding:5px 12px 5px 9px;border:1px solid #1c1c1c;border-radius:4px;background:#ffca49;font:800 15px/1.15 Satoshi,Inter,sans-serif;box-shadow:2px 2px 0 #1c1c1c;transform:rotate(-2deg)}.ds-reason{display:flex;gap:10px;margin:12px 0 0;font-size:14px;line-height:1.625}.ds-reason span{flex-shrink:0;align-self:flex-start;padding:1px 6px;border:1px solid #d3c9bc;border-radius:4px;background:#f6f2e9;font-size:12px;font-weight:650}"
     },
     {
-      "name": "Decision Stamps",
+      "name": "Verdict Tags",
       "kind": "custom",
-      "refersTo": "stamp",
-      "description": "The three checker verdicts plus a person's own decline; lands with an overshoot when a decision arrives.",
-      "html": "<div class=\"ds-stamps\"><span class=\"ds-st ds-st-approve\">Approved</span><span class=\"ds-st ds-st-ask\">Asking you</span><span class=\"ds-st ds-st-block\">Blocked</span><span class=\"ds-st ds-st-declined\">You declined</span></div>",
-      "css": ".ds-stamps{display:flex;flex-wrap:wrap;gap:16px;padding:8px;font-family:var(--font-sans,Manrope,system-ui,sans-serif);} .ds-st{--tilt:-4deg;display:inline-flex;align-items:center;padding:6px 12px;border:2px solid currentColor;border-radius:10px;outline:1.5px solid currentColor;outline-offset:2.5px;font-weight:800;font-size:.8125rem;letter-spacing:.08em;text-transform:uppercase;line-height:1;transform:rotate(var(--tilt));animation:ds-land 220ms cubic-bezier(0.16, 1, 0.3, 1) both;} .ds-st-approve{color:#173f35;background:rgb(23 63 53/.06);} .ds-st-ask{color:#0f2e26;background:rgb(233 165 26/.3);} .ds-st-block{color:#b4511f;background:rgb(217 106 50/.08);} .ds-st-declined{color:#4a5a55;background:rgb(74 90 85/.06);} @keyframes ds-land{0%{opacity:0;transform:rotate(calc(var(--tilt) - 8deg)) scale(1.7);filter:blur(3px);}55%{opacity:1;transform:rotate(var(--tilt)) scale(.93);filter:blur(0);}100%{transform:rotate(var(--tilt)) scale(1);}} @media (prefers-reduced-motion:reduce){.ds-st{animation:none;}}"
+      "refersTo": "stamp-approve",
+      "description": "Mint approved, yellow asking, pink blocked, dashed surface for a person's decline or cancel.",
+      "html": "<span class=\"ds-v ds-ok\">Approved</span> <span class=\"ds-v ds-ask\">Asking you</span> <span class=\"ds-v ds-no\">Blocked</span> <span class=\"ds-v ds-wd\">You declined</span>",
+      "css": ".ds-v{display:inline-flex;margin:6px;padding:5px 12px 5px 9px;border:1px solid #1c1c1c;border-radius:4px;color:#1c1c1c;font:800 15px/1.15 Satoshi,Inter,sans-serif;letter-spacing:-.01em;box-shadow:2px 2px 0 #1c1c1c;transform:rotate(-2deg)}.ds-ok{background:#c7e9cc}.ds-ask{background:#ffca49}.ds-no{background:#f8b7c7}.ds-wd{background:#f6f2e9;border-style:dashed;box-shadow:none}"
     },
     {
-      "name": "Screen Title with Script",
-      "kind": "custom",
-      "refersTo": "typography.display",
-      "description": "Heavy Manrope title with at most one Ephesis word, underlined by a drawn soft-orange stroke.",
-      "html": "<h2 class=\"ds-title\">Ask the <span class=\"ds-script\">agent<svg viewBox=\"0 0 120 12\" preserveAspectRatio=\"none\"><path d=\"M3 8.5C30 3.5 72 2.5 117 6.5\" stroke=\"#ecb898\" stroke-width=\"3.5\" stroke-linecap=\"round\" fill=\"none\"/></svg></span></h2>",
-      "css": ".ds-title{margin:0;font:800 1.75rem/1.15 var(--font-sans,Manrope,system-ui,sans-serif);letter-spacing:-.03em;color:var(--color-forest,#173f35);} .ds-script{position:relative;display:inline-block;padding:0 2px;vertical-align:-.06em;font-family:var(--font-sign,Ephesis,'Snell Roundhand',cursive);font-size:2.6rem;font-weight:400;line-height:.8;letter-spacing:normal;color:var(--color-orange,#d96a32);} .ds-script svg{position:absolute;left:0;bottom:-6px;width:100%;height:10px;overflow:visible;} .ds-script path{stroke-dasharray:140;animation:ds-draw 700ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;} @keyframes ds-draw{from{stroke-dashoffset:140;}to{stroke-dashoffset:0;}}"
+      "name": "Dock",
+      "kind": "nav",
+      "refersTo": "dock",
+      "description": "The ink tab dock with a yellow marker under the active tab and a yellow pending count.",
+      "html": "<nav class=\"ds-dock\"><a>Rules</a><a class=\"on\">Ask</a><a>Approvals<b>1</b></a><a>Activity</a></nav>",
+      "css": ".ds-dock{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;max-width:396px;padding:6px;background:#1c1c1c;border-radius:4px;box-shadow:0 6px 22px rgb(28 28 28 / .16);font:700 12px/1.33 Inter,system-ui,sans-serif}.ds-dock a{position:relative;display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:4px;color:rgb(254 250 244 / .85);cursor:pointer;transition:background-color .2s ease}.ds-dock a:hover{background:rgb(254 250 244 / .1)}.ds-dock a.on{background:#ffca49;color:#1c1c1c}.ds-dock b{position:absolute;top:6px;right:8px;min-width:18px;height:18px;padding:0 4px;border-radius:9999px;background:#ffca49;color:#1c1c1c;font-size:11px;line-height:18px;text-align:center;box-shadow:0 0 0 2px #1c1c1c}"
     }
   ],
   "narrative": {
-    "northStar": "The Decision Receipt",
-    "overview": "Every checker decision is printed, not displayed. A purchase arrives as a sheet of warm paper with a torn bottom edge; the decision comes down on it as a tilted rubber stamp (Approved, Asking you, Blocked); the reasons are its line items, each tagged with who checked it. The rest of the app is the counter the receipts sit on: a cream ground, a forest header, forest pills for the one thing to do next, and a single hand-written word per screen.\n\nThe app is a phone-sized shell (max 420px), dense but calm. Manrope carries everything, heavy and tight at display sizes, relaxed at reading sizes. Colour is semantic before it is decorative: forest is the product's voice and the primary action, gold means \"needs you\" and nothing else, orange-ink is Blocked and errors. Motion is one ease, `cubic-bezier(0.16, 1, 0.3, 1)`: steps slide in, the stamp lands with an overshoot, buttons press down, and reduced motion collapses all of it to an instant.\n\nColours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called The Payer (Agent Mandates until 21 Oct 2026).",
+    "northStar": "The Verdict Sheet",
+    "overview": "The Payer wears Rochak's portfolio design, site-dime: golden yellow, warm cream, ink outlines and white paper, carried from an editorial portfolio into a working app. Every checker decision is a sheet of white paper with a 1px ink edge, sitting on a hard coloured offset that says the verdict before a word is read: mint for Approved, yellow for Asking you, pink for Blocked, warm line for a person's own decline or cancel. On the sheet, the verdict is a tag with the same fill, tilted 2 degrees and pressed down with a hard ink offset.\n\nThe app is one phone-sized column (max 420px). On wide screens it stands on a flat yellow field, the way the portfolio sets its portrait on yellow. The shell is a cream masthead with the \"The Payer.\" wordmark and an ink dock at the foot whose yellow marker slides to the active tab. Satoshi carries every display word, heavy and tight; Inter carries everything people read. Controls are Dime controls: 4px corners, an ink edge and a hard ink offset that grows on hover and vanishes on press.\n\nThe previous look (The Product Kinship's forest, gold and orange, Manrope and a script word, torn receipts and rubber stamps) is retired. None of Rochak's personal identity is used: no portrait, mascot or monogram.",
     "keyCharacteristics": [
-      "Decisions live on receipts: paper, torn edge, dashed rules between sections, a stamp, line-item reasons.",
-      "One accent per meaning: forest acts, gold waits on the person, orange-ink refuses.",
-      "Manrope only, except one Ephesis script word per screen title with a hand-drawn soft-orange stroke.",
-      "Pills for every control; 20px corners for every surface.",
-      "Soft, forest-tinted shadows; depth comes mostly from paper on cream.",
-      "One easing curve for all motion; reduced motion turns it off."
+      "Decisions on white sheets with ink edges; the offset colour is the verdict.",
+      "Yellow is the voice: primary actions, chosen chips, the highlighted title word, the dock marker, the pending count.",
+      "Satoshi 800–900 with tight tracking for display; Inter for body, labels and controls; sentence case everywhere.",
+      "4px corners, 1px ink outlines, hard offsets on controls; dashed rules between sections.",
+      "Paper and tags move on one curve, `cubic-bezier(0.16, 1, 0.3, 1)`; controls move on plain `ease` at 180ms; reduced motion turns it all off."
     ],
     "rules": [
       {
-        "name": "The Gold Means You Rule",
-        "body": "Gold appears only where the person must act on a pending purchase: the needs button, the pending badge, the Asking you stamp. Never as decoration, never as a highlight, never under the script word.",
+        "name": "The Verdict Colour Rule",
+        "body": "Mint is Approved, yellow is Asking you, pink is Blocked, warm line is a person's own decline or cancel. A decision always shows its colour twice (tag fill and sheet offset) and never alone: the tag carries an icon (check, question, cross) and the fixed word.",
         "section": "colors"
       },
       {
-        "name": "The Three Stamps Rule",
-        "body": "Approved is forest, Asking you is forest-deep on gold, Blocked is orange-ink on orange; a person's own Declined or Cancelled is ink-soft. The decision words never change.",
+        "name": "The Ink Text Rule",
+        "body": "Text on yellow, mint, pink or surface is always ink (10:1 or better). Muted charcoal is for cream and white only.",
         "section": "colors"
       },
       {
-        "name": "The One Signature Rule",
-        "body": "At most one word per screen is set in Ephesis, inside the screen title, with its soft-orange stroke drawn in. Screens may have none (Rules does not).",
+        "name": "The Yellow Is Yours Rule",
+        "body": "Yellow marks what a person can do or must do next. It is never a status colour for something already settled.",
+        "section": "colors"
+      },
+      {
+        "name": "The Sentence Case Rule",
+        "body": "No uppercase tracking anywhere: tags, labels, buttons and table headers are sentence case, as on the portfolio.",
         "section": "typography"
       },
       {
-        "name": "The Tabular Money Rule",
-        "body": "Amounts, card digits, counts and eval figures use tabular numerals.",
+        "name": "The One Highlight Rule",
+        "body": "At most one word per screen sits on the yellow band (Rules spends it on \"understood\" in the preview heading).",
         "section": "typography"
       },
       {
-        "name": "The Paper Lifts Rule",
-        "body": "Only receipts float. Panels, chips and fields stay flat with a line ring.",
+        "name": "The Tabular Figures Rule",
+        "body": "Amounts, times, counts and eval figures use tabular numerals; text columns next to them do not (Inter's tabular set widens hyphens).",
+        "section": "typography"
+      },
+      {
+        "name": "The Hard Offset Rule",
+        "body": "Offsets are solid and blur-free, down and to the right, in ink, yellow or a verdict colour. Panels, empty states and the masthead stay flat.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "**Do** put every checker decision on a receipt with a stamp and reason lines, using the shared Receipt, Stamp and ReasonLines parts.",
-      "**Do** keep gold for \"needs you\" only: the needs button, the pending badge, the Asking you stamp.",
-      "**Do** use orange-ink, not orange, for any orange text below display size.",
-      "**Do** make controls full pills and surfaces 20px; tilt only the stamp.",
-      "**Do** tint every shadow forest-deep (`rgb(15 46 38 / …)`), soft and offset downward.",
-      "**Do** animate with the one house ease and honour reduced motion."
+      "**Do** put every checker decision on a sheet with a verdict tag and reason lines, using the shared Receipt, Stamp and ReasonLines parts with the decision's `tone`.",
+      "**Do** keep text ink on every coloured fill; keep muted charcoal on cream and white only.",
+      "**Do** use 4px corners, 1px ink outlines and blur-free offsets for controls and decision sheets.",
+      "**Do** keep one highlighted word per screen and sentence case everywhere.",
+      "**Do** load Satoshi from Fontshare's CDN; never commit its font files to this public repo.",
+      "**Do** honour reduced motion and keep every state readable without animation."
     ],
     "donts": [
-      "**Don't** use The Product Kinship's name, logo or blob mark; only its colours and type.",
-      "**Don't** set more than one Ephesis word on a screen, or use the script outside screen titles.",
-      "**Don't** reword the decision labels (Approved, Asking you, Blocked).",
-      "**Don't** fall back to small coloured status badges in a grey list for decisions; that is the default this world replaces.",
-      "**Don't** add hard-edged or grey shadows, or lift panels and chips off the cream."
+      "**Don't** use Rochak's portrait, mascot, \"r.\" monogram or the portfolio's layouts (hero, project selector, marquee, bookshelf, games) in the app.",
+      "**Don't** reword the decision labels (Approved, Asking you, Blocked) or show a verdict by colour alone.",
+      "**Don't** use yellow for a settled status, or pink and mint as decoration.",
+      "**Don't** bring back the retired Product Kinship look: forest and gold, Manrope, the script word, torn receipt edges or rubber-stamp double borders.",
+      "**Don't** add uppercase tracked labels, gradients, glass or soft-blurred card shadows."
     ]
   }
 }

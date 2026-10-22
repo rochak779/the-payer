@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { demoCharge } from '@/app/actions';
 import { ArrowIcon, CardIcon, ChartIcon } from '@/components/icons';
 import { SubmitButton } from '@/components/SubmitButton';
-import { buttonClass, Nudge, Panel, ReasonLines, Receipt, ReceiptHead, ReceiptSection, ScreenTitle, Stamp, stampFor } from '@/components/ui';
+import { buttonClass, EMPTY, Nudge, Panel, ReasonLines, Receipt, ReceiptHead, ReceiptSection, ScreenTitle, SectionHeading, Stamp, stampFor } from '@/components/ui';
 import { STATUS_LABEL } from '@/domain/labels';
 import { formatMoney } from '@/domain/money';
 import type { Approval, LogEntry } from '@/domain/types';
@@ -17,8 +17,8 @@ function LogLines({ log }: { log: LogEntry[] }) {
   return (
     <ol className="space-y-1.5">
       {log.map((l) => (
-        <li key={l.id} className="flex gap-2.5 text-[0.75rem] leading-relaxed text-ink-soft">
-          <span className="shrink-0 font-semibold text-muted tabular-nums">{time(l.at)}</span>
+        <li key={l.id} className="flex gap-2.5 text-[0.75rem] leading-relaxed text-muted">
+          <span className="shrink-0 font-[650] text-ink tabular-nums">{time(l.at)}</span>
           <span className="min-w-0">{l.message}</span>
         </li>
       ))}
@@ -28,15 +28,16 @@ function LogLines({ log }: { log: LogEntry[] }) {
 
 function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry[] }) {
   const shown = a.decision.reasons.filter((r) => r.outcome !== 'approve');
+  const stamp = stampFor(a.status, a.decision.outcome);
   return (
-    <Receipt>
+    <Receipt tone={stamp}>
       <ReceiptHead title={a.request.item} sub={`${a.request.merchant} · ${STATUS_LABEL[a.status]}`} amount={formatMoney(a.request.total)} />
       <ReceiptSection className="space-y-3">
-        <Stamp outcome={stampFor(a.status, a.decision.outcome)} />
+        <Stamp outcome={stamp} />
         <ReasonLines reasons={shown} fallback={a.decision.summary} />
       </ReceiptSection>
       {a.payment && (
-        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-medium text-ink-soft">
+        <ReceiptSection className="flex items-center gap-2 text-[0.8125rem] font-[650] text-ink">
           <CardIcon width={18} height={18} />
           {a.payment.label}
         </ReceiptSection>
@@ -50,8 +51,8 @@ function PurchaseEntry({ approval: a, log }: { approval: Approval; log: LogEntry
         <ReceiptSection>
           <form action={demoCharge}>
             <input type="hidden" name="id" value={a.id} />
-            <p className="mb-2 text-[0.75rem] font-semibold text-ink-soft">Demo: what if…</p>
-            <div className="flex flex-wrap gap-1.5">
+            <p className="mb-2.5 text-[0.75rem] font-[650] text-muted">Demo: what if…</p>
+            <div className="flex flex-wrap gap-2">
               <SubmitButton name="kind" value="more">Shop asks for {formatMoney({ ...a.request.total, minor: 2000 })} more</SubmitButton>
               <SubmitButton name="kind" value="other_merchant">Another shop asks</SubmitButton>
               <SubmitButton name="kind" value="repeat">Shop asks again</SubmitButton>
@@ -75,21 +76,21 @@ export default async function ActivityPage() {
   const on = db.settings.agentEnabled;
   return (
     <div className="space-y-5">
-      <ScreenTitle script="Activity" />
+      <ScreenTitle highlight="Activity" />
       <Panel className="flex items-center justify-between gap-4 p-4">
         <div>
-          <p className="text-[0.9375rem] font-bold text-forest">Agent is {on ? 'on' : 'off'}</p>
+          <p className="font-display text-[1.0625rem] font-extrabold tracking-[-0.02em] text-ink">Agent is {on ? 'on' : 'off'}</p>
           <p className="text-[0.8125rem] leading-snug text-muted">Turning it off cancels every open approval and payment.</p>
         </div>
         <AgentSwitch on={on} />
       </Panel>
       {purchases.length === 0 && (
-        <p className="rounded-[20px] border border-dashed border-line px-4 py-6 text-center text-sm text-muted">No purchases yet.</p>
+        <p className={EMPTY}>No purchases yet.</p>
       )}
       {purchases.map((a) => <PurchaseEntry key={a.id} approval={a} log={db.log.filter((l) => l.approvalId === a.id)} />)}
       {system.length > 0 && (
-        <section className="space-y-2 pt-1">
-          <h3 className="text-sm font-bold text-forest">Other events</h3>
+        <section className="space-y-3 pt-3">
+          <SectionHeading>Other events</SectionHeading>
           <LogLines log={system} />
         </section>
       )}

@@ -6,28 +6,9 @@ import { AlertIcon, CheckIcon, CrossIcon, QuestionIcon } from './icons';
 type Variant = 'primary' | 'secondary' | 'needs' | 'quiet' | 'warn';
 type Size = 'lg' | 'md' | 'sm' | 'xs';
 
-const VARIANT: Record<Variant, string> = {
-  primary:
-    'bg-forest text-cream shadow-[inset_0_1px_0_rgb(255_255_255/0.08),0_8px_16px_-10px_rgb(15_46_38/0.75)] hover:bg-forest-deep disabled:bg-forest/35 disabled:text-cream/85 disabled:shadow-none',
-  secondary: 'bg-paper text-forest ring-1 ring-line hover:bg-cream hover:ring-forest/35 disabled:text-forest/45',
-  needs: 'bg-gold text-forest-deep shadow-[0_8px_16px_-10px_rgb(150_100_0/0.8)] hover:bg-[#dc9a12]',
-  quiet: 'text-forest hover:bg-forest/[0.06]',
-  warn: 'text-orange-ink hover:bg-orange/10',
-};
-const SIZE: Record<Size, string> = {
-  lg: 'h-12 px-6 text-[0.9375rem]',
-  md: 'h-10 px-4 text-sm',
-  sm: 'h-8 px-3 text-[0.8125rem]',
-  xs: 'h-7 px-2.5 text-[0.75rem]',
-};
-
-/** Classes for anything that should look like a button, links included. */
+/** Classes for anything that should look like a button, links included. The look lives in globals.css (`.btn`). */
 export function buttonClass(variant: Variant = 'primary', size: Size = 'lg', extra = '') {
-  return [
-    'group inline-flex select-none items-center justify-center gap-2 rounded-full font-semibold whitespace-nowrap',
-    'transition-[background-color,box-shadow,color,transform] duration-200 ease-out active:scale-[0.97] disabled:pointer-events-none',
-    VARIANT[variant], SIZE[size], extra,
-  ].join(' ');
+  return ['group btn', `btn-${variant}`, `btn-${size}`, extra].join(' ');
 }
 
 export function Button({ variant = 'primary', size = 'lg', className = '', busy = false, children, ...props }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size; busy?: boolean }) {
@@ -48,14 +29,15 @@ export function Nudge({ children }: { children: ReactNode }) {
   return <span className="transition-transform duration-200 ease-out group-hover:translate-x-0.5">{children}</span>;
 }
 
-type StampKind = Outcome | 'declined' | 'cancelled';
+export type StampKind = Outcome | 'declined' | 'cancelled';
 
-const STAMP: Record<StampKind, { tone: string; label: string; icon: ReactNode }> = {
-  approve: { tone: 'text-forest bg-forest/[0.06]', label: OUTCOME_LABEL.approve, icon: <CheckIcon width={15} height={15} strokeWidth={2.5} /> },
-  ask: { tone: 'text-forest-deep bg-gold/30', label: OUTCOME_LABEL.ask, icon: <QuestionIcon width={15} height={15} strokeWidth={2.5} /> },
-  block: { tone: 'text-orange-ink bg-orange/[0.08]', label: OUTCOME_LABEL.block, icon: <CrossIcon width={15} height={15} strokeWidth={2.5} /> },
-  declined: { tone: 'text-ink-soft bg-ink-soft/[0.06]', label: 'You declined', icon: <CrossIcon width={15} height={15} strokeWidth={2.5} /> },
-  cancelled: { tone: 'text-ink-soft bg-ink-soft/[0.06]', label: 'Cancelled', icon: <CrossIcon width={15} height={15} strokeWidth={2.5} /> },
+const ICON = { width: 16, height: 16, strokeWidth: 2.5 };
+const STAMP: Record<StampKind, { label: string; icon: ReactNode }> = {
+  approve: { label: OUTCOME_LABEL.approve, icon: <CheckIcon {...ICON} /> },
+  ask: { label: OUTCOME_LABEL.ask, icon: <QuestionIcon {...ICON} /> },
+  block: { label: OUTCOME_LABEL.block, icon: <CrossIcon {...ICON} /> },
+  declined: { label: 'You declined', icon: <CrossIcon {...ICON} /> },
+  cancelled: { label: 'Cancelled', icon: <CrossIcon {...ICON} /> },
 };
 
 /** The stamp a purchase carries now: once the person has decided, theirs replaces the checker's "Asking you". */
@@ -67,34 +49,30 @@ export function stampFor(status: ApprovalStatus, outcome: Outcome): StampKind {
   return outcome;
 }
 
-/** The checker's decision as a rubber stamp. `land` plays the stamp coming down. */
+/** The checker's decision as a tag on the sheet: mint approved, yellow asking, pink blocked. `land` plays it coming down. */
 export function Stamp({ outcome, land = false, small = false }: { outcome: StampKind; land?: boolean; small?: boolean }) {
   const s = STAMP[outcome];
   return (
-    <span className={`stamp ${s.tone} ${land ? 'stamp-land' : ''} ${small ? 'scale-[0.85] origin-left' : ''}`}>
+    <span className={`stamp stamp-${outcome} ${land ? 'stamp-land' : ''} ${small ? 'origin-left scale-[0.85]' : ''}`}>
       {s.icon}
       {s.label}
     </span>
   );
 }
 
-/** Warm paper with a perforated bottom edge: every decision is printed on one. */
-export function Receipt({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return (
-    <div className={`receipt-shadow ${className}`}>
-      <article className="receipt px-5 pt-5">{children}</article>
-    </div>
-  );
+/** A sheet of white paper with an ink edge. With a `tone`, its offset takes the decision's colour. */
+export function Receipt({ children, className = '', tone }: { children: ReactNode; className?: string; tone?: StampKind }) {
+  return <article className={`sheet ${tone ? `tone-${tone}` : ''} px-5 pb-5 pt-5 ${className}`}>{children}</article>;
 }
 
 export function ReceiptHead({ title, sub, amount }: { title: ReactNode; sub?: ReactNode; amount?: string }) {
   return (
     <div className="flex items-start justify-between gap-4">
       <div className="min-w-0">
-        <h3 className="text-[1.0625rem] font-bold leading-snug text-forest text-pretty">{title}</h3>
-        {sub && <p className="mt-0.5 text-[0.8125rem] text-muted">{sub}</p>}
+        <h3 className="font-display text-[1.1875rem] font-extrabold leading-[1.15] tracking-[-0.025em] text-ink text-pretty">{title}</h3>
+        {sub && <p className="mt-1 text-[0.8125rem] text-muted">{sub}</p>}
       </div>
-      {amount && <p className="shrink-0 text-2xl font-extrabold tracking-[-0.02em] text-forest tabular-nums">{amount}</p>}
+      {amount && <p className="shrink-0 font-display text-[1.75rem] font-black leading-none tracking-[-0.035em] text-ink tabular-nums">{amount}</p>}
     </div>
   );
 }
@@ -105,14 +83,14 @@ export function ReceiptSection({ children, className = '' }: { children: ReactNo
 
 const BY_LABEL: Record<Reason['by'], string> = { code: 'Rule check', ai: 'AI check', system: 'System' };
 
-/** The reasons behind a decision, printed as the receipt's line items. */
+/** The reasons behind a decision, each led by a small tag naming who checked it. */
 export function ReasonLines({ reasons, fallback }: { reasons: Reason[]; fallback: string }) {
-  if (reasons.length === 0) return <p className="text-sm leading-relaxed text-slate">{fallback}</p>;
+  if (reasons.length === 0) return <p className="text-sm leading-relaxed text-ink">{fallback}</p>;
   return (
     <ul className="space-y-2.5">
       {reasons.map((r, i) => (
-        <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-slate">
-          <span className="mt-[3px] shrink-0 rounded-full bg-cream px-2 py-0.5 text-[0.6875rem] font-bold uppercase tracking-[0.05em] text-ink-soft ring-1 ring-line">
+        <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-ink">
+          <span className="mt-[2px] shrink-0 rounded-[4px] border border-line bg-surface px-1.5 py-px text-[0.75rem] font-[650] text-ink">
             {BY_LABEL[r.by]}
           </span>
           <span className="min-w-0">{r.message}</span>
@@ -122,46 +100,56 @@ export function ReasonLines({ reasons, fallback }: { reasons: Reason[]; fallback
   );
 }
 
-/** A screen's title. At most one word per screen is set in the script, with a hand-drawn stroke under it. */
-export function ScreenTitle({ before = '', script, after = '', children }: { before?: string; script?: string; after?: string; children?: ReactNode }) {
+/** A screen's title. At most one word per screen sits on the yellow highlight band. */
+export function ScreenTitle({ before = '', highlight, after = '', children }: { before?: string; highlight?: string; after?: string; children?: ReactNode }) {
   return (
-    <header className="mb-5 space-y-2">
-      <h2 className="text-[1.75rem] font-extrabold leading-[1.15] tracking-[-0.03em] text-forest text-balance">
+    <header className="mb-6 space-y-2.5">
+      <h2 className="font-display text-[2rem] font-black leading-[1.05] tracking-[-0.04em] text-ink text-balance">
         {before}
-        {script && <Script>{script}</Script>}
+        {highlight && <Highlight>{highlight}</Highlight>}
         {after}
       </h2>
-      {children && <p className="max-w-[34ch] text-[0.9375rem] leading-relaxed text-ink-soft">{children}</p>}
+      {children && <p className="max-w-[36ch] text-[0.9375rem] leading-relaxed text-muted">{children}</p>}
     </header>
   );
 }
 
-export function Script({ children }: { children: string }) {
+export function Highlight({ children }: { children: string }) {
+  return <span className="highlight highlight-draw">{children}</span>;
+}
+
+/** A heading inside a screen, followed by a dashed rule to the edge. */
+export function SectionHeading({ children }: { children: ReactNode }) {
   return (
-    <span className="relative inline-block px-0.5 align-[-0.06em] font-sign text-[2.6rem] font-normal leading-[0.8] tracking-normal text-orange">
-      {children}
-      <svg aria-hidden="true" viewBox="0 0 120 12" preserveAspectRatio="none" className="absolute -bottom-1.5 left-0 h-2.5 w-full overflow-visible">
-        <path className="draw" d="M3 8.5C30 3.5 72 2.5 117 6.5" stroke="var(--color-orange-soft)" strokeWidth="3.5" strokeLinecap="round" fill="none" />
-      </svg>
-    </span>
+    <div className="flex items-center gap-3">
+      <h3 className="min-w-0 font-display text-lg font-extrabold leading-tight tracking-[-0.03em] text-ink text-balance">{children}</h3>
+      <span aria-hidden="true" className="min-w-6 flex-1 border-b border-dashed border-rule" />
+    </div>
   );
 }
 
+/** Flat paper with a fine edge, for settings rows and tables. Only decisions get a coloured offset. */
 export function Panel({ children, className = '' }: { children: ReactNode; className?: string }) {
-  return <div className={`rounded-[20px] bg-paper ring-1 ring-line ${className}`}>{children}</div>;
+  return <div className={`rounded-[4px] border border-line bg-paper ${className}`}>{children}</div>;
 }
 
-export const FIELD =
-  'w-full resize-none rounded-[20px] border border-line bg-paper px-4 py-3.5 [field-sizing:content] min-h-[7.5rem] max-h-[22rem] text-[0.9375rem] leading-relaxed text-slate shadow-[inset_0_1px_2px_rgb(15_46_38/0.05)] transition-[border-color,box-shadow] duration-200 ease-out placeholder:text-muted focus:border-forest/55 focus:outline-none focus:ring-4 focus:ring-forest/10';
+/** An empty state: a dashed outline on the warm surface. */
+export const EMPTY = 'rounded-[4px] border border-dashed border-rule bg-surface px-4 py-6 text-center text-sm text-muted';
 
+export const FIELD =
+  'w-full resize-none rounded-[4px] border border-ink bg-paper px-4 py-3.5 [field-sizing:content] min-h-[7.5rem] max-h-[22rem] text-base leading-relaxed text-ink transition-shadow duration-200 ease-out placeholder:text-muted focus:outline-none focus:shadow-[4px_4px_0_0_var(--color-yellow),4px_4px_0_1px_var(--color-ink)]';
+
+/** Example tasks: outlined like the portfolio's filters, yellow when hovered or chosen. */
 export const CHIP =
-  'rounded-full bg-paper px-3.5 py-1.5 text-[0.8125rem] font-medium text-forest ring-1 ring-line transition-[background-color,box-shadow,transform] duration-200 ease-out hover:bg-peach hover:ring-orange-soft active:scale-[0.96]';
+  'min-h-10 rounded-[4px] border border-yellow-line px-3 py-2 text-left text-[0.8125rem] font-[650] leading-snug text-ink transition-[background-color,border-color] duration-200 ease-out hover:border-yellow hover:bg-yellow aria-pressed:border-yellow aria-pressed:bg-yellow active:translate-y-px';
 
 /** Plain notes under a control: errors name the problem; confirmations say what changed. */
 export function Note({ tone, children }: { tone: 'ok' | 'error'; children: ReactNode }) {
   return (
-    <p role={tone === 'error' ? 'alert' : 'status'} className={`step-in flex items-start gap-2 text-sm ${tone === 'error' ? 'text-orange-ink' : 'text-forest'}`}>
-      <span className="mt-0.5 shrink-0">{tone === 'error' ? <AlertIcon width={16} height={16} /> : <CheckIcon width={16} height={16} strokeWidth={2.25} />}</span>
+    <p role={tone === 'error' ? 'alert' : 'status'} className="step-in flex items-start gap-2 text-sm text-ink">
+      <span className={`mt-px flex size-5 shrink-0 items-center justify-center rounded-full border border-ink ${tone === 'error' ? 'bg-pink' : 'bg-mint'}`}>
+        {tone === 'error' ? <AlertIcon width={12} height={12} strokeWidth={2.5} /> : <CheckIcon width={12} height={12} strokeWidth={2.75} />}
+      </span>
       <span>{children}</span>
     </p>
   );

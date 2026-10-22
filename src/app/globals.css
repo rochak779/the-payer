@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
-/* The Product Kinship's palette and type (colours and type only; see PRODUCT.md). */
+/* The look follows Rochak's portfolio design, site-dime: golden yellow, warm cream, ink outlines, white paper. */
 @theme {
-  --color-forest: #173f35;
-  --color-forest-deep: #0f2e26;
-  --color-cream: #f7f2e8;
-  --color-paper: #fffdf8;
-  --color-line: #e4dccd;
-  --color-sage: #c6cbc1;
-  --color-gold: #e9a51a;
-  --color-orange: #d96a32;
-  --color-orange-ink: #b4511f;
-  --color-orange-soft: #ecb898;
-  --color-peach: #f8e1d2;
-  --color-slate: #24333b;
-  --color-ink-soft: #4a5a55;
-  --color-muted: #5c6a64;
+  --color-yellow: #ffca49;
+  --color-yellow-line: #e9c893;
+  --color-cream: #fefaf4;
+  --color-paper: #ffffff;
+  --color-surface: #f6f2e9;
+  --color-ink: #1c1c1c;
+  --color-muted: #5c5c5c;
+  --color-line: #d3c9bc;
+  --color-rule: #91867b;
+  --color-brown: #5c491a;
+  --color-mint: #c7e9cc;
+  --color-pink: #f8b7c7;
 
-  --font-sans: var(--font-manrope), system-ui, sans-serif;
-  --font-sign: var(--font-ephesis), "Snell Roundhand", cursive;
+  /* Satoshi loads from Fontshare's CDN (its licence doesn't allow committing the file); Inter is self-hosted by next/font. */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Satoshi", var(--font-inter), ui-sans-serif, system-ui, sans-serif;
 
-  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  /* Paper and tags move on this curve; controls use plain `ease` at 180ms. */
+  --ease-paper: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @layer base {
@@ -28,31 +28,27 @@
     -webkit-tap-highlight-color: transparent;
   }
   body {
-    font-feature-settings: "ss01" on;
-    caret-color: var(--color-forest);
+    caret-color: var(--color-ink);
   }
   ::selection {
-    background: var(--color-peach);
-    color: var(--color-forest-deep);
+    background: var(--color-yellow);
+    color: var(--color-ink);
   }
   :focus-visible {
-    outline: 2px solid var(--color-forest);
+    outline: 3px solid var(--color-ink);
+    outline-offset: 3px;
+  }
+  /* On the ink dock the ring turns yellow so it stays visible. */
+  .on-ink :focus-visible {
+    outline-color: var(--color-yellow);
     outline-offset: 2px;
   }
-  /* On the forest header the ring flips to cream so it stays visible. */
-  .on-forest :focus-visible {
-    outline-color: var(--color-cream);
-  }
   a {
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
   }
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--color-line) transparent;
-  }
-  input,
-  textarea {
-    caret-color: var(--color-forest);
+    scrollbar-color: var(--color-yellow) transparent;
   }
   textarea::placeholder {
     color: var(--color-muted);
@@ -60,55 +56,219 @@
 }
 
 @layer components {
-  /* A receipt: warm paper with a perforated bottom edge. The shadow lives on a wrapper, since the mask clips it. */
-  .receipt-shadow {
-    filter: drop-shadow(0 1px 1px rgb(15 46 38 / 0.08)) drop-shadow(0 10px 18px rgb(15 46 38 / 0.09));
+  /* The wordmark: Satoshi, heavy and tight, with a yellow full stop that screen readers skip. */
+  .wordmark {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
   }
-  /* The torn edge is an irregular tear, drawn once and repeated every 120px. */
-  .receipt {
-    --tear: 10px;
-    background: var(--color-paper);
-    border-radius: 20px 20px 0 0;
-    padding-bottom: calc(var(--tear) + 14px);
-    mask:
-      linear-gradient(#000 0 0) top / 100% calc(100% - var(--tear)) no-repeat,
-      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 10' preserveAspectRatio='none'%3E%3Cpath d='M0 0H120V6L115 8.5L111 4.5L104 9.5L99 5L93 7.5L86 3.5L81 8L74 5.5L69 9.5L62 4L57 7L50 3L46 8.5L39 5L33 9L28 4.5L21 8L16 3.5L10 9L5 5L0 6Z'/%3E%3C/svg%3E") bottom / 120px var(--tear) repeat-x;
-  }
-  .rule-dashed {
-    border-top: 1.5px dashed var(--color-line);
+  .wordmark::after {
+    content: "." / "";
+    color: var(--color-yellow);
   }
 
-  /* The decision stamp: a rubber stamp's double border, set at a slight angle. */
+  /* Buttons: an ink edge and a hard ink offset that grows on hover and vanishes on press. */
+  .btn {
+    --btn-offset: var(--color-ink);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 4px;
+    font-weight: 650;
+    line-height: 1.35;
+    white-space: nowrap;
+    user-select: none;
+    box-shadow: 2px 2px 0 var(--btn-offset);
+    transition:
+      transform 0.18s ease,
+      box-shadow 0.18s ease,
+      background-color 0.18s ease,
+      color 0.18s ease;
+  }
+  @media (hover: hover) {
+    .btn:hover {
+      transform: translate(-1px, -1px);
+      box-shadow: 4px 4px 0 var(--btn-offset);
+    }
+  }
+  .btn:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 var(--btn-offset);
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    transform: none;
+    box-shadow: none;
+    pointer-events: none;
+  }
+  /* A busy button stays pressed down and fully legible while its work runs. */
+  .btn[aria-busy="true"] {
+    opacity: 1;
+    transform: translate(2px, 2px);
+    box-shadow: 0 0 0 transparent;
+  }
+  .btn-primary {
+    background: var(--color-yellow);
+    color: var(--color-ink);
+  }
+  .btn-secondary {
+    background: var(--color-cream);
+    color: var(--color-ink);
+  }
+  /* "Needs you": ink with a yellow offset, the one action that routes a person to a waiting purchase. */
+  .btn-needs {
+    --btn-offset: var(--color-yellow);
+    background: var(--color-ink);
+    color: var(--color-cream);
+  }
+  .btn-needs:focus-visible {
+    outline-offset: 5px;
+  }
+  /* Quiet: a text action with a yellow underline, no edge. */
+  .btn-quiet,
+  .btn-warn {
+    border-color: transparent;
+    box-shadow: none;
+    background: transparent;
+    color: var(--color-ink);
+    text-decoration: underline;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 6px;
+  }
+  .btn-quiet {
+    text-decoration-color: var(--color-yellow);
+  }
+  .btn-warn {
+    text-decoration-color: var(--color-pink);
+  }
+  @media (hover: hover) {
+    .btn-quiet:hover,
+    .btn-warn:hover {
+      transform: none;
+      box-shadow: none;
+      background: var(--color-surface);
+    }
+  }
+  .btn-quiet:active,
+  .btn-warn:active {
+    transform: translateY(1px);
+  }
+  .btn-lg {
+    min-height: 3rem;
+    padding: 0 1.25rem;
+    font-size: 0.9375rem;
+  }
+  .btn-md {
+    min-height: 2.75rem;
+    padding: 0 1rem;
+    font-size: 0.875rem;
+  }
+  .btn-sm {
+    min-height: 2.25rem;
+    padding: 0 0.75rem;
+    font-size: 0.8125rem;
+  }
+  .btn-xs {
+    min-height: 2rem;
+    padding: 0 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  /* A sheet of white paper with an ink edge; its offset colour says the verdict. */
+  .sheet {
+    --sheet-offset: var(--color-yellow);
+    background: var(--color-paper);
+    border: 1px solid var(--color-ink);
+    border-radius: 4px;
+    box-shadow: 5px 5px 0 var(--sheet-offset);
+    transition: box-shadow 0.35s var(--ease-paper);
+  }
+  .tone-approve {
+    --sheet-offset: var(--color-mint);
+  }
+  .tone-ask {
+    --sheet-offset: var(--color-yellow);
+  }
+  .tone-block {
+    --sheet-offset: var(--color-pink);
+  }
+  .tone-declined,
+  .tone-cancelled {
+    --sheet-offset: var(--color-line);
+  }
+  .rule-dashed {
+    border-top: 1px dashed var(--color-line);
+  }
+
+  /* The verdict tag: an outlined label in the decision's colour, set at a slight angle on the sheet. */
   .stamp {
-    --tilt: -4deg;
+    --tilt: -2deg;
+    --stamp-offset: var(--color-ink);
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    padding: 0.375rem 0.75rem;
-    border: 2px solid currentColor;
-    border-radius: 10px;
-    outline: 1.5px solid currentColor;
-    outline-offset: 2.5px;
+    padding: 0.3125rem 0.75rem 0.3125rem 0.5625rem;
+    border: 1px solid var(--color-ink);
+    border-radius: 4px;
+    color: var(--color-ink);
+    font-family: var(--font-display);
+    font-size: 0.9375rem;
     font-weight: 800;
-    font-size: 0.8125rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    line-height: 1;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    box-shadow: 2px 2px 0 var(--stamp-offset);
     transform: rotate(var(--tilt));
   }
+  .stamp-approve {
+    background: var(--color-mint);
+  }
+  .stamp-ask {
+    background: var(--color-yellow);
+  }
+  .stamp-block {
+    background: var(--color-pink);
+  }
+  /* A person's own decline or cancel: withdrawn, so the edge is dashed and the tag lies flat. */
+  .stamp-declined,
+  .stamp-cancelled {
+    --stamp-offset: transparent;
+    background: var(--color-surface);
+    border-style: dashed;
+  }
   .stamp-land {
-    animation: stamp-land 220ms var(--ease-out) both;
+    animation: stamp-land 420ms var(--ease-paper) both;
+  }
+
+  /* The highlighted word in a title: a hard yellow band across the lower part of the text, drawn in once. */
+  .highlight {
+    background-image: linear-gradient(var(--color-yellow), var(--color-yellow));
+    background-repeat: no-repeat;
+    background-position: 0 94%;
+    background-size: 100% 18%;
+    padding-inline: 2px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  /* An alarming figure sits on a small pink block, so it reads at a glance without red text. */
+  .highlight-alarm {
+    background-image: linear-gradient(var(--color-pink), var(--color-pink));
+    background-size: 100% 100%;
+    padding-inline: 0.3125rem;
+    border-radius: 3px;
+  }
+  .highlight-draw {
+    animation: highlight-draw 700ms ease-out 120ms both;
   }
 
   .step-in {
-    animation: step-in 360ms var(--ease-out) both;
+    animation: step-in 350ms var(--ease-paper) both;
   }
   .pop {
-    animation: pop 320ms var(--ease-out) both;
-  }
-  .draw {
-    stroke-dasharray: 140;
-    animation: draw 700ms 120ms var(--ease-out) both;
+    animation: pop 320ms var(--ease-paper) both;
   }
   .thinking span {
     animation: thinking 1.2s ease-in-out infinite;
@@ -120,23 +280,33 @@
     animation-delay: 0.3s;
   }
   .leaving {
-    animation: leave 180ms var(--ease-out) forwards;
+    animation: leave 180ms var(--ease-paper) forwards;
+  }
+  .dock-marker {
+    transition: transform 360ms var(--ease-paper);
   }
 }
 
+/* Lifted with a deep ink offset, pressed flat onto the sheet, then settled. */
 @keyframes stamp-land {
   0% {
     opacity: 0;
-    transform: rotate(calc(var(--tilt) - 8deg)) scale(1.7);
-    filter: blur(3px);
+    transform: translate(-5px, -12px) rotate(calc(var(--tilt) - 5deg));
+    box-shadow: 8px 12px 0 var(--stamp-offset);
   }
   55% {
     opacity: 1;
-    transform: rotate(var(--tilt)) scale(0.93);
-    filter: blur(0);
+    transform: translate(1px, 1px) rotate(var(--tilt));
+    box-shadow: 0 0 0 var(--stamp-offset);
   }
   100% {
-    transform: rotate(var(--tilt)) scale(1);
+    transform: rotate(var(--tilt));
+    box-shadow: 2px 2px 0 var(--stamp-offset);
+  }
+}
+@keyframes highlight-draw {
+  from {
+    background-size: 0% 18%;
   }
 }
 @keyframes step-in {
@@ -151,14 +321,6 @@
   }
   60% {
     transform: scale(1.15);
-  }
-}
-@keyframes draw {
-  from {
-    stroke-dashoffset: 140;
-  }
-  to {
-    stroke-dashoffset: 0;
   }
 }
 @keyframes thinking {
