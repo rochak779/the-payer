@@ -880,6 +880,8 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 ### Session 14: Demo video (under 3 minutes)
 
 > **Done last (Rochak, 21 Oct 2026):** after Session 15's write-up. Then add the video link to the README and replace the placeholder in `docs/devpost.md` and on Devpost.
+>
+> **As built (22 Oct 2026):** Steps 1–3 and 5 done (PR on `video/demo`, not merged); Step 4 is Rochak's. Reshaped by Rochak's brief ("very creative, a dashing audio, not the basic ones"): a motion-graphics cut in the app's site-dime look, no voiceover, cut on the beat of an original score. **2:25.7 (145.73 s), 1920 × 1080, 30 fps, H.264 + AAC, -13.9 LUFS integrated, true peak -2.0 dBTP.** Built in a self-contained `video/` folder (its own `package.json`: Remotion 4.0.534, Tone.js 15.1.22, Playwright 1.63.0, React 19.3.0, all at least two weeks old), not `scripts/video/` as listed below, so Render never installs it; the root `tsconfig.json`, `eslint.config.mjs` and `globals.css` (`@source not`) leave `video/` out. Story: the hook (3%, the October 2026 survey of 11,000 consumers), the promise on the drop, rules read back by Gemini, the mug approved and paid exactly $12, **PayPal's record** read from the sandbox API (order, hold and capture ids, all `COMPLETED`/`CAPTURED`, $12.00, one capture), the present asked then approved and paid $38, the refurbished headphones blocked, the shop's three tries refused with the 15%/$75 line, the off switch (the music stops with it), a **live** Channel3 + Gemini + PayPal sandbox run ($5.95, approved and paid) with every shop and brand name blurred in the page, the eval numbers, and the outro (built on PayPal, Gemini 3.5 Flash-Lite, Channel3, Render; built with Claude Code; the hosted and GitHub links). "Connect PayPal" isn't shown: the demo buyer is pre-connected. Recordings use `SEARCH=fixtures SHOPPER=scripted CHECKER=gemini PARSER=gemini PAYMENTS=paypal`, with exact in-page event times and scroll positions so the camera tracks page content; waits are sped up and labelled "Sped up". The music ("Held to the Penny", A minor, 124 BPM, 74 bars) and every sound effect are synthesised in code and rendered offline; a licensed 124 BPM track can replace the score by changing `MUSIC_FILE` in `video/src/config.ts`. Gemini's free tier timed out repeatedly during recording, so the fixture beats took four seeded passes and the live beat seven attempts (about 50 task-level Gemini calls, more with the SDK's own retries). Details, timings and how to re-render: `docs/video-run-of-show.md`. Outputs (`video/out/`: the MP4, `the-payer-thumbnail.png`, `the-payer-demo.srt`) are git-ignored.
 
 **Needs:** the hosted URL (or local with live services) and the Session 8 screenshot. Rochak uploads to YouTube as Public.
 
@@ -898,11 +900,11 @@ Rochak runs it on the hosted URL. I fold the quotes and counts into the write-up
 9. Evals: 0 wrong approvals against 5 for keyword rules. Innovation.
 10. Outro: built on PayPal Orders and Vault in the sandbox, Gemini, Channel3 and Render; the GitHub URL.
 
-- [ ] **Step 1: Adapt the scripts.** Use the Session 10 queries and update the captions. The final card names PayPal (sandbox), Gemini 3.5 Flash-Lite, Channel3 and Render.
-- [ ] **Step 2: Record and cut.** Check the length with `ffprobe -v error -show_entries format=duration -of csv=p=0 <file>`. Expected: under `180`.
-- [ ] **Step 3: Frame check.** Watch every frame for brand names or logos in product titles and images. Re-record any take that shows one, using the offline fixtures for that step if needed. Use no music, or only a track whose licence allows it.
+- [x] **Step 1: Adapt the scripts.** Use the Session 10 queries and update the captions. The final card names PayPal (sandbox), Gemini 3.5 Flash-Lite, Channel3 and Render.
+- [x] **Step 2: Record and cut.** Check the length with `ffprobe -v error -show_entries format=duration -of csv=p=0 <file>`. Expected: under `180`.
+- [x] **Step 3: Frame check.** Watch every frame for brand names or logos in product titles and images. Re-record any take that shows one, using the offline fixtures for that step if needed. Use no music, or only a track whose licence allows it.
 - [ ] **Step 4: Rochak uploads to YouTube as Public** and sends me the link. Add it to the README.
-- [ ] **Step 5: Commit the scripts and the run-of-show, push, open a PR.**
+- [x] **Step 5: Commit the scripts and the run-of-show, push, open a PR.**
 
 ### Session 15: Devpost write-up and submit
 

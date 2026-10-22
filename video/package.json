@@ -1,0 +1,29 @@
+{
+  "name": "the-payer-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Payer's hackathon demo video: Remotion edit, original score and the app recordings. Separate from the app so Render never installs it.",
+  "type": "module",
+  "scripts": {
+    "studio": "remotion studio src/index.ts",
+    "record": "node scripts/record.mjs",
+    "music": "node music/render.mjs",
+    "render:draft": "node scripts/master.mjs --draft",
+    "render": "node scripts/master.mjs",
+    "thumbnail": "remotion still src/index.ts Thumbnail out/the-payer-thumbnail.png",
+    "srt": "node scripts/srt.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.534",
+    "playwright": "1.63.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "remotion": "4.0.534",
+    "tone": "15.1.22"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "typescript": "5.9.3"
+  }
+}
