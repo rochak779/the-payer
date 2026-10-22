@@ -1,4 +1,4 @@
-# Project brief: "Agent Mandates", spending rules for personal AI shopping agents
+# Project brief: "The Payer" (was "Agent Mandates"), spending rules for personal AI shopping agents
 
 ## How to work with me
 I'm a Product Manager, not an engineer. Act like an engineering manager advising a stakeholder:
@@ -213,13 +213,34 @@ Run it locally; deploy to Vercel only when I need a shareable link. AI: measured
   **Update 16 Oct 2026:** all done. The sandbox key, cardholder and CLI signing secret are in `.env.local`. The CLI is installed and runs with the sandbox key (`STRIPE_API_KEY`), so no `stripe login` is needed. Firecrawl's key is in `.env.local` too. Gemini (free) stands in for Claude in the checker and rule reader; there's still no Anthropic key.
 - None of this blocks Phases 1–7, which run on offline fakes.
 
+## PayPal AI Hackathon (Oct–Nov 2026)
+The product is entered in the PayPal AI Hackathon on Devpost as **The Payer** (renamed from Agent Mandates, 21 Oct 2026). Target submission 10 Nov 2026; the hard deadline is 12 Nov 2026, 20:00 UK. Plan: `docs/superpowers/plans/2026-10-21-paypal-hackathon.md`. The judges' guide is `README.md`.
+
+**What changed for the hackathon.** The rest of this brief describes the original build, which still holds, except:
+- **Payments go through PayPal's sandbox, not Stripe cards.** The buyer saves their PayPal once (PayPal's vault). Each approved purchase becomes a PayPal hold for exactly its total (Orders v2, `intent: AUTHORIZE`). When the shop asks to be paid, the code-only payment check runs first, and only then is the hold captured (Payments v2). The off switch voids open holds. Stripe stays as an alternative (`PAYMENTS=stripe`).
+- **The agent gets no PayPal tools.** It can only ask to buy. Only the payment check's code path can move money.
+- **Retail, not hotels.** Product search comes from Channel3 (US shops), because Channel3 is retail only. The hotel scenarios stay in the offline listings and the evals.
+- **US dollars,** because UK sandbox shops can't save a buyer's PayPal (below). UK spelling stays.
+- **Hosted on Render** for judges (`HOSTED=1`): each visitor gets their own seeded demo, already connected to a sandbox buyer, with daily limits that fall back to the offline agent.
+- **Generic demo content:** fictional shops and unbranded products, because the hackathon bans third-party trademarks in the video.
+
+**The hackathon's requirements, and where they're met:**
+- PayPal central, with an AI tool: the PayPal rail (vault, hold, capture, void; plan Sessions 1, 6–8) and Gemini as the agent, rule reader and checker.
+- New since the 1 Oct 2026 start: the first commit is 15 Oct 2026.
+- A working demo judges can use, free, until 15 Dec 2026: the Render service (Session 11), with no login needed.
+- A public repo with an open-source licence: MIT (`LICENSE`, Session 12). Rochak makes the repo public.
+- A video under 3 minutes with no third-party trademarks: Session 14, made last.
+- Prizes aimed for: Best Use of Agentic Commerce, and Best Use of Channel3.
+
+**Status (21 Oct 2026):** Sessions 1–11 are built and merged. Session 12 (licence, judges' README, the rename) is in review. Left: the Render deploy and its smoke test, making the repo public (both Rochak), the Devpost write-up (Session 15) and the video (Session 14). Not built: refund (Session 8b, optional) and retail eval cases (Session 10b, optional).
+
 ## PayPal: verified in sandbox (21 Oct 2026, hackathon Session 1)
 
 Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypal.com`. **Result: Go, in US dollars.**
 
 **The setup that works, and why it's in dollars:**
 - A **Merchant** app linked to a **US** sandbox business account (PayPal's default one for the developer account). The buyer is a UK personal sandbox account.
-- **UK sandbox shops can't save a buyer's PayPal.** Two different UK business accounts were refused at the first step, `POST /v3/vault/setup-tokens`: 403 `NOT_AUTHORIZED`, issue `NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE` (debug ids `ca4dedde33a00`, `f4880596e4b47`). "Save payment methods" was on and the token had the `vault/payment-tokens/readwrite` scope. The US shop worked first time.
+- **UK sandbox shops can't save a buyer's PayPal.** Two different UK business accounts were refused at the first step, `POST /v3/vault/setup-tokens`: 403 `NOT_AUTHORIZED`, issue `NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE`. "Save payment methods" was on and the token had the `vault/payment-tokens/readwrite` scope. The US shop worked first time.
 - **The US shop leaves £ payments `PENDING`** (`status_details.reason: RECEIVING_PREFERENCE_MANDATES_MANUAL_ACTION`) until the shop accepts them by hand. Fixing that needs a login to the shop at sandbox.paypal.com, and that login was refused ("some of your info isn't correct") even after a password reset. **US dollar payments complete at once. Decision (Rochak, 21 Oct): the demo charges in US dollars.** UK spelling stays.
 - **A saved PayPal belongs to the shop, not the app.** After the app was deleted and remade for the same shop, the vault id saved earlier still worked.
 - **PayPal hands back the same OAuth token for up to 9 hours,** so a permission change in the dashboard doesn't show until that token is revoked: `POST /v1/oauth2/token/terminate`, Basic auth, body `token=<access token>&token_type_hint=ACCESS_TOKEN`. Only matters when changing app settings.
@@ -272,14 +293,14 @@ Checked live with `scripts/paypal-spike.ts` against `https://api-m.sandbox.paypa
 - **In the app too (21 Oct):** the Ask screen's suggested tasks are now these two wordings plus "Buy wireless headphones under $80", so people trying the live app get the same stable, unbranded picks. Offline, they still reach the mug (approved, $12), the present (asks) and the refurbished headphones (blocked).
 
 ## Hackathon decisions (Rochak, 21 Oct 2026)
-- **Name:** the app, video and Devpost entry are called **"The Payer"**. Session 12 does the rename.
+- **Name:** the app, video and Devpost entry are called **"The Payer"**. Renamed in Session 12 (the app's title and header, `package.json`, README, this brief and the design docs; old plan files and the build log keep the old name).
 - **Gemini:** the hosted demo uses the **free key**. Past the app's own daily limits, runs use the offline agent with a one-line notice (Session 5). If Google's own allowance (500 calls a day) runs out first, a run stops with a message saying Gemini is over its usage limit, and nothing is approved. Google may use free-tier prompts, so the demo uses mock data only.
 - **Session 13 (5-person test kit) is skipped.**
 - **The video (Session 14) is made last,** after Session 15's write-up. The write-up leaves a placeholder for the video link.
 - **Hosting:** Render, from the Blueprint in `render.yaml` (Session 11): one Starter web service in Frankfurt, Node 24, health check `/api/health`. The keys are typed into Render's dashboard, never committed.
 
 ## Earlier research (raw files)
-Saved pages and search results from the research session that produced this brief:
+Saved pages and search results from the research session that produced this brief (on Rochak's machine only; raw scraped sources are not published):
 `/Users/rochakagarwal/orca/projects/Learning/.firecrawl/agent-mandates/`
 Includes:
 - Stripe: Link wallet for agents, Issuing for agents, Issuing testing, SPT docs, SPT expansion post

@@ -59,7 +59,7 @@ Do these in order. Each one names the session that's blocked without it. Only yo
 8. **Render** (blocks Session 11). Sign up at render.com with your GitHub account, then claim the $50 hackathon credits at credits-portal-mmdm.onrender.com/claim/paypal-ai-hackathon. When Session 11 asks, give Render access to the `rochak779/the-payer` repo. The Starter plan is $7 a month, so the credits cover it through judging.
 9. **Later, when a session asks:**
    - review the repo before it goes public, then make it public (Session 12);
-   - create a second sandbox buyer for judges and put its login in the README (Session 12);
+   - create a second sandbox buyer for judges and put its login in the README (Session 12): skipped (21 Oct), because the hosted demo is pre-connected to the demo buyer;
    - the 5-person test (Session 13): skipped (decided 21 Oct);
    - paste the write-up into Devpost (Session 15; the video link is a placeholder until Session 14);
    - upload the video to YouTube as Public (Session 14, done last, decided 21 Oct), then add its link to Devpost and submit.
@@ -736,19 +736,19 @@ Before writing the code, check the SDK's real method and type names in `node_mod
 
 ### Session 10: Live retail run (Gemini + Channel3 + PayPal)
 
-> **As built (21 Oct 2026):** done, 245 tests. Each AI shopper remembers the search results it showed the agent in this task. If the agent's link matches a result with a Channel3 offer, `toPurchaseRequest` takes that offer's price (times the number of items) and shop, and the checker gets the listing's own text with its Condition line; otherwise the agent's words stand. The prompt now says US dollars, pick only in-stock offers, and copy price and shop exactly. All 25 requests in 24 live runs matched a listing. Step 5 (9 runs, before the misread fix) gave the right outcome every time; each paid purchase is one PayPal order with one hold and one `COMPLETED` capture at the listing's price. The "ask" purchases were approved the way the Approve button does it. The headphones were all new, so the live run approves them; the "blocked" scene stays on the offline listings. Step 6 found two misreads, each fixed test-first: a wooden blocks set for a nephew was filed as a gift card and blocked by "No gift cards" (the `category` field now says `gift_card` means a gift card or voucher), and the agent added brand and shop names to its searches ("Melissa and Doug", "site:walmart.com"); it is now told to search in the person's own words. Review then found that two of a listed item would have been priced as one; fixed. Video wordings are in BRIEF.md. Results name real products and shops (below), so Session 14's frame check still applies.
+> **As built (21 Oct 2026):** done, 245 tests. Each AI shopper remembers the search results it showed the agent in this task. If the agent's link matches a result with a Channel3 offer, `toPurchaseRequest` takes that offer's price (times the number of items) and shop, and the checker gets the listing's own text with its Condition line; otherwise the agent's words stand. The prompt now says US dollars, pick only in-stock offers, and copy price and shop exactly. All 25 requests in 24 live runs matched a listing. Step 5 (9 runs, before the misread fix) gave the right outcome every time; each paid purchase is one PayPal order with one hold and one `COMPLETED` capture at the listing's price. The "ask" purchases were approved the way the Approve button does it. The headphones were all new, so the live run approves them; the "blocked" scene stays on the offline listings. Step 6 found two misreads, each fixed test-first: a wooden blocks set for a nephew was filed as a gift card and blocked by "No gift cards" (the `category` field now says `gift_card` means a gift card or voucher), and the agent added brand and shop names to its searches (a toy brand, and `site:` with a big retailer's address); it is now told to search in the person's own words. Review then found that two of a listed item would have been priced as one; fixed. Video wordings are in BRIEF.md. The live results named real brands and US shops; the table describes them generically (Session 12, before the repo went public), and Session 14's frame check still applies.
 >
 > | Task | Run | Product | Shop | Price | Outcome | Paid |
 > |---|---|---|---|---|---|---|
-> | Buy a plain white ceramic mug, under $15 | 1 | Ceramic Mug Blank, White 15 oz | cricut.com | $7.99 | approve | yes, capture 82309798NU756113S |
-> | | 2 | Ceramic Mug Blank (White, 15 oz) | cricut.com | $7.99 | approve | yes, 9TP29415RH723181H |
-> | | 3 | Ceramic Mug Blank (15 oz) | cricut.com | $7.99 | approve | yes, 6KC45393C7764202H |
-> | Buy a birthday present for my nephew, about $40 | 1 | LEGO Star Wars AT-RT Attack set | gamestop.com | $42.74 | ask, then approved | yes, 11T166748B463154Y |
-> | | 2 | LEGO Star Wars X-Wing Starfighter | lego.com | $29.99 | ask, then approved | yes, 9G4338422D107430A |
-> | | 3 | LEGO Star Wars Battle Pack | toysrus.com | $29.99 | ask, then approved | yes, 5GC28858CV538322M |
-> | Buy wireless headphones under $80 | 1 | Philips A4216 Wireless Headphones | macys.com | $49.49 | approve (new) | yes, 86J21535F5651405G |
-> | | 2 | Philips Wireless Headphones | macys.com | $76.99 | approve (new) | yes, 2PH72189DC365152V |
-> | | 3 | Philips A4216 Wireless Headphones | macys.com | $49.49 | approve (new) | yes, 14475863766147148 |
+> | Buy a plain white ceramic mug, under $15 | 1 | White ceramic mug blank, 15 oz | a US craft retailer | $7.99 | approve | yes, capture 82309798NU756113S |
+> | | 2 | White ceramic mug blank, 15 oz | the same craft retailer | $7.99 | approve | yes, 9TP29415RH723181H |
+> | | 3 | White ceramic mug blank, 15 oz | the same craft retailer | $7.99 | approve | yes, 6KC45393C7764202H |
+> | Buy a birthday present for my nephew, about $40 | 1 | Branded building-blocks set (a film tie-in) | a US games retailer | $42.74 | ask, then approved | yes, 11T166748B463154Y |
+> | | 2 | Branded building-blocks set (a film tie-in) | the toy maker's own shop | $29.99 | ask, then approved | yes, 9G4338422D107430A |
+> | | 3 | Branded building-blocks battle pack (a film tie-in) | a US toy retailer | $29.99 | ask, then approved | yes, 5GC28858CV538322M |
+> | Buy wireless headphones under $80 | 1 | Branded wireless headphones | a US department store | $49.49 | approve (new) | yes, 86J21535F5651405G |
+> | | 2 | Branded wireless headphones | the same department store | $76.99 | approve (new) | yes, 2PH72189DC365152V |
+> | | 3 | Branded wireless headphones | the same department store | $49.49 | approve (new) | yes, 14475863766147148 |
 
 **Needs:** `GEMINI_API_KEY`, `CHANNEL3_API_KEY`, PayPal keys and a connected buyer.
 
@@ -813,6 +813,8 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 
 ### Session 12: Public-repo prep (licence, judge README, clean-up)
 
+> **As built (21 Oct 2026):** Steps 2, 3, 5 and 6 done (PR on `chore/public-repo`, not merged). **Step 1 skipped:** the hosted demo is pre-connected to the demo buyer, so judges need no login, and a judge login would only lead to PayPal's sandbox error page after Agree (Session 7). The README's "Try it" says so, and offers "Connect your own PayPal" (then "Finish connecting") to anyone with their own sandbox account. The README follows the 11-part order below. The hosted address is the placeholder `HOSTED_URL_TBD` until Render is live, and refund is stated as not built. **Renamed to "The Payer":** the browser tab and header (a new test also fails if "Agent Mandates" appears anywhere in `src/`), the AP2 extension's description (its key stays `x_agent_mandates`), `package.json`, the README, BRIEF.md and the design docs; old plans and the build log keep the old name. The Session 10 table is now generic. BRIEF.md gained a hackathon section and lost two PayPal debug ids. **Step 3's scan doesn't give 0, but every hit is a false positive:** the scan command itself in this file, the fake key `sk_live_nope` in a Stripe test, and one sha512 hash in `package-lock.json`. Filtered, it gives 0: `git log -p --all | grep -E "<Step 3's pattern>" | grep -v -F 'sk_live_|sk_test_' | grep -v -F 'sk_live_nope' | grep -v -F '"integrity": "sha512-' | wc -l`. No `.env.local` value appears anywhere in the history. 249 tests, typecheck and build pass. **Left for Rochak:** Step 4 (the confidentiality scan), reading the repo through, and making it public.
+
 **Needs:** Rochak's review, then Rochak makes the repo public. Target: public by 9 Nov.
 
 **Files:**
@@ -837,12 +839,12 @@ Add 10 retail cases to `evals/cases.json` in the `test` split. Include used and 
 10. Stripe as an alternative rail
 11. Limits of the demo
 
-- [ ] **Step 1: Rochak creates a second UK sandbox buyer for judges.** I add its email and password to the README's "Try it" section. These are sandbox-only logins, which the rules ask for.
-- [ ] **Step 2: Write the LICENSE, the README and the other edits above.**
-- [ ] **Step 3: Scan for secrets across all history.** Run `git log -p --all | grep -c -E "sk_live_|sk_test_[A-Za-z0-9]{20}|whsec_[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{30}|fc-[0-9a-f]{20}|EC[A-Za-z0-9_-]{60}"`. Expected: `0`.
+- [x] **Step 1 (skipped, 21 Oct): Rochak creates a second UK sandbox buyer for judges.** I add its email and password to the README's "Try it" section. These are sandbox-only logins, which the rules ask for.
+- [x] **Step 2: Write the LICENSE, the README and the other edits above.**
+- [x] **Step 3: Scan for secrets across all history.** Run `git log -p --all | grep -c -E "sk_live_|sk_test_[A-Za-z0-9]{20}|whsec_[A-Za-z0-9]{20}|AIza[0-9A-Za-z_-]{30}|fc-[0-9a-f]{20}|EC[A-Za-z0-9_-]{60}"`. Expected: `0`.
 - [ ] **Step 4: Confidentiality scan.** Give Rochak this command to run with the names that must never appear (Rochak types them, so I never see them): `git log -p --all | grep -i -c -E "name1|name2"`. Expected: `0`.
-- [ ] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
-- [ ] **Step 6: Commit, push, open a PR.** Rochak merges, then reads the repo, including BRIEF.md, `docs/` and commit messages, and runs `gh repo edit rochak779/the-payer --visibility public --accept-visibility-change-consequences`.
+- [x] **Step 5: Run `npm test && npm run typecheck`.** Expected: all pass.
+- [x] **Step 6: Commit, push, open a PR.** Rochak merges, then reads the repo, including BRIEF.md, `docs/` and commit messages, and runs `gh repo edit rochak779/the-payer --visibility public --accept-visibility-change-consequences`.
   Expected: the repo page's About section shows "MIT license".
 
 ### Session 13 (optional, cut first): 5-person test kit

@@ -46,7 +46,7 @@ export function toAp2OpenMandate(
   const constraints: Record<string, unknown>[] = [];
   const ext = {
     about:
-      'Agent Mandates extension: rules AP2 v0.2 has no field for, and whether each rule asks or blocks. ' +
+      'The Payer extension: rules AP2 v0.2 has no field for, and whether each rule asks or blocks. ' +
       'Unsigned content: cnf (the agent key) and payment.reference are added when a trusted surface signs it.',
     rules: [] as ExtRule[],
     amount_caps: [] as Record<string, unknown>[],

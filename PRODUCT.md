@@ -15,7 +15,7 @@ Two audiences, weighted equally (confirmed 17 Oct 2026):
 
 ## Product Purpose
 
-Agent Mandates is the spending-control layer for a personal AI shopping agent. A person writes rules the way they'd tell a human ("Hotels up to £150 a night. Nothing non-refundable. Ask me about gifts."). When the agent wants to buy something, a checker decides approve, ask the person, or block, always with a plain-English reason. Approved purchases get a one-time card that only works for that shop and amount. Success means the person can skip approving routine purchases without ever being surprised by one, and the decisions are measurably right (wrong approvals and needless asks, measured in `evals/`).
+The Payer is the spending-control layer for a personal AI shopping agent. A person writes rules the way they'd tell a human ("Hotels up to £150 a night. Nothing non-refundable. Ask me about gifts."). When the agent wants to buy something, a checker decides approve, ask the person, or block, always with a plain-English reason. Approved purchases get a one-time card that only works for that shop and amount. Success means the person can skip approving routine purchases without ever being surprised by one, and the decisions are measurably right (wrong approvals and needless asks, measured in `evals/`).
 
 ## Positioning
 
@@ -36,13 +36,13 @@ It is the layer between "approve every purchase" and blunt spending caps. Code e
 
 ## Brand Commitments
 
-- The product name stays **Agent Mandates**. Visual identity borrows **The Product Kinship's colours and type only** (confirmed): no Product Kinship name, logo or claim anywhere in the app, so it isn't presented as a community project.
+- The product is called **The Payer** (renamed from Agent Mandates for the PayPal AI Hackathon, 21 Oct 2026). Visual identity borrows **The Product Kinship's colours and type only** (confirmed): no Product Kinship name, logo or claim anywhere in the app, so it isn't presented as a community project.
 - Never name the builder's employer, its client bank or their products; write "a UK bank". Mock data and public sources only.
 
 ## Evidence on Hand
 
 - Eval results: `evals/RESULTS.md` and saved runs under `evals/runs/` (67 cases; keyword baseline vs Gemini Flash-Lite).
-- Canned listings for demos: `src/agent/fixtures.ts` (Lisbon hotels, a LEGO present, headphones, a book). Synthetic; must stay labelled as demo data where a viewer could mistake it.
+- Canned listings for demos: `src/agent/fixtures.ts` (retail: a mug, a building-blocks present, refurbished headphones; plus Lisbon hotels and a book; generic products and fictional shops). Synthetic; must stay labelled as demo data where a viewer could mistake it.
 - No real testimonials, customers or usage figures exist; never invent them.
 
 ## Product Principles

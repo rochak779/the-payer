@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-10-17T17:06:20+00:00",
-  "title": "Design System: Agent Mandates",
+  "title": "Design System: The Payer",
   "extensions": {
     "colorMeta": {
       "forest": {
@@ -439,7 +439,7 @@
   ],
   "narrative": {
     "northStar": "The Decision Receipt",
-    "overview": "Every checker decision is printed, not displayed. A purchase arrives as a sheet of warm paper with a torn bottom edge; the decision comes down on it as a tilted rubber stamp (Approved, Asking you, Blocked); the reasons are its line items, each tagged with who checked it. The rest of the app is the counter the receipts sit on: a cream ground, a forest header, forest pills for the one thing to do next, and a single hand-written word per screen.\n\nThe app is a phone-sized shell (max 420px), dense but calm. Manrope carries everything, heavy and tight at display sizes, relaxed at reading sizes. Colour is semantic before it is decorative: forest is the product's voice and the primary action, gold means \"needs you\" and nothing else, orange-ink is Blocked and errors. Motion is one ease, `cubic-bezier(0.16, 1, 0.3, 1)`: steps slide in, the stamp lands with an overshoot, buttons press down, and reduced motion collapses all of it to an instant.\n\nColours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called Agent Mandates.",
+    "overview": "Every checker decision is printed, not displayed. A purchase arrives as a sheet of warm paper with a torn bottom edge; the decision comes down on it as a tilted rubber stamp (Approved, Asking you, Blocked); the reasons are its line items, each tagged with who checked it. The rest of the app is the counter the receipts sit on: a cream ground, a forest header, forest pills for the one thing to do next, and a single hand-written word per screen.\n\nThe app is a phone-sized shell (max 420px), dense but calm. Manrope carries everything, heavy and tight at display sizes, relaxed at reading sizes. Colour is semantic before it is decorative: forest is the product's voice and the primary action, gold means \"needs you\" and nothing else, orange-ink is Blocked and errors. Motion is one ease, `cubic-bezier(0.16, 1, 0.3, 1)`: steps slide in, the stamp lands with an overshoot, buttons press down, and reduced motion collapses all of it to an instant.\n\nColours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called The Payer (Agent Mandates until 21 Oct 2026).",
     "keyCharacteristics": [
       "Decisions live on receipts: paper, torn edge, dashed rules between sections, a stamp, line-item reasons.",
       "One accent per meaning: forest acts, gold waits on the person, orange-ink refuses.",

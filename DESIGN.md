@@ -1,5 +1,5 @@
 ---
-name: Agent Mandates
+name: The Payer
 description: Spending rules for your AI shopping agent; every checker decision is printed as a receipt.
 colors:
   forest: "#173f35"
@@ -169,7 +169,7 @@ components:
     height: "18px"
 ---
 
-# Design System: Agent Mandates
+# Design System: The Payer
 
 ## Overview
 
@@ -179,7 +179,7 @@ Every checker decision is printed, not displayed. A purchase arrives as a sheet 
 
 The app is a phone-sized shell (max 420px), dense but calm. Manrope carries everything, heavy and tight at display sizes, relaxed at reading sizes. Colour is semantic before it is decorative: forest is the product's voice and the primary action, gold means "needs you" and nothing else, orange-ink is Blocked and errors. Motion is one ease, `cubic-bezier(0.16, 1, 0.3, 1)`: steps slide in, the stamp lands with an overshoot, buttons press down, and reduced motion collapses all of it to an instant.
 
-Colours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called Agent Mandates.
+Colours and type are The Product Kinship's; the name, logo and blob mark are not used. The product is always called The Payer (Agent Mandates until 21 Oct 2026).
 
 **Key Characteristics:**
 - Decisions live on receipts: paper, torn edge, dashed rules between sections, a stamp, line-item reasons.

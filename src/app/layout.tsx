@@ -8,7 +8,7 @@ import './globals.css';
 const manrope = Manrope({ subsets: ['latin'], variable: '--font-manrope' });
 const ephesis = Ephesis({ subsets: ['latin'], weight: '400', variable: '--font-ephesis' });
 
-export const metadata: Metadata = { title: 'Agent Mandates', description: 'Spending rules for your AI shopping agent' };
+export const metadata: Metadata = { title: 'The Payer', description: 'Spending rules for your AI shopping agent' };
 export const dynamic = 'force-dynamic';
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
@@ -22,7 +22,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <header className="on-forest bg-forest px-5 pb-5 pt-7 text-cream">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <h1 className="text-[1.375rem] font-extrabold leading-tight tracking-[-0.02em]">Agent Mandates</h1>
+                <h1 className="text-[1.375rem] font-extrabold leading-tight tracking-[-0.02em]">The Payer</h1>
                 <p className="text-[0.8125rem] text-cream/70">Spending rules for your shopping agent</p>
               </div>
               <span
