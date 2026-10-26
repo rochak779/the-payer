@@ -154,7 +154,7 @@ Channel3 and Render.
 - **Live results show real US shop names and products, but no shop is really paid** and nothing is ordered. It's PayPal's sandbox: every payment goes to one sandbox business account, and the shop's request to be paid is played by the app.
 - **Please type nothing personal.** The demo runs on Gemini's free tier, whose prompts may be used to improve the service.
 - **Daily limits.** Past them, a run uses the offline agent and says so in one line. Payments still go through PayPal's sandbox.
-- **Optional: your own sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**.
+- **Optional: your own sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal sandbox account** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**.
 
 ## Updated during the hackathon
 

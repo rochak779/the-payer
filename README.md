@@ -11,7 +11,7 @@ Built for the PayPal AI Hackathon (October to November 2026), entirely on PayPal
 **https://the-payer.onrender.com**
 
 - **Nothing to install, no login.** Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)").
-- **Optional: use your own PayPal sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**; the app checks with PayPal before saving.
+- **Optional: use your own PayPal sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal sandbox account** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**; the app checks with PayPal before saving.
 - **Please type nothing personal.** The demo uses Gemini's free tier, and Google may use free-tier prompts to improve its products.
 - It's sandbox money in US dollars. Nothing real is bought or paid.
 

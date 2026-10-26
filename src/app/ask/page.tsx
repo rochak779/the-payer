@@ -55,9 +55,14 @@ async function PayPalStrip({ result }: { result: string | string[] | undefined }
             <form action={finishPayPal}><FinishPayPalButton /></form>
           </>
         ) : (
-          <ConnectPayPalButton label={demo ? 'Connect your own PayPal' : 'Connect PayPal'} variant={demo ? 'secondary' : 'primary'} />
+          <ConnectPayPalButton label={demo ? 'Connect your own PayPal sandbox account' : 'Connect a PayPal sandbox account'} variant={demo ? 'secondary' : 'primary'} />
         )}
       </Panel>
+      {!own && !pending && (
+        <p className="px-1 text-[0.8125rem] text-muted">
+          Sandbox only, no real money. Use a sandbox personal account from developer.paypal.com{demo ? ', or keep the demo buyer' : ''}.
+        </p>
+      )}
       {note && <Note tone={note.tone}>{note.text}</Note>}
     </div>
   );
