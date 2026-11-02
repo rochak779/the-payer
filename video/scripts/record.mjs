@@ -468,6 +468,10 @@ const CLIPS = {
   // Beat 10: the measured scores, as the app shows them.
   async evals() {
     await go('/evals');
+    // The hackathon's video rule bars third-party trademarks, and this screen names the model under each run.
+    // Blur those ids in the page, the way the live clip blurs shop names.
+    await page.addStyleTag({ content: `
+      article h3 + p, table span[title] { color: transparent !important; text-shadow: 0 0 9px rgba(92,92,92,.9) !important; }` });
     startClip('evals');
     await mark('start', { title: page.getByRole('heading', { name: /How well does the checker/ }), latest: page.locator('article').first() });
     await pause(2500);

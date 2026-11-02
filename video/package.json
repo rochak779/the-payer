@@ -10,7 +10,7 @@
     "music": "node music/render.mjs",
     "render:draft": "node scripts/master.mjs --draft",
     "render": "node scripts/master.mjs",
-    "thumbnail": "remotion still src/index.ts Thumbnail out/the-payer-thumbnail.png",
+    "thumbnail": "remotion still src/index.ts Thumbnail out/the-payer-thumbnail.png && remotion still src/index.ts ThumbnailDevpost out/the-payer-thumbnail-3x2.png",
     "srt": "node scripts/srt.ts",
     "typecheck": "tsc --noEmit"
   },
