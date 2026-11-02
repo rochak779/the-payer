@@ -72,7 +72,7 @@ export const LINES: Line[] = [
 
   // 9. Live
   { key: 'live.head', section: 'live', from: 0, to: 24, text: 'Live, with|real US *shops*.' },
-  { key: 'live.sub', section: 'live', from: 2, to: 24, text: 'A Gemini agent searches Channel3, the checker decides, and PayPal’s sandbox pays.' },
+  { key: 'live.sub', section: 'live', from: 2, to: 24, text: 'An AI agent searches Channel3, the checker decides, and PayPal’s sandbox pays.' },
   { key: 'live.label', section: 'live', from: 0, to: 24, text: 'Live: Channel3 + PayPal sandbox · shop names blurred' },
 
   // 10. Evals
@@ -82,13 +82,12 @@ export const LINES: Line[] = [
   { key: 'evals.keyword', section: 'evals', from: 5, to: 24, text: 'Keyword rules: 17' },
   { key: 'evals.payer', section: 'evals', from: 7, to: 24, text: 'The Payer’s AI checker: 0 to 1 per run' },
   { key: 'evals.heldout', section: 'evals', from: 13, to: 24, text: '17 held-out cases, never used for tuning: 14 of 17 right and 0 wrong approvals, in both runs. Keyword rules: 9 right, 5 wrong approvals.' },
-  { key: 'evals.source', section: 'evals', from: 4, to: 24, text: 'Gemini 3.5 Flash-Lite, prompt v4, two runs · evals/RESULTS.md' },
+  { key: 'evals.source', section: 'evals', from: 4, to: 24, text: 'The AI checker, prompt v4, two runs · evals/RESULTS.md' },
 
   // 11. Outro
   { key: 'outro.name', section: 'outro', from: 0, to: 30, text: 'The Payer' },
   { key: 'outro.line', section: 'outro', from: 1, to: 16, text: 'Your rules, in plain English. Never a cent more than you approved.' },
-  { key: 'outro.built', section: 'outro', from: 4, to: 30, text: 'Built on PayPal (Orders v2 + Vault, sandbox) · Gemini 3.5 Flash-Lite · Channel3 · Render' },
-  { key: 'outro.claude', section: 'outro', from: 6, to: 30, text: 'Built with Claude Code' },
+  { key: 'outro.built', section: 'outro', from: 4, to: 30, text: 'Built on PayPal (Orders v2 + Vault, sandbox) · Channel3 · Render' },
   { key: 'outro.try', section: 'outro', from: 16, to: 30, text: 'Try it: https://the-payer.onrender.com' },
   { key: 'outro.code', section: 'outro', from: 17, to: 30, text: 'Code: github.com/rochak779/the-payer' },
 ];

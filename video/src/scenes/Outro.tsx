@@ -22,7 +22,7 @@ function Chip({ children, at }: { children: string; at: number }) {
 
 export function Outro() {
   const { frame, B } = useSection('outro');
-  // "Built on PayPal (…) · Gemini … · Channel3 · Render" → one chip per part.
+  // "Built on PayPal (…) · Channel3 · Render" → one chip per part. No other third-party names: the hackathon's video rule.
   const parts = text('outro.built').replace(/^Built on /, '').split(' · ');
   const card = prog(frame, B(16), 12);
   return (
@@ -35,9 +35,6 @@ export function Outro() {
         <div style={{ marginTop: 70, fontFamily: BODY, fontWeight: 650, fontSize: 40, color: C.muted, opacity: prog(frame, B(4), 8) }}>Built on</div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 22, marginTop: 18, width: 1620 }}>
           {parts.map((p, i) => <Chip key={p} at={B(4.5 + i * 0.5)}>{p}</Chip>)}
-        </div>
-        <div style={{ marginTop: 40, display: 'flex', alignItems: 'center', gap: 20 }}>
-          <Chip at={B(7)}>{text('outro.claude')}</Chip>
         </div>
       </div>
       <AbsoluteFill style={{ alignItems: 'center', justifyContent: 'center', opacity: card, transform: `translateY(${(1 - card) * 120}px)` }}>
