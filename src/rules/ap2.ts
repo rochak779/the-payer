@@ -4,7 +4,7 @@
  * Spec: AP2 v0.2.0 (released 28 Apr 2026), read at commit e1ea56d on 15 Oct 2026:
  *   https://github.com/google-agentic-commerce/AP2/blob/e1ea56db72a6385bce3e5c1112b3a56ce60acb43/code/sdk/schemas/ap2/open_payment_mandate.json
  *   https://github.com/google-agentic-commerce/AP2/blob/e1ea56db72a6385bce3e5c1112b3a56ce60acb43/docs/ap2/payment_mandate.md
- * Field names used here are only those recorded in BRIEF.md ("AP2 v0.2 field names").
+ * Field names used here are only those read from the schemas above.
  *
  * Why the Payment Mandate and not the Checkout Mandate: an open Checkout Mandate must list the exact
  * items allowed (`checkout.line_items`), which standing rules can't know in advance.

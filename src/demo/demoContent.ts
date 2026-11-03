@@ -9,7 +9,7 @@ No gift cards.`;
 
 /**
  * One task per outcome, in this order: approved and paid, asks first, blocked (offline; live listings are all new).
- * The first two are the wordings that gave stable, unbranded live picks in Session 10 (BRIEF.md, "Video wordings").
+ * The first two are the wordings that gave stable, unbranded live picks in Session 10.
  */
 export const SUGGESTED_TASKS: readonly string[] = [
   'Buy a plain white ceramic coffee mug, under $15',

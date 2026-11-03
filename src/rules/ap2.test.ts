@@ -20,7 +20,7 @@ const run = (rs: Rule[] = rules) => {
   return { out, constraints: out.constraints as Constraint[], ext: out.x_agent_mandates as Ext };
 };
 
-// Field names recorded from AP2 v0.2.0 (open Payment Mandate schema + Merchant type). See BRIEF.md.
+// Field names recorded from AP2 v0.2.0 (open Payment Mandate schema + Merchant type).
 const AP2_NAMES = new Set([
   'vct', 'constraints', 'cnf', 'iat', 'exp',
   'type', 'currency', 'max', 'min', 'allowed', 'id', 'name', 'website', 'not_before', 'not_after',

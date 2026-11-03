@@ -4,7 +4,7 @@ import type { PayPalClient } from './client';
 
 /**
  * "Connect PayPal": the buyer approves once on PayPal, and PayPal saves their account for this shop (the vault).
- * After that, each approved purchase can be held on it with no buyer action. Shapes verified in the sandbox (BRIEF.md).
+ * After that, each approved purchase can be held on it with no buyer action. Shapes verified in the sandbox (21 Oct 2026).
  */
 const SetupToken = z.object({ id: z.string(), links: z.array(z.object({ rel: z.string(), href: z.string().url() })).default([]) });
 const PaymentToken = z.object({ id: z.string() });

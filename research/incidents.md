@@ -42,4 +42,4 @@ Collected 15 Oct 2026. One row each: what happened, source, date. "Unverified" m
 - **Injection and fake merchants** (#2, #3, #21, #25–#28): listing and page text must be treated as data.
 - **Rules given in chat don't stick** (#6, #18): store rules as data, outside the agent.
 
-**Correction to BRIEF.md:** the brief says Muse "sold a user's keyboard for $10". The Guardian confirms Muse accepted lowball offers on a keyboard listing and shared the seller's address, but I found no source for the $10 figure.
+**Correction:** an earlier note said Muse "sold a user's keyboard for $10". The Guardian confirms Muse accepted lowball offers on a keyboard listing and shared the seller's address, but I found no source for the $10 figure.
