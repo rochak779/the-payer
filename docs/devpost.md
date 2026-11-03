@@ -1,6 +1,6 @@
 # The Payer: Devpost write-up
 
-The text to paste into each Devpost field, one section per field. One placeholder is left: `VIDEO_URL_TBD` (the YouTube link, made last in Session 14). Replace it here and on Devpost before submitting. Every claim matches `README.md` and the code as built on 22 Oct 2026, and the hosted demo was smoke-tested the same day.
+The text to paste into each Devpost field, one section per field. Every claim matches `README.md` and the code as built on 22 Oct 2026, and the hosted demo was smoke-tested the same day.
 
 ---
 
@@ -15,115 +15,83 @@ PayPal made shops agent-ready. The Payer makes buyers agent-safe: your AI shoppi
 ## Links
 
 - **Try it:** https://the-payer.onrender.com (no login, nothing to install)
-- **Video:** VIDEO_URL_TBD
+- **Video:** https://youtu.be/6VWm8YpckTo
 - **Code:** https://github.com/rochak779/the-payer (MIT licence)
 
 ---
 
-## Inspiration
+## Try it out links
 
-PayPal made shops agent-ready. The Payer makes buyers agent-safe.
+Add each one as its own link in Devpost's "Try it out" field.
 
-This autumn, AI agents that shop and act for you went mainstream, and so did stories of agents acting without asking first. In an October 2026 survey of 11,000 consumers, only 3% were comfortable with AI making routine purchases without a final OK.
+- https://the-payer.onrender.com
+- https://github.com/rochak779/the-payer
 
-Most of the tools for agent payments so far serve the shop: they let a business accept an agent's payment and check who the agent is. The buyer gets two blunt options. They can approve every purchase, which defeats the point of an agent. Or they can set a spending cap, which can't say what people actually care about. In a small research pass before building, I collected 27 real spending rules that people say they'd give an agent, and 12 of them needed judgement, such as refund terms, hidden fees and gifts for other people.
+## About the project
 
-So I built the buyer's side: rules in your own words, a checker that decides when it's safe not to ask you, and a payment step that can't pay a cent more than you approved.
+Paste everything from "Inspiration" to the end of "What's next" into Devpost's **About the project** field. Dollar signs are written `\$` so Devpost doesn't read them as math; if a backslash shows in the preview, delete it.
 
-## What it does
+### Inspiration
 
-You write spending rules the way you'd tell a person. The demo starts with four:
+AI agents can shop for you now. But would you let one pay without asking? In an October 2026 survey of 11,000 people, only 3% said yes.
 
-- Up to $80 on any one item.
-- Only new items: nothing used or refurbished.
-- Ask me before buying anything that's a gift or for someone else.
-- No gift cards.
+Today you have two choices. Approve every purchase yourself, which defeats the point of an agent. Or set a spending limit, which can't say what you really care about, like "nothing refurbished" or "ask me about gifts".
 
-Press **Show me what you understood** and the app reads your rules back before saving, so a misreading is caught before it costs money.
+PayPal made shops ready for agents. I wanted to make buyers safe with them.
 
-Then you give the shopping agent a task. It searches real products from US shops through Channel3, picks one and asks to buy it. A checker decides **approve**, **ask you** or **block**, with a plain-English reason:
+### What it does
 
-- **Approve.** PayPal holds exactly the listing's price from your saved PayPal. When the shop asks to be paid, a code-only payment check compares the charge with the approval: the amount, the shop, used once, not expired, and the agent still on. Only then does the app capture the hold.
-- **Ask.** The purchase waits on **Approvals** with the reason. Only your tap counts as consent. Then it's paid the same way.
-- **Block.** Nothing is held and nothing is paid. The reason names the rule.
+The Payer lets your AI shopping agent pay with PayPal, but only within rules you write in plain English.
 
-**Activity** lists every decision with its reason, and each paid purchase shows PayPal's capture id. Three demo buttons play a shop trying it on: **Shop asks for $20 more**, **Another shop asks** and **Shop asks again**. The payment check refuses each one before PayPal is even called. On its own, PayPal lets a shop take up to 15% more than was held (capped at $75). The Payer holds it to the penny.
+1. **You write rules** the way you'd tell a person: "Up to \$80 on any one item." "Ask me before buying a gift."
+2. **The agent shops.** It searches real US shops and picks something.
+3. **A checker decides:** approve, ask you, or block. It always says why.
+4. **PayPal holds exactly the approved price.** The shop gets paid only if it asks for that exact amount.
 
-The **off switch** stops everything: purchases waiting for you are cancelled, open PayPal holds are voided and a new task stops at once, without shopping.
+Normally, PayPal lets a shop take up to 15% more than it held. The Payer doesn't:
 
-## How we built it
+$$\text{amount paid} = \text{amount you approved}$$
 
-I built it solo with Claude Code, in short sessions from a written plan. Each session ended with passing tests and a pull request.
+There's also an off switch. One tap cancels everything and releases every PayPal hold.
 
-```
-your rules → shopping agent → checker → (you, if it asks) → PayPal hold → payment check → PayPal capture
-```
+### How I built it
 
-**PayPal (developer sandbox, REST APIs called directly):**
+I built it on my own with Claude Code, in short sessions from a written plan.
 
-- **OAuth 2.0 client credentials** (`POST /v1/oauth2/token`). The token is reused until it expires.
-- **Vault v3, to save the buyer's PayPal once.** "Connect PayPal" creates a setup token (`POST /v3/vault/setup-tokens`). After the buyer agrees, "Finish connecting" checks it (`GET /v3/vault/setup-tokens/{id}`) and saves a payment token (`POST /v3/vault/payment-tokens`).
-- **Orders v2 with `intent: AUTHORIZE`**, paid from the saved PayPal (`vault_id`) with the buyer away. This holds exactly the approved total. The hold comes back in the order response, so no separate authorise call is needed.
-- **Payments v2 capture** (final capture), called only after the code-only payment check approves the shop's charge. Only a `COMPLETED` capture counts as paid.
-- **Payments v2 void**, for the off switch.
-- Every call that moves money sends a fixed **`PayPal-Request-Id`** built from the purchase and the step, so a retried call can't pay twice.
-- The sandbox address is fixed in code, so no setting can point the app at live PayPal. Refunds weren't built.
+- **PayPal** saves the buyer's account once, holds the money for each approved purchase, and takes it only after the final check.
+- **Gemini** runs the shopping agent, reads the rules and judges the fuzzy ones.
+- **Channel3** gives the agent real products from US shops.
+- **Render** hosts the demo. Every visitor gets their own copy, with a test PayPal buyer already connected.
 
-**AI tools:**
+The key design choice: **the AI can only make things stricter.** Simple limits, like price, are checked by code. The AI only judges the fuzzy rules, and if it's unsure, the answer is "ask you". The agent itself can never touch PayPal.
 
-- **Gemini `gemini-3.5-flash-lite`** does three jobs: the shopping agent, the rule reader and the checker for fuzzy rules.
-- **Channel3** is the agent's product search: real products from US shops in US dollars, each with its shop, price, condition and stock.
-- **Built with Claude Code:** the code, tests and docs were written with Claude Code, session by session.
+### Challenges I ran into
 
-**Safe by design:**
+- **UK accounts didn't work.** PayPal's test system wouldn't save a UK buyer's account. I tested PayPal on its own before connecting it to the app, so I caught this early and switched the demo to US dollars.
+- **PayPal never sent the buyer back.** After agreeing, buyers saw an error page. So the app asks PayPal directly whether the buyer agreed instead of waiting for them to come back.
+- **The agent thought a toy was a gift card,** so "No gift cards" blocked it. Because the AI can only make things stricter, the mistake was a visible block, not a wrong payment. I fixed it and added a test.
 
-- The agent has exactly two tools: search, and ask to buy. It never gets PayPal tools, tokens or ids, so it can't pay for anything itself.
-- Code checks the hard limits (amount, shop, category, dates). The AI judges only the fuzzy rules. It reports facts (clear, breached or unsure, plus hidden costs and prompt-injection attempts), and code turns those facts into the decision. So the AI can only make a decision stricter. If it fails or returns junk, the answer is "ask".
-- When the agent picks a Channel3 listing, the purchase uses that listing's own price and shop, whatever the agent wrote. The checker reads the listing's own text, condition included. Shop and listing text is treated as data, never as instructions.
-- Money is whole cents everywhere, and every outside response (PayPal, Channel3, Gemini) is checked against a schema before it's used.
+### Accomplishments that I'm proud of
 
-**Hosting on Render:** one web service from the Blueprint in `render.yaml`, with a health check. Hosted mode gives each visitor their own seeded copy of the demo and daily limits. Past the limits, a run uses the offline agent and says so in one line, and payments still go through PayPal's sandbox.
+- **It never overpaid.** In 24 live runs, 17 purchases were paid, each at exactly the listing's price.
+- **It's measured.** On 67 sample purchases, the AI checker wrongly approved 0 or 1 per run. A simple keyword filter wrongly approved 17.
 
-**Offline mode:** every service has an offline stand-in (canned listings at fictional shops, a keyword checker, a simple rule reader and offline test payments). So the app runs with no keys at all.
+### What I learned
 
-**Tests:** 250 automated tests, including PayPal's failure cases: a capture that fails after the check approved, a retry after that, and a void that fails.
+- **Where the AI sits matters more than how smart it is.** Let it flag problems, and let code make the final call.
+- **Test the riskiest part first.** Testing PayPal on its own, before connecting it to the app, caught both PayPal surprises early.
 
-## Challenges we ran into
+### What's next
 
-- **UK sandbox shops couldn't save a buyer's PayPal.** I ran a PayPal sandbox spike first, as a go/no-go gate. Two UK sandbox business accounts were refused at the first vault step (`NOT_ENABLED_TO_VAULT_PAYMENT_SOURCE`). A US one worked first time, but it left pound payments pending until the shop accepted them by hand, and the shop's sandbox login was refused. So the demo moved to US dollars.
-- **PayPal's sandbox never sends the buyer back after they agree.** It shows an error page instead, yet PayPal has already recorded the approval. It happened with a local and a public return address alike. So the app doesn't rely on the redirect. It remembers the setup token it's waiting for and opens PayPal in a new tab. Then "Finish connecting" asks PayPal whether the token was approved, and only then saves it. The return page does the same and never reads a token from the link, so a crafted link can't attach someone else's PayPal.
-- **A double click said "wasn't connected".** A second click on "Finish connecting" during its two-second check found nothing left to finish and said "PayPal wasn't connected", though the first click had connected it. I fixed it test-first. The button now shows a spinner and can't be pressed twice.
-- **The agent misread things in live runs.** It filed a wooden building blocks set for a nephew as a gift card, so "No gift cards" blocked it. It also added brand and shop names to its searches. Each was fixed test-first in the agent's instructions. Because rules only tighten, the first misread could only cause a wrong block that the person sees, never a wrong approval. A review also found that two of a listed item would have been priced as one, fixed the same way.
-- **Pinning a fast-moving SDK.** Channel3's SDK was moving fast (a new version came out the day before I started), and the installed version differed from the docs: the client's name, where the price sits, where the country goes and the shape of a results page. I pinned one version, followed the installed code over the docs, and checked every response so that one malformed product is skipped instead of breaking the whole search.
-- **Seeing PayPal's side.** The sandbox accounts couldn't log in to PayPal's sandbox website, so I checked every order through PayPal's API instead: each order lists its holds and captures.
-
-## Accomplishments that we're proud of
-
-- **It doesn't overpay.** In 24 live runs (Gemini, Channel3 and the PayPal sandbox), all 25 purchase requests used the listing's own price and shop. Each of the 17 paid purchases is one PayPal hold and one completed capture at exactly that price.
-- **It's measured, not just demoed.** On 67 labelled purchase requests against a fixed set of 10 rules, the Gemini checker made 0 to 1 wrong approvals per run, against 17 for a keyword baseline (the way a simple guardrail works). On the 17 held-out cases it got 14 right in both runs with no wrong approvals; the baseline got 9 right with 5 wrong approvals.
-- **It reads rules well.** On 22 plain-English rules, Gemini read 21 and 20 correctly over two runs, against 15 for the offline pattern reader.
-- **The failure cases are pinned by tests.** A capture that fails after the check approved can't be retried into a second payment. A timeout is never reported as "nothing was charged", because PayPal may have taken it.
-- **Judges need nothing.** No install and no login: each visitor gets their own copy of the demo, with a PayPal sandbox buyer already connected.
-
-## What we learned
-
-- **Where the AI sits matters more than how clever it is.** The AI only reports facts and code makes the decision, so the AI can only make things stricter. That's what makes it safe to let the agent buy without asking.
-- **A PayPal hold is the right tool for an agent.** A hold for exactly the approved amount, captured only after a code check, gives one clear place to refuse an overcharge. On its own, PayPal allows a capture up to 15% over the hold. The check closes that gap.
-- **Try the risky integration first.** The PayPal spike found the UK vaulting refusal and the missing redirect before any app code depended on them.
-- **The listing's data beats the agent's words.** Taking price and shop from the search result itself, not from what the agent typed, removed a whole class of mistakes.
-
-## What's next for The Payer
-
-- **Undo with a PayPal refund.** It was planned and cut for time.
-- **Paying many shops.** Today every payment goes to one sandbox business account, because a saved PayPal works only with the shop it was saved for. Paying real shops needs PayPal's partner setup.
-- **Living inside a wallet.** In real use, this belongs with whoever holds the buyer's payment method, as a feature of a PayPal wallet rather than a separate app.
-- **More evals:** retail cases (used and refurbished items, gift cards, prompt injection in listings), measured the same way as the current set.
+- Refunds, so a purchase can be undone.
+- Paying many real shops, not just one test account.
+- Building it into a PayPal wallet, where the buyer's payment method already lives.
 
 ---
 
 ## Built with
 
-paypal, paypal-orders-v2, paypal-vault, gemini, channel3, render, claude-code
+paypal, paypal-orders-v2, paypal-vault, gemini, channel3, next.js, react, typescript, tailwindcss, zod, vitest, render, claude-code
 
 ## AI tools used
 
@@ -180,4 +148,4 @@ The Payer is new. The repository's first commit is 15 Oct 2026, two weeks after 
 
 **Innovation/Idea.** Agent payment tools mostly verify agents for shops. This is the buyer's rules layer. Hard limits are code; fuzzy rules ("nothing refurbished", "ask me about gifts") are AI judgement that can only tighten. And the PayPal hold is the enforcement point, so a shop can't take even the 15% extra that PayPal allows by default. Rules also export as an AP2 open Payment Mandate (the open Agent Payments Protocol), which shows the gap: AP2 can carry caps and allowed shops, but has no field for "nothing refurbished".
 
-**Presentation.** The video (VIDEO_URL_TBD, 2:26) shows it working end to end: the problem and who it's for, rules read back, the mug approved and paid exactly, PayPal's own record of that payment, the present asking first, the refurbished headphones blocked, an overcharge refused, the off switch, a live run on real US shops, and the eval numbers. The music and sound are original, made in code for this video.
+**Presentation.** The video (https://youtu.be/6VWm8YpckTo, 2:26) shows it working end to end: the problem and who it's for, rules read back, the mug approved and paid exactly, PayPal's own record of that payment, the present asking first, the refurbished headphones blocked, an overcharge refused, the off switch, a live run on real US shops, and the eval numbers. The music and sound are original, made in code for this video.
