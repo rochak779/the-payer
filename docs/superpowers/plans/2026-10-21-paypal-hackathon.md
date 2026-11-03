@@ -8,7 +8,7 @@
 
 **Tech Stack:** Next.js 16.4.2 (App Router), TypeScript, Tailwind v4, Zod 4, Vitest, tsx. AI: Gemini `gemini-3.5-flash-lite` via `@google/genai`. New: PayPal REST API v2/v3 called with `fetch`, `@channel3/sdk`, Render (Starter web service).
 
-**Spec:** `BRIEF.md` (the product), plus the "Hackathon requirements" section below (the competition). Read both before any session. BRIEF.md's confidentiality rules apply to every file, commit and video frame.
+**Spec:** `BRIEF.md` (the product), plus the "Hackathon requirements" section below (the competition). Read both before any session.
 
 ---
 
@@ -41,7 +41,7 @@ The PayPal spike goes first, against the usual "integrations last" rule. If PayP
 
 ### What I need from you (prerequisites)
 
-Do these in order. Each one names the session that's blocked without it. Only you can create accounts and type passwords. Put every key in `/Users/rochakagarwal/orca/projects/The Payer/.env.local` (already created, copied from Agent Mandates, and ignored by git). Never paste a key into chat.
+Do these in order. Each one names the session that's blocked without it. Only you can create accounts and type passwords. Put every key in `.env.local` (already created, copied from Agent Mandates, and ignored by git). Never paste a key into chat.
 
 1. **Eligibility and IP check** (blocks everything). The rules exclude employees, representatives and agents of the sponsor (PayPal), the administrator (Devpost) and their parent companies, subsidiaries and affiliates. They also exclude anyone whose employer employs a judge, and anyone whose entry would be a conflict of interest. Your entry must be your own work and solely owned by you. Check your employment contract's IP and side-project terms. Tell me "eligible" before Session 1.
 2. **Product name** (blocks Session 12). The repo is `the-payer`. Should the app, video and Devpost entry also be called "The Payer", or stay "Agent Mandates"? Until you say, the app keeps "Agent Mandates" and Session 12 does the rename if you want it. **Decided 21 Oct: "The Payer".** Session 12 does the rename.
@@ -129,7 +129,6 @@ These come from the official rules (paypalaihackathon.devpost.com/rules), read 2
 - Secrets live only in `.env.local` (locally) and in Render's environment settings (hosted). Never print, `cat` or regex-mask their values. Check only variable names or `[ -n "$VAR" ]`. Never commit a key.
 - Merchant, listing, Channel3 and agent-written text is untrusted data. It goes into prompts only inside the untrusted-data wrapper.
 - Demo content (fixtures, seed rules, suggested tasks, video) uses generic products and fictional shop names: no third-party trademarks. PayPal, Channel3 and Render are the hackathon's sponsors and may be named.
-- Confidentiality (from BRIEF.md): never name Rochak's employer, client bank or their products anywhere. Say "a UK bank".
 - Env switches, all defaulting to offline fakes:
   - `CHECKER=keyword|claude|claude-haiku|gemini`
   - `PARSER=pattern|claude|gemini`
@@ -214,7 +213,7 @@ No app code and no tests. One throwaway script answers the questions everything 
 - Create: `scripts/paypal-spike.ts`
 - Modify: `package.json` (script `"paypal:spike": "node --env-file-if-exists=.env.local --import tsx scripts/paypal-spike.ts"`), `.env.example` (names only: `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_VAULT_ID`, `# PAYMENTS=paypal`), `BRIEF.md`
 
-- [x] **Step 1: Read the current docs.** The saved copies are in `/Users/rochakagarwal/orca/projects/Agent Mandates/.firecrawl/`:
+- [x] **Step 1: Read the current docs.** The saved copies are in `.firecrawl/` of the original project:
   - `pp-platforms-checkout-save-payment-methods-purchase-later-payment-tokens-api-paypal.md` (vault);
   - `pp-payment-methods-auth-honor.md` (hold lifetime and the 115% rule);
   - `pp-platforms-checkout-standard-customize-overcharge-handling.md`;

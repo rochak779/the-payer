@@ -8,7 +8,7 @@
 
 **Tech Stack:** Next.js (App Router, latest from `create-next-app`), TypeScript, Tailwind, Zod, Vitest, tsx. Later: `@anthropic-ai/sdk`, `@mendable/firecrawl-js`, `stripe`, Stripe CLI.
 
-**Spec:** `BRIEF.md` (project root). Read it before any session. Confidentiality rules in it apply to every file.
+**Spec:** `BRIEF.md` (project root). Read it before any session.
 
 ---
 
@@ -88,7 +88,6 @@
 - Integration code (Claude, Firecrawl, Stripe) is only written in Phase 8.
 - Stripe: sandbox only. Code refuses any key that doesn't start with `sk_test_`.
 - Models: `claude-sonnet-5-5` for the checker and the agent (named in the brief). `claude-haiku-5-5` is an optional cheap checker. Override with `CHECKER_MODEL` / `AGENT_MODEL`.
-- Confidentiality (from BRIEF.md): never name Rochak's employer, client bank or their products in code, copy, fixtures, docs or commits. Use mock data and public sources only.
 - Copy uses plain English, UK spelling and £.
 - Every session ends with `npm test` and `npm run typecheck` passing, then a commit.
 - When a decision is made or an open question is answered, update `BRIEF.md`.
@@ -229,7 +228,7 @@ Integration code comes last, but access problems surface first. A Stripe access 
 - [x] **Step 1: Generate into a temp folder.** `create-next-app` refuses non-empty folders, and `BRIEF.md` is here.
 
 ```bash
-cd "/Users/rochakagarwal/orca/projects/Agent Mandates"
+cd "Agent Mandates"
 npx create-next-app@latest .scaffold --ts --tailwind --eslint --app --src-dir --import-alias "@/*" --use-npm --skip-install --yes
 rsync -a --exclude .git .scaffold/ ./
 rm -rf .scaffold
@@ -1909,7 +1908,7 @@ git commit -m "feat(evals): eval runner, metrics and saved results"
 
 > **As built:** 25 cases appended as written; research sources added to within-04, against-06 and ambiguous-03. Keyword baseline on 35 cases: 25/35, 7 wrong approvals, 3 needless asks (e.g. "grocery delivery" read as an extra cost).
 
-Content session. Append the 25 cases below to `evals/cases.json`. First check `research/rules-test.md` and `research/incidents.md`. Where a real rule or incident fits a scenario, adapt the case to match it and add `"source": "<link> (<date>)"`. Keep the label consistent with `evals/README.md`. No case may name Rochak's employer or its products.
+Content session. Append the 25 cases below to `evals/cases.json`. First check `research/rules-test.md` and `research/incidents.md`. Where a real rule or incident fits a scenario, adapt the case to match it and add `"source": "<link> (<date>)"`. Keep the label consistent with `evals/README.md`.
 
 **Files:**
 - Modify: `evals/cases.json`
@@ -5622,7 +5621,7 @@ git commit -m "feat(rules): export rules as an AP2 open mandate"
 
 - [x] **Step 1: Full check.** Run `npm test && npm run typecheck && npm run build`. Expected: all pass.
 
-- [x] **Step 2: Write `README.md`** (no employer names):
+- [x] **Step 2: Write `README.md`**:
 
 ```markdown
 # Agent Mandates

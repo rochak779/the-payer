@@ -1,5 +1,5 @@
 // Reads one purchase back from PayPal's sandbox API, read-only, for the video's "PayPal's record" card.
-// Nobody can log in at sandbox.paypal.com (BRIEF.md), so the API is the honest view of PayPal's side.
+// Nobody can log in at sandbox.paypal.com, so the API is the honest view of PayPal's side.
 //
 //   node --env-file=../.env.local scripts/paypal-record.mjs <hold (authorization) id> [--out src/data/paypal-record.json]
 //

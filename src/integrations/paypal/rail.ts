@@ -47,7 +47,7 @@ export function createPayPalRail(deps: { store: Store; client: PayPalClient; vau
           payment_source: { paypal: { vault_id: vaultId } },
         },
       }));
-      // Verified in the sandbox (BRIEF.md): the hold comes back in this response, so no /authorize call.
+      // Verified in the sandbox (21 Oct 2026): the hold comes back in this response, so no /authorize call.
       const hold = order.purchase_units[0]?.payments?.authorizations?.[0];
       if (!hold || hold.status !== 'CREATED') throw new Error(`PayPal didn't hold the payment (order ${order.status}${hold ? `, hold ${hold.status}` : ''}).`);
       return { id: hold.id, label: `PayPal, held ${formatMoney(total)}` };
