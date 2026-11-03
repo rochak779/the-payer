@@ -12,7 +12,7 @@ Built for the PayPal AI Hackathon (October to November 2026), entirely on PayPal
 
 - **Nothing to install, no login.** Each visitor gets their own copy of the demo: four spending rules, and a PayPal sandbox buyer that's already connected (the Ask screen says "Using the demo PayPal buyer (sandbox)").
 - **Optional: use your own PayPal sandbox buyer.** If you have a personal account in PayPal's developer sandbox, press **Connect your own PayPal sandbox account** on the Ask screen. PayPal opens in a new tab: log in and agree. PayPal's sandbox then shows an error page instead of sending you back, but it has recorded your approval. Close that tab and press **Finish connecting**; the app checks with PayPal before saving.
-- **Please type nothing personal.** The demo uses Gemini's free tier, and Google may use free-tier prompts to improve its products.
+- **Please type nothing personal.** What you type is sent to Google's Gemini, and Google may use it to improve its products.
 - It's sandbox money in US dollars. Nothing real is bought or paid.
 
 ## A 3-minute tour
@@ -62,7 +62,7 @@ Every call that moves money sends a fixed `PayPal-Request-Id` built from the pur
 
 ## AI used
 
-- **Gemini `gemini-3.5-flash-lite`** (Google, free tier, through `@google/genai`) does three jobs: the **shopping agent**, the **rule reader** and the **checker** for fuzzy rules. Each job can be switched to Claude, which is built but unmeasured (no Anthropic key).
+- **Gemini `gemini-3.5-flash-lite`** (Google, through `@google/genai`) does three jobs: the **shopping agent**, the **rule reader** and the **checker** for fuzzy rules. Each job can be switched to Claude, which is built but not yet measured.
 - **Built with Claude Code.** The code, tests and docs were written with Claude Code, session by session, from the plan in `docs/superpowers/plans/`.
 
 ## Channel3 and Render
@@ -136,7 +136,7 @@ In Stripe's Issuing settings, set the real-time authorisation timeout fallback t
 - **One shop receives every payment.** A saved PayPal works only with the shop it was saved for, and paying many different shops needs PayPal partner status. So every payment goes to one sandbox business account; the shop's name goes in the order description, and the payment check still checks it.
 - **Live results show real US shop names and products, but no shop is really paid,** and nothing is ordered. The shop's request to be paid is played by the app.
 - **Visitor data resets on each deploy.** It lives on the service's own disk, so the next visit starts from the seeded demo again.
-- **Daily limits fall back to the offline agent.** Past the limits above, a run uses the offline agent and says so in one line; payments still go through PayPal's sandbox. If Google's own free allowance runs out first, a run stops with a message saying Gemini is over its usage limit, and nothing is approved.
+- **Daily limits fall back to the offline agent.** Past the limits above, a run uses the offline agent and says so in one line; payments still go through PayPal's sandbox. If Gemini hits its usage limit first, a run stops with a message saying so, and nothing is approved.
 - **PayPal's sandbox doesn't send you back after you agree.** It shows an error page instead, so the app has a **Finish connecting** button that asks PayPal whether you agreed.
 - **The "blocked" headphones need the offline listings.** Live search hasn't returned a used or refurbished listing, so live, the headphones are usually approved.
 - **Spending only.** The app can't stop an agent's non-payment actions, such as sharing an address.
