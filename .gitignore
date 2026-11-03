@@ -44,9 +44,8 @@ next-env.d.ts
 /data
 !.env.example
 .firecrawl/
-.impeccable/review/
-.impeccable/questions/
 
 # local agent notes and raw research (never published)
 .superpowers/
 research/raw/
+.impeccable/
