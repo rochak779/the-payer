@@ -47,6 +47,12 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           <main className="flex-1 overflow-y-auto px-5 pb-8 pt-6">{children}</main>
           <TabBar pending={pending} />
         </div>
+        <p className="pb-6 pt-4 text-center text-[0.8125rem] text-muted sm:pt-0">
+          Built by{' '}
+          <a href="https://www.rochakagarwal.com" className="underline underline-offset-4">
+            Rochak Agarwal
+          </a>
+        </p>
       </body>
     </html>
   );
